@@ -1,0 +1,83 @@
+{
+  "kind": "collectionType",
+  "collectionName": "leads",
+  "info": {
+    "singularName": "lead",
+    "pluralName": "leads",
+    "displayName": "Lead",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "completeName": {
+      "displayName": "Complete Name",
+      "type": "component",
+      "repeatable": false,
+      "component": "contact.complete-name"
+    },
+    "tradeName": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contact.phone"
+    },
+    "mainAddress": {
+      "type": "component",
+      "repeatable": false,
+      "component": "address.address"
+    },
+    "fiscalInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "fiscal.fiscal-info"
+    },
+    "rating": {
+      "type": "integer",
+      "default": 0
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::contact-group.contact-group",
+      "inversedBy": "leads"
+    },
+    "source": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::contact-source.contact-source",
+      "inversedBy": "leads"
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::tag.tag"
+    },
+    "responsible": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    }
+  }
+}

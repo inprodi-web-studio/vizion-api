@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "suscription_plans",
+  "info": {
+    "singularName": "suscription-plan",
+    "pluralName": "suscription-plans",
+    "displayName": "Suscription Plan",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "price": {
+      "default": 0,
+      "required": true,
+      "unique": true,
+      "type": "decimal"
+    },
+    "companies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::company.company",
+      "mappedBy": "plan"
+    },
+    "payments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::suscription-payment.suscription-payment",
+      "mappedBy": "plan"
+    }
+  }
+}

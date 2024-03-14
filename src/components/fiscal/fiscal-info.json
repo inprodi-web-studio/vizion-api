@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_fiscal_fiscal_infos",
+  "info": {
+    "displayName": "Fiscal Info"
+  },
+  "options": {},
+  "attributes": {
+    "legalName": {
+      "type": "string",
+      "unique": false
+    },
+    "rfc": {
+      "type": "string"
+    },
+    "regime": {
+      "type": "string"
+    },
+    "address": {
+      "displayName": "Address",
+      "type": "component",
+      "repeatable": false,
+      "component": "address.address"
+    }
+  }
+}

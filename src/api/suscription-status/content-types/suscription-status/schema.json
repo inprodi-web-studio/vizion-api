@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "suscription_statuses",
+  "info": {
+    "singularName": "suscription-status",
+    "pluralName": "suscription-statuses",
+    "displayName": "Suscription Status",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "unique": true,
+      "required": false
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company",
+      "inversedBy": "suscriptionStatus"
+    },
+    "nextBilling": {
+      "type": "date",
+      "required": true
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true,
+      "unique": false
+    },
+    "plan": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::suscription-plan.suscription-plan"
+    }
+  }
+}

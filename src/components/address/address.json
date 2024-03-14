@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_address_addresses",
+  "info": {
+    "displayName": "Address"
+  },
+  "options": {},
+  "attributes": {
+    "street": {
+      "type": "string"
+    },
+    "extNumber": {
+      "type": "string"
+    },
+    "intNumber": {
+      "type": "string"
+    },
+    "suburb": {
+      "type": "string"
+    },
+    "cp": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    }
+  }
+}

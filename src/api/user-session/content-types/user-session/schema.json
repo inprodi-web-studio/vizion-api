@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_sessions",
+  "info": {
+    "singularName": "user-session",
+    "pluralName": "user-sessions",
+    "displayName": "User Session",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "system": {
+      "type": "string"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "sessions"
+    },
+    "ip": {
+      "type": "string"
+    }
+  }
+}

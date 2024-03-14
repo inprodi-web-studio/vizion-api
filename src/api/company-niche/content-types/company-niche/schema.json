@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "company_niches",
+  "info": {
+    "singularName": "company-niche",
+    "pluralName": "company-niches",
+    "displayName": "Company Niche",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "comapanies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::company.company",
+      "mappedBy": "nich"
+    }
+  }
+}

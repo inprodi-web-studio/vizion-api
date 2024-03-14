@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lead_stages",
+  "info": {
+    "singularName": "lead-stage",
+    "pluralName": "lead-stages",
+    "displayName": "Lead Stage",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "name": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer"
+    }
+  }
+}

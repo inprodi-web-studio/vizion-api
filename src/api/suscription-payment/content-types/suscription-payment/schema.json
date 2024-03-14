@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "suscription_payments",
+  "info": {
+    "singularName": "suscription-payment",
+    "pluralName": "suscription-payments",
+    "displayName": "Suscription Payment",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "company": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::company.company",
+      "inversedBy": "payments"
+    },
+    "plan": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::suscription-plan.suscription-plan",
+      "inversedBy": "payments"
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true
+    }
+  }
+}

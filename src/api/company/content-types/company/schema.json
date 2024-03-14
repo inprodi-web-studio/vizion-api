@@ -1,0 +1,87 @@
+{
+  "kind": "collectionType",
+  "collectionName": "companies",
+  "info": {
+    "singularName": "company",
+    "pluralName": "companies",
+    "displayName": "Company",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "unique": true,
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "nich": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::company-niche.company-niche",
+      "inversedBy": "comapanies"
+    },
+    "logotype": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "size": {
+      "type": "string"
+    },
+    "completedOnboarding": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "fiscalInfo": {
+      "displayName": "Fiscal Info",
+      "type": "component",
+      "repeatable": false,
+      "component": "fiscal.fiscal-info"
+    },
+    "address": {
+      "type": "component",
+      "repeatable": false,
+      "component": "address.address"
+    },
+    "users": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "company"
+    },
+    "plan": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::suscription-plan.suscription-plan",
+      "inversedBy": "companies"
+    },
+    "payments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::suscription-payment.suscription-payment",
+      "mappedBy": "company"
+    },
+    "suscriptionStatus": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::suscription-status.suscription-status",
+      "mappedBy": "company"
+    }
+  }
+}

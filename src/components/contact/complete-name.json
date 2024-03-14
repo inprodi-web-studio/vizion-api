@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_contact_complete_names",
+  "info": {
+    "displayName": "Complete Name"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "middleName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    }
+  }
+}
