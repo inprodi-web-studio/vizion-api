@@ -1017,6 +1017,8 @@ export interface ApiLeadLead extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
+    value: Attribute.Decimal;
+    potential: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::lead.lead', 'oneToOne', 'admin::user'> &

@@ -3,11 +3,13 @@ const findMany                 = require('../../../helpers/findMany');
 const { validateCreate }       = require('../content-types/lead/lead.validation');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const checkForDuplicates       = require('../../../helpers/checkForDuplicates');
+const { validateKeyUpdate }    = require('../../../helpers/validateKeyUpdate');
+const findOneByUuid = require('../../../helpers/findOneByUuid');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const leadFields = {
-    fields   : ["uuid", "tradeName", "email", "rating", "isActive"],
+    fields   : ["uuid", "tradeName", "email", "rating", "isActive", "value", "potential"],
     populate : {
         completeName : true,
         phone        : true,
@@ -29,7 +31,8 @@ const leadFields = {
 
 module.exports = createCoreController( LEAD, ({ strapi }) => ({
     async find(ctx) {
-        const user = ctx.state.user;
+        const user  = ctx.state.user;
+        const query = ctx.query;
 
         const filters = {
             $search : [
@@ -49,6 +52,10 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         const leads = await findMany( LEAD, leadFields, filters );
 
+        if ( query?.stats ) {
+            await strapi.service( LEAD ).addStats( leads );
+        }
+
         return leads;
     },
 
@@ -61,9 +68,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const user    = ctx.state.user;
-        const company = ctx.state.company;
-
+        const { user, company } = ctx.state;
         const data = ctx.request.body;
 
         await validateCreate( data );
@@ -97,7 +102,9 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         const newLead = await strapi.entityService.create( LEAD, {
             data : {
                 ...data,
-                company : company.id,
+                company   : company.id,
+                value     : 0,
+                potential : 0,
             },
             ...leadFields,
         });
@@ -106,6 +113,47 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
     },
     
     async keyUpdate(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
 
+        await validateKeyUpdate( data );
+
+        const { id } = await validateEntityPermission( uuid, LEAD );
+
+        const entityId = await strapi.service( LEAD ).keyFind( data );
+
+        const updatedLead = await strapi.entityService.update( LEAD, id, {
+            data : {
+                [data.key] : entityId,
+            },
+            ...leadFields
+        });
+
+        return updatedLead;
+    },
+
+    async toggleStatus(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id, isActive } = await validateEntityPermission( uuid, LEAD );
+
+        const updatedLead = await strapi.entityService.update( LEAD, id, {
+            data : {
+                isActive : !isActive,
+            },
+            ...leadFields
+        });
+
+        return updatedLead;
+    },
+
+    async delete(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id } = await validateEntityPermission( uuid, LEAD );
+
+        const deletedLead = await strapi.entityService.delete( LEAD, id );
+
+        return deletedLead;
     },
 }));

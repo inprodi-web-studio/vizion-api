@@ -1,9 +1,30 @@
-'use strict';
+const { CONTACT_GROUP } = require("../../../constants/models");
+const findMany = require("../../../helpers/findMany");
 
-/**
- * contact-group controller
- */
+const { createCoreController } = require("@strapi/strapi").factories;
 
-const { createCoreController } = require('@strapi/strapi').factories;
+const groupFields = {
+    fields   : ["uuid", "name", "icon", "color"],
+    populate : {
+        leads : {
+            count : true,
+        },
+    },
+};
 
-module.exports = createCoreController('api::contact-group.contact-group');
+module.exports = createCoreController( CONTACT_GROUP, ({ strapi }) => ({
+    async find(ctx) {
+        const user  = ctx.state.user;
+        const query = ctx.query;
+
+        const filters = {
+            $search : [
+                "name",
+            ],
+        };
+
+        const groups = await findMany( CONTACT_GROUP, groupFields, filters );
+
+        return groups;
+    },
+}));

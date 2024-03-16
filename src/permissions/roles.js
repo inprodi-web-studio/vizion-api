@@ -1,6 +1,7 @@
 const {
     USER,
     LEAD,
+    CONTACT_GROUP,
 } = require("../constants/models");
 
 const roles = {
@@ -18,9 +19,10 @@ const roles = {
     "owner" : {
         permissions : {
             [USER] : {
-                user : ["find"],
+                user : ["find", "me"],
             },
-            [LEAD] : ["find", "findOne", "create", "update", "keyUpdate", "delete"],
+            [LEAD] : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [CONTACT_GROUP] : ["find", "findOne", "create", "update", "delete"],
         },
         meta : {
             type        : "owner",
@@ -30,9 +32,10 @@ const roles = {
     "admin" : {
         permissions : {
             [USER] : {
-                user : ["find"],
+                user : ["find", "me"],
             },
-            [LEAD] : ["find", "findOne", "create", "update", "keyUpdate", "delete"],
+            [LEAD] : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [CONTACT_GROUP] : ["find", "findOne", "create", "update", "delete"],
         },
         meta : {
             type        : "super-admin",
@@ -42,9 +45,10 @@ const roles = {
     "sales-manager" : {
         permissions : {
             [USER] : {
-                user : ["find"],
+                user : ["find", "me"],
             },
-            [LEAD] : ["find", "findOne", "create", "update", "keyUpdate", "delete"],
+            [LEAD] : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [CONTACT_GROUP] : ["find", "findOne", "create"],
         },
         meta : {
             type        : "sales-manager",
@@ -54,9 +58,10 @@ const roles = {
     "sales-agent" : {
         permissions : {
             [USER] : {
-                user : ["find"],
+                user : ["find", "me"],
             },
-            [LEAD] : ["find", "findOne", "create", "update", "keyUpdate", "delete"],
+            [LEAD] : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [CONTACT_GROUP] : ["find", "findOne"],
         },
         meta : {
             type        : "sales-agent",

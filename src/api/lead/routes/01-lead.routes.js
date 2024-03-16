@@ -34,6 +34,14 @@ module.exports = {
       },
       {
         method  : "PATCH",
+        path    : "/contacts/leads/:uuid/toggle",
+        handler : "lead.toggleStatus",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PATCH",
         path    : "/contacts/leads/:uuid",
         handler : "lead.keyUpdate",
         config : {

@@ -7,4 +7,13 @@ module.exports = ( plugin ) => {
             prefix : "",
         },
     });
+
+    plugin.routes["content-api"].routes.push({
+        method  : "GET",
+        path    : "/users",
+        handler : "user.find",
+        config  : {
+            prefix : "",
+        },
+    });
 }
