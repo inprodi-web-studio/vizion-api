@@ -847,6 +847,7 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
       'oneToOne',
       'api::suscription-status.suscription-status'
     >;
+    urlParam: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -968,6 +969,50 @@ export interface ApiContactSourceContactSource extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::contact-source.contact-source',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiInvitationInvitation extends Schema.CollectionType {
+  collectionName: 'invitations';
+  info: {
+    singularName: 'invitation';
+    pluralName: 'invitations';
+    displayName: 'Invitation';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String & Attribute.Unique;
+    name: Attribute.String & Attribute.Required;
+    lastName: Attribute.String;
+    email: Attribute.String & Attribute.Required;
+    role: Attribute.String & Attribute.Required;
+    invitedBy: Attribute.Relation<
+      'api::invitation.invitation',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    company: Attribute.Relation<
+      'api::invitation.invitation',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::invitation.invitation',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::invitation.invitation',
       'oneToOne',
       'admin::user'
     > &
@@ -1275,6 +1320,7 @@ declare module '@strapi/types' {
       'api::company-niche.company-niche': ApiCompanyNicheCompanyNiche;
       'api::contact-group.contact-group': ApiContactGroupContactGroup;
       'api::contact-source.contact-source': ApiContactSourceContactSource;
+      'api::invitation.invitation': ApiInvitationInvitation;
       'api::lead.lead': ApiLeadLead;
       'api::lead-stage.lead-stage': ApiLeadStageLeadStage;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;

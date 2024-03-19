@@ -2,6 +2,7 @@ const {
     USER,
     LEAD,
     CONTACT_GROUP,
+    INVITATION,
 } = require("../constants/models");
 
 const roles = {
@@ -19,9 +20,10 @@ const roles = {
     "owner" : {
         permissions : {
             [USER] : {
-                user : ["find", "me"],
+                user : ["find", "me", "toggle", "delete"],
             },
-            [LEAD] : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [INVITATION]    : ["find", "create", "delete"],
+            [LEAD]          : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
             [CONTACT_GROUP] : ["find", "findOne", "create", "update", "delete"],
         },
         meta : {
@@ -32,9 +34,10 @@ const roles = {
     "admin" : {
         permissions : {
             [USER] : {
-                user : ["find", "me"],
+                user : ["find", "me", "toggle", "delete"],
             },
-            [LEAD] : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [INVITATION]    : ["find", "create", "delete"],
+            [LEAD]          : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
             [CONTACT_GROUP] : ["find", "findOne", "create", "update", "delete"],
         },
         meta : {
@@ -47,7 +50,7 @@ const roles = {
             [USER] : {
                 user : ["find", "me"],
             },
-            [LEAD] : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [LEAD]          : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
             [CONTACT_GROUP] : ["find", "findOne", "create"],
         },
         meta : {
@@ -60,7 +63,7 @@ const roles = {
             [USER] : {
                 user : ["find", "me"],
             },
-            [LEAD] : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [LEAD]          : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
             [CONTACT_GROUP] : ["find", "findOne"],
         },
         meta : {

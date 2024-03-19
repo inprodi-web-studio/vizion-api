@@ -14,6 +14,13 @@ module.exports = async ( policyContext, config, { strapi } ) => {
         },
     });
 
+    if ( user.blocked ) {
+        throw new UnauthorizedError( "The user has being blocked", {
+            key : "user.blocked",
+            path : ctx.request.path,
+        });
+    }
+
     if ( !user.company.isActive ) {
         throw new UnauthorizedError( "The company has being blocked", {
             key : "company.blocked",

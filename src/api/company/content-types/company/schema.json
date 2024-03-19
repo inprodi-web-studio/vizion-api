@@ -82,6 +82,9 @@
       "relation": "oneToOne",
       "target": "api::suscription-status.suscription-status",
       "mappedBy": "company"
+    },
+    "urlParam": {
+      "type": "string"
     }
   }
 }
