@@ -1,4 +1,4 @@
-const { LEAD, CONTACT_GROUP, USER } = require('../../../constants/models');
+const { LEAD, CONTACT_GROUP, USER, CONTACT_SOURCE } = require('../../../constants/models');
 const { BadRequestError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
@@ -66,6 +66,16 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                     const { id : groupId } = await findOneByUuid( value, CONTACT_GROUP );
                     
                     entityId = groupId;
+                } else {
+                    entityId = null;
+                }
+            break;
+
+            case "source":
+                if ( value ) {
+                    const { id : sourceId } = await findOneByUuid( value, CONTACT_SOURCE );
+                    
+                    entityId = sourceId;
                 } else {
                     entityId = null;
                 }

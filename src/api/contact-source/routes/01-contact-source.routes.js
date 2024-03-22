@@ -2,32 +2,32 @@ module.exports = {
     routes : [
       {
         method  : "GET",
-        path    : "/contacts/groups",
-        handler : "contact-group.find",
+        path    : "/contacts/sources",
+        handler : "contact-source.find",
         config : {
           policies : ["global::userContext"],
         },
       },
       {
         method  : "POST",
-        path    : "/contacts/groups",
-        handler : "contact-group.create",
+        path    : "/contacts/sources",
+        handler : "contact-source.create",
         config : {
           policies : ["global::userContext"],
         },
       },
       {
         method  : "PUT",
-        path    : "/contacts/groups/:uuid",
-        handler : "contact-group.update",
+        path    : "/contacts/sources/:uuid",
+        handler : "contact-source.update",
         config : {
           policies : ["global::userContext"],
         },
       },
       {
         method  : "DELETE",
-        path    : "/contacts/groups/:uuid",
-        handler : "contact-group.delete",
+        path    : "/contacts/sources/:uuid",
+        handler : "contact-source.delete",
         config : {
           policies : ["global::userContext"],
         },

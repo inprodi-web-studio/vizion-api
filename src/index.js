@@ -5,6 +5,8 @@ const {
   LEAD,
   COMPANY,
   INVITATION,
+  CONTACT_GROUP,
+  CONTACT_SOURCE,
 } = require("./constants/models");
 
 module.exports = {
@@ -17,6 +19,8 @@ module.exports = {
         LEAD,
         COMPANY,
         INVITATION,
+        CONTACT_GROUP,
+        CONTACT_SOURCE,
       ],
       async beforeCreate( event ) {
         const { data } = event.params;

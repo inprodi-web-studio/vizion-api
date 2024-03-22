@@ -28,6 +28,11 @@
       "relation": "oneToMany",
       "target": "api::lead.lead",
       "mappedBy": "source"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
     }
   }
 }

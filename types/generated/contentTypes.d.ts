@@ -922,6 +922,11 @@ export interface ApiContactGroupContactGroup extends Schema.CollectionType {
       'oneToMany',
       'api::lead.lead'
     >;
+    company: Attribute.Relation<
+      'api::contact-group.contact-group',
+      'oneToOne',
+      'api::company.company'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -958,6 +963,11 @@ export interface ApiContactSourceContactSource extends Schema.CollectionType {
       'api::contact-source.contact-source',
       'oneToMany',
       'api::lead.lead'
+    >;
+    company: Attribute.Relation<
+      'api::contact-source.contact-source',
+      'oneToOne',
+      'api::company.company'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

@@ -3,6 +3,7 @@ const {
     LEAD,
     CONTACT_GROUP,
     INVITATION,
+    CONTACT_SOURCE,
 } = require("../constants/models");
 
 const roles = {
@@ -22,9 +23,10 @@ const roles = {
             [USER] : {
                 user : ["find", "me", "toggle", "delete"],
             },
-            [INVITATION]    : ["find", "create", "delete"],
-            [LEAD]          : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
-            [CONTACT_GROUP] : ["find", "findOne", "create", "update", "delete"],
+            [INVITATION]     : ["find", "create", "delete"],
+            [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [CONTACT_GROUP]  : ["find", "create", "update", "delete"],
+            [CONTACT_SOURCE] : ["find", "create", "update", "delete"],
         },
         meta : {
             type        : "owner",
@@ -36,9 +38,10 @@ const roles = {
             [USER] : {
                 user : ["find", "me", "toggle", "delete"],
             },
-            [INVITATION]    : ["find", "create", "delete"],
-            [LEAD]          : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
-            [CONTACT_GROUP] : ["find", "findOne", "create", "update", "delete"],
+            [INVITATION]     : ["find", "create", "delete"],
+            [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [CONTACT_GROUP]  : ["find", "create", "update", "delete"],
+            [CONTACT_SOURCE] : ["find", "create", "update", "delete"],
         },
         meta : {
             type        : "super-admin",
@@ -50,8 +53,9 @@ const roles = {
             [USER] : {
                 user : ["find", "me"],
             },
-            [LEAD]          : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
-            [CONTACT_GROUP] : ["find", "findOne", "create"],
+            [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [CONTACT_GROUP]  : ["find", "create"],
+            [CONTACT_SOURCE] : ["find", "create"],
         },
         meta : {
             type        : "sales-manager",
@@ -63,8 +67,9 @@ const roles = {
             [USER] : {
                 user : ["find", "me"],
             },
-            [LEAD]          : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
-            [CONTACT_GROUP] : ["find", "findOne"],
+            [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [CONTACT_GROUP]  : ["find"],
+            [CONTACT_SOURCE] : ["find"],
         },
         meta : {
             type        : "sales-agent",
