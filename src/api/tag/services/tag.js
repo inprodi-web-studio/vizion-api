@@ -1,9 +1,18 @@
-'use strict';
-
-/**
- * tag service
- */
+const { TAG } = require('../../../constants/models');
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::tag.tag');
+module.exports = createCoreService( TAG, ({ strapi }) => ({
+    async getEntity() {
+        const ctx = strapi.requestContext.get();
+        const url = ctx.request.url;
+
+        let entity;
+
+        if ( url.includes( "contacts" ) ) {
+            entity = "contact";
+        }
+
+        return entity;
+    },
+}));

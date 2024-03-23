@@ -1,4 +1,4 @@
-const { LEAD, CONTACT_GROUP, USER, CONTACT_SOURCE } = require('../../../constants/models');
+const { LEAD, CONTACT_GROUP, USER, CONTACT_SOURCE, TAG } = require('../../../constants/models');
 const { BadRequestError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
@@ -45,7 +45,7 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         };
     },
 
-    async keyFind({ key, value }) {
+    async keyFind({ key, value }, tags = []) {
         const ctx = strapi.requestContext.get();
 
         let entityId;
@@ -79,6 +79,27 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                 } else {
                     entityId = null;
                 }
+            break;
+
+            case "tags":
+                const { id : tagId, uuid, entity } = await findOneByUuid( value, TAG );
+
+                if ( entity !== "contact" ) {
+                    throw new BadRequestError( `The tag ${value} is not a contact tag`, {
+                        key  : "lead.invalidTag",
+                        path : ctx.request.url,
+                    });
+                }
+
+                const index = tags.findIndex( t => t.uuid === uuid );
+
+                if ( index === -1 ) {
+                    tags.push( tagId );
+                } else {
+                    tags.splice( index, 1 );
+                }
+
+                entityId = tags;
             break;
 
             case "rating":

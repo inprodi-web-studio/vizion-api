@@ -1,8 +1,9 @@
 const {
+    TAG,
     USER,
     LEAD,
-    CONTACT_GROUP,
     INVITATION,
+    CONTACT_GROUP,
     CONTACT_SOURCE,
 } = require("../constants/models");
 
@@ -23,8 +24,9 @@ const roles = {
             [USER] : {
                 user : ["find", "me", "toggle", "delete"],
             },
-            [INVITATION]     : ["find", "create", "delete"],
+            [TAG]            : ["find", "create", "update", "delete"],
             [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [INVITATION]     : ["find", "create", "delete"],
             [CONTACT_GROUP]  : ["find", "create", "update", "delete"],
             [CONTACT_SOURCE] : ["find", "create", "update", "delete"],
         },
@@ -38,8 +40,9 @@ const roles = {
             [USER] : {
                 user : ["find", "me", "toggle", "delete"],
             },
-            [INVITATION]     : ["find", "create", "delete"],
+            [TAG]            : ["find", "create", "update", "delete"],
             [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
+            [INVITATION]     : ["find", "create", "delete"],
             [CONTACT_GROUP]  : ["find", "create", "update", "delete"],
             [CONTACT_SOURCE] : ["find", "create", "update", "delete"],
         },
@@ -53,6 +56,7 @@ const roles = {
             [USER] : {
                 user : ["find", "me"],
             },
+            [TAG]            : ["find", "create", "update", "delete"],
             [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
             [CONTACT_GROUP]  : ["find", "create"],
             [CONTACT_SOURCE] : ["find", "create"],
@@ -67,6 +71,7 @@ const roles = {
             [USER] : {
                 user : ["find", "me"],
             },
+            [TAG]            : ["find", "create"],
             [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete"],
             [CONTACT_GROUP]  : ["find"],
             [CONTACT_SOURCE] : ["find"],

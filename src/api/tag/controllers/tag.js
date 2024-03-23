@@ -1,9 +1,50 @@
-'use strict';
-
-/**
- * tag controller
- */
+const { TAG } = require('../../../constants/models');
+const checkForDuplicates = require('../../../helpers/checkForDuplicates');
+const findMany = require('../../../helpers/findMany');
+const { validateCreate } = require('../content-types/tag/tag.validation');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
-module.exports = createCoreController('api::tag.tag');
+const tagFields = {
+    fields : ["uuid", "name"],
+}
+
+module.exports = createCoreController( TAG, ({ strapi }) => ({
+    async find(ctx) {
+        const entity = await strapi.service( TAG ).getEntity();
+
+        const filters = {
+            $search : [
+                "name",
+            ],
+            entity,
+        };
+
+        const tags = await findMany( TAG, tagFields, filters );
+
+        return tags;
+    },
+
+    async create(ctx) {
+        const { company } = ctx.state;
+        const data = ctx.request.body;
+
+        await validateCreate( data );
+
+        await checkForDuplicates( TAG, [
+            { name : data.name },
+        ]);
+
+        const entity = await strapi.service( TAG ).getEntity();
+
+        const newTag = await strapi.entityService.create( TAG, {
+            data : {
+                ...data,
+                entity,
+                company : company.id,
+            },
+        });
+
+        return newTag;
+    },
+}));

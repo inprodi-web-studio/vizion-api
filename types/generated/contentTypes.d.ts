@@ -1262,6 +1262,11 @@ export interface ApiTagTag extends Schema.CollectionType {
     uuid: Attribute.String & Attribute.Unique;
     name: Attribute.String;
     entity: Attribute.String;
+    company: Attribute.Relation<
+      'api::tag.tag',
+      'oneToOne',
+      'api::company.company'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::tag.tag', 'oneToOne', 'admin::user'> &

@@ -118,9 +118,9 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         await validateKeyUpdate( data );
 
-        const { id } = await validateEntityPermission( uuid, LEAD );
+        const { id, tags } = await validateEntityPermission( uuid, LEAD, leadFields );
 
-        const entityId = await strapi.service( LEAD ).keyFind( data );
+        const entityId = await strapi.service( LEAD ).keyFind( data, tags );
 
         const updatedLead = await strapi.entityService.update( LEAD, id, {
             data : {

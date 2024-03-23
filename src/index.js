@@ -1,6 +1,7 @@
 const { uuid } = require("uuidv4");
 
 const {
+  TAG,
   USER,
   LEAD,
   COMPANY,
@@ -15,6 +16,7 @@ module.exports = {
   bootstrap({ strapi }) {
     strapi.db.lifecycles.subscribe({
       models : [
+        TAG,
         USER,
         LEAD,
         COMPANY,
