@@ -115,4 +115,42 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
 
         return entityId;
     },
+
+    async validateParallelData(data) {
+        const ctx = strapi.requestContext.get();
+
+        if ( data.responsible ) {
+            const { id : responsibleId } = await findOneByUuid( data.responsible, USER );
+
+            data.responsible = responsibleId;
+        }
+
+        if ( data.group ) {
+            const { id : groupId } = await findOneByUuid( data.group, CONTACT_GROUP );
+
+            data.group = groupId;
+        }
+
+        if ( data.source ) {
+            const { id : sourceId } = await findOneByUuid( data.source, CONTACT_SOURCE );
+
+            data.source = sourceId;
+        }
+
+        if ( data.tags ) {
+            for ( let i = 0; i < data.tags.length; i++ ) {
+                const tag = data.tags[i];
+                const { id : tagId, uuid, entity } = await findOneByUuid( tag, TAG );
+
+                if ( entity !== "contact" ) {
+                    throw new BadRequestError( `The tag with uuid ${ uuid } is not a contact tag`, {
+                        key  : "lead.invalidTag",
+                        path : ctx.request.url,
+                    });
+                }
+
+                data.tags[i] = tagId;
+            }
+        }
+    },
 }));

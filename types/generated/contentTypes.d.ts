@@ -1048,7 +1048,6 @@ export interface ApiLeadLead extends Schema.CollectionType {
     email: Attribute.String;
     phone: Attribute.Component<'contact.phone'>;
     mainAddress: Attribute.Component<'address.address'>;
-    fiscalInfo: Attribute.Component<'fiscal.fiscal-info'>;
     rating: Attribute.Integer & Attribute.DefaultTo<0>;
     isActive: Attribute.Boolean & Attribute.DefaultTo<true>;
     group: Attribute.Relation<
@@ -1074,6 +1073,8 @@ export interface ApiLeadLead extends Schema.CollectionType {
     >;
     value: Attribute.Decimal;
     potential: Attribute.Integer;
+    cellphone: Attribute.Component<'contact.phone'>;
+    finalName: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::lead.lead', 'oneToOne', 'admin::user'> &

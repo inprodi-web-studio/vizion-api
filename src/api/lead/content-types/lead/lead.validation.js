@@ -7,8 +7,8 @@ const createSchema = yup.object().shape({
         } else {
             return yup.object().shape({
                 name     : yup.string().required(),
-                lastName : yup.string(),
-                middleName : yup.string(),
+                lastName : yup.string().nullable(),
+                middleName : yup.string().nullable(),
             }).strict().required();
         }
     }),
@@ -19,39 +19,30 @@ const createSchema = yup.object().shape({
             return yup.string().required();
         }
     }),
-    email : yup.string().email(),
+    email : yup.string().email().nullable(),
     phone : yup.object().shape({
-        code   : yup.string().required(),
-        number : yup.string().required(),
+        code   : yup.string().nullable(),
+        number : yup.string().nullable(),
+    }).strict().nullable(),
+    cellphone : yup.object().shape({
+        code   : yup.string().nullable(),
+        number : yup.string().nullable(),
     }).strict().nullable(),
     mainAddress : yup.object().shape({
-        street    : yup.string(),
-        extNumber : yup.string(),
-        intNumber : yup.string(),
-        suburb    : yup.string(),
-        cp        : yup.string().min(5).max(5),
-        city      : yup.string(),
-        country   : yup.string(),
+        street    : yup.string().nullable(),
+        extNumber : yup.string().nullable(),
+        intNumber : yup.string().nullable(),
+        suburb    : yup.string().nullable(),
+        cp        : yup.string().nullable().min(5).max(5),
+        city      : yup.string().nullable(),
+        state     : yup.string().nullable(),
+        country   : yup.string().nullable(),
     }).strict().nullable(),
-    fiscalInfo : yup.object().shape({
-        legalName : yup.string(),
-        rfc       : yup.string(),
-        regime    : yup.string(),
-        address : yup.object().shape({
-            street    : yup.string(),
-            extNumber : yup.string(),
-            intNumber : yup.string(),
-            suburb    : yup.string(),
-            cp        : yup.string().min(5).max(5),
-            city      : yup.string(),
-            country   : yup.string(),
-        }).strict().nullable(),
-    }).strict().nullable(),
-    responsible : yup.string().uuid(),
+    responsible : yup.string().uuid().nullable(),
     rating      : yup.number().min(0).max(5).required(),
-    group       : yup.string().uuid(),
-    source      : yup.string().uuid(),
-    tags        : yup.array().of( yup.string().uuid() ),
+    group       : yup.string().uuid().nullable(),
+    source      : yup.string().uuid().nullable(),
+    tags        : yup.array().of( yup.string().uuid() ).nullable(),
 }, [["completeName", "tradeName"]]).strict();
 
 module.exports = {

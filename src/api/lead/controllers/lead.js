@@ -13,6 +13,7 @@ const leadFields = {
     populate : {
         completeName : true,
         phone        : true,
+        cellphone    : true,
         mainAddress  : true,
         fiscalInfo   : true,
         group        : true,
@@ -88,16 +89,14 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
                 },
             },
             {
-                fiscalInfo : {
-                    rfc : data.fiscalInfo?.rfc,
-                },
-            },
-            {
-                fiscalInfo : {
-                    legalName : data.fiscalInfo?.legalName,
+                cellphone : {
+                    code   : data.cellphone?.code,
+                    number : data.cellphone?.number,
                 },
             },
         ], leadFields );
+
+        await strapi.service( LEAD ).validateParallelData( data );
 
         const newLead = await strapi.entityService.create( LEAD, {
             data : {
@@ -105,11 +104,51 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
                 company   : company.id,
                 value     : 0,
                 potential : 0,
+                finalName : data.tradeName ? data.tradeName : `${ data.completeName.name }${ data.completeName.middleName ? ` ${ data.completeName.middleName }` : "" } ${ data.completeName.lastName ? data.completeName.lastName : "" }`,
             },
             ...leadFields,
         });
 
         return newLead;
+    },
+
+    async update(ctx) {
+        const { uuid } = ctx.params;
+        const data = ctx.request.body;
+
+        await validateCreate( data );
+
+       const lead = await validateEntityPermission( uuid, LEAD, leadFields );
+
+        await checkForDuplicates( LEAD, [
+            {
+                email : data.email,
+            },
+            {
+                phone : {
+                    code   : data.phone?.code,
+                    number : data.phone?.number,
+                },
+            },
+            {
+                cellphone : {
+                    code   : data.cellphone?.code,
+                    number : data.cellphone?.number,
+                },
+            },
+        ], leadFields );
+
+        await strapi.service( LEAD ).validateParallelData( data );
+
+        const updatedLead = await strapi.entityService.update( LEAD, lead.id, {
+            data : {
+                ...data,
+                finalName : data.tradeName ? data.tradeName : `${ data.completeName.name }${ data.completeName.middleName ? ` ${ data.completeName.middleName }` : "" } ${ data.completeName.lastName ? data.completeName.lastName : "" }`,
+            },
+            ...leadFields,
+        });
+
+        return updatedLead;
     },
     
     async keyUpdate(ctx) {

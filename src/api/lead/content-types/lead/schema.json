@@ -39,11 +39,6 @@
       "repeatable": false,
       "component": "address.address"
     },
-    "fiscalInfo": {
-      "type": "component",
-      "repeatable": false,
-      "component": "fiscal.fiscal-info"
-    },
     "rating": {
       "type": "integer",
       "default": 0
@@ -84,6 +79,14 @@
     },
     "potential": {
       "type": "integer"
+    },
+    "cellphone": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contact.phone"
+    },
+    "finalName": {
+      "type": "string"
     }
   }
 }
