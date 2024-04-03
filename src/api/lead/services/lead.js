@@ -1,6 +1,15 @@
-const { LEAD, CONTACT_GROUP, USER, CONTACT_SOURCE, TAG } = require('../../../constants/models');
+const {
+    TAG,
+    LEAD,
+    USER,
+    CONTACT_GROUP,
+    CONTACT_SOURCE,
+} = require('../../../constants/models');
+
 const { BadRequestError } = require('../../../helpers/errors');
-const findOneByUuid = require('../../../helpers/findOneByUuid');
+const findOneByUuid       = require('../../../helpers/findOneByUuid');
+
+const moment = require("moment-timezone");
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
@@ -23,12 +32,38 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             },
         });
 
+        const timeZone     = 'America/Mexico_City';
+        const startOfMonth = moment.tz( timeZone ).startOf('month').toISOString();
+        const endOfMonth   = moment.tz(timeZone).endOf('month').toISOString();
+        const startOfLastMonth = moment.tz(timeZone).subtract(1, 'month').startOf('month').toISOString();
+        const endOfLastMonth = moment.tz(timeZone).subtract(1, 'month').endOf('month').toISOString();
+
+        const leadsThisMonth = await strapi.query( LEAD ).count({
+            where : {
+                company  : company.id,
+                createdAt : {
+                    $gte : startOfMonth,
+                    $lte : endOfMonth,
+                },
+            },
+        });
+
+        const leadsLastMonth = await strapi.query( LEAD ).count({
+            where : {
+                company  : company.id,
+                createdAt : {
+                    $gte : startOfLastMonth,
+                    $lte : endOfLastMonth,
+                },
+            },
+        })
+
         leads.stats = {
             active,
             inactive,
             new : {
-                current : 0,
-                passed  : 0,
+                current : leadsThisMonth,
+                passed  : leadsLastMonth,
             },
             converted : {
                 current : 0,
