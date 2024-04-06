@@ -1,15 +1,16 @@
-const { LEAD }                 = require('../../../constants/models');
+const { LEAD, DOCUMENT }                 = require('../../../constants/models');
 const findMany                 = require('../../../helpers/findMany');
 const { validateCreate }       = require('../content-types/lead/lead.validation');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const checkForDuplicates       = require('../../../helpers/checkForDuplicates');
 const { validateKeyUpdate }    = require('../../../helpers/validateKeyUpdate');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
+const { UnprocessableContentError } = require('../../../helpers/errors');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const leadFields = {
-    fields   : ["uuid", "tradeName", "email", "rating", "isActive", "value", "potential"],
+    fields   : ["uuid", "tradeName", "email", "rating", "isActive", "value", "potential", "createdAt"],
     populate : {
         completeName : true,
         phone        : true,
@@ -181,6 +182,82 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
                 isActive : !isActive,
             },
             ...leadFields
+        });
+
+        return updatedLead;
+    },
+
+    async getFiles(ctx) {
+        const { uuid } = ctx.params;
+        
+        const lead = await validateEntityPermission( uuid, LEAD, {
+            populate : {
+                documents : {
+                    fields   : ["uuid"],
+                    populate : {
+                        user : {
+                            fields   : ["name, middleName, lastName"],
+                            populate : {
+                                image : {
+                                    fields : ["url"],
+                                },
+                            },
+                        },
+                        file : true,
+                    },
+                },
+            },
+        });
+
+        return lead.documents ?? [];
+    },
+
+    async uploadFile(ctx) {
+        const { user } = ctx.state;
+        const { uuid } = ctx.params;
+        const { file } = ctx.request.files ?? {};
+
+        if ( !file ) {
+            throw new UnprocessableContentError(["File is required"]);
+        }
+
+        const lead = await validateEntityPermission( uuid, LEAD, leadFields );
+
+        const newDocument = await strapi.entityService.create( DOCUMENT, {
+            data : {
+                user : user.id,
+            },
+        });
+
+        await strapi.plugins.upload.services.upload.uploadToEntity({
+            id    : newDocument.id,
+            model : DOCUMENT,
+            field : "file",
+        }, file );
+
+        const updatedLead = await strapi.entityService.update( LEAD, lead.id, {
+            data : {
+                documents : {
+                    connect : [ newDocument.id ],
+                },
+            },
+            fields   : ["uuid"],
+            populate : {
+                documents : {
+                    fields   : ["uuid"],
+                    populate : {
+                        user : {
+                            fields   : ["name, middleName, lastName"],
+                            populate : {
+                                image : {
+                                    fields : ["url"],
+                                },
+                            },
+                        },
+                        file : true,
+                    },
+                },
+            },
         });
 
         return updatedLead;

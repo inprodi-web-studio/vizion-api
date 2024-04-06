@@ -1,7 +1,7 @@
 const { UnauthorizedError } = require("./errors");
 const findOneByUuid = require("./findOneByUuid");
 
-const validateEntityPermission = async ( uuid, MODEL, schema ) => {
+const validateEntityPermission = async ( uuid, MODEL, schema = {} ) => {
     const ctx  = strapi.requestContext.get();
     const user = ctx.state.user;
 
@@ -11,9 +11,10 @@ const validateEntityPermission = async ( uuid, MODEL, schema ) => {
         }) : ({
             fields : schema.fields,
         })),
-        ...( (!schema?.populate?.responsible && !schema?.populate?.watchers) ? ({
+        ...( (!schema?.populate?.responsible) ? ({
             populate : {
                 responsible : true,
+                ...schema.populate,
             },
         }) : ({
             populate : schema.populate,

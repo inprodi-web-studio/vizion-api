@@ -17,9 +17,25 @@ module.exports = {
         },
       },
       {
+        method  : "GET",
+        path    : "/files/leads/:uuid",
+        handler : "lead.getFiles",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/contacts/leads",
         handler : "lead.create",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "POST",
+        path    : "/files/leads/:uuid",
+        handler : "lead.uploadFile",
         config : {
           policies : ["global::userContext"],
         },

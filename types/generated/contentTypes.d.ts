@@ -986,6 +986,42 @@ export interface ApiContactSourceContactSource extends Schema.CollectionType {
   };
 }
 
+export interface ApiDocumentDocument extends Schema.CollectionType {
+  collectionName: 'documents';
+  info: {
+    singularName: 'document';
+    pluralName: 'documents';
+    displayName: 'Document';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String & Attribute.Unique;
+    user: Attribute.Relation<
+      'api::document.document',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    file: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::document.document',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::document.document',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiInvitationInvitation extends Schema.CollectionType {
   collectionName: 'invitations';
   info: {
@@ -1075,6 +1111,11 @@ export interface ApiLeadLead extends Schema.CollectionType {
     potential: Attribute.Integer;
     cellphone: Attribute.Component<'contact.phone'>;
     finalName: Attribute.String;
+    documents: Attribute.Relation<
+      'api::lead.lead',
+      'oneToMany',
+      'api::document.document'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::lead.lead', 'oneToOne', 'admin::user'> &
@@ -1336,6 +1377,7 @@ declare module '@strapi/types' {
       'api::company-niche.company-niche': ApiCompanyNicheCompanyNiche;
       'api::contact-group.contact-group': ApiContactGroupContactGroup;
       'api::contact-source.contact-source': ApiContactSourceContactSource;
+      'api::document.document': ApiDocumentDocument;
       'api::invitation.invitation': ApiInvitationInvitation;
       'api::lead.lead': ApiLeadLead;
       'api::lead-stage.lead-stage': ApiLeadStageLeadStage;

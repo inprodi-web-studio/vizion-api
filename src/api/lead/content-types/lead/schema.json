@@ -87,6 +87,11 @@
     },
     "finalName": {
       "type": "string"
+    },
+    "documents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::document.document"
     }
   }
 }
