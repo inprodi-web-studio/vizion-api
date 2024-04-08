@@ -1318,6 +1318,38 @@ export interface ApiTagTag extends Schema.CollectionType {
   };
 }
 
+export interface ApiTaskTask extends Schema.CollectionType {
+  collectionName: 'tasks';
+  info: {
+    singularName: 'task';
+    pluralName: 'tasks';
+    displayName: 'Task';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String & Attribute.Unique;
+    title: Attribute.String;
+    description: Attribute.String;
+    dueDate: Attribute.DateTime;
+    reminders: Attribute.JSON;
+    relation: Attribute.String;
+    entity: Attribute.String;
+    responsible: Attribute.Relation<
+      'api::task.task',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::task.task', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::task.task', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface ApiUserSessionUserSession extends Schema.CollectionType {
   collectionName: 'user_sessions';
   info: {
@@ -1385,6 +1417,7 @@ declare module '@strapi/types' {
       'api::suscription-plan.suscription-plan': ApiSuscriptionPlanSuscriptionPlan;
       'api::suscription-status.suscription-status': ApiSuscriptionStatusSuscriptionStatus;
       'api::tag.tag': ApiTagTag;
+      'api::task.task': ApiTaskTask;
       'api::user-session.user-session': ApiUserSessionUserSession;
     }
   }

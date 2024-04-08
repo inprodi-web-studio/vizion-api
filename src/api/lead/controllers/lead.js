@@ -1,4 +1,4 @@
-const { LEAD, DOCUMENT }                 = require('../../../constants/models');
+const { LEAD, DOCUMENT }       = require('../../../constants/models');
 const findMany                 = require('../../../helpers/findMany');
 const { validateCreate }       = require('../content-types/lead/lead.validation');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
@@ -188,7 +188,8 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
     },
 
     async getFiles(ctx) {
-        const { uuid } = ctx.params;
+        const { uuid }   = ctx.params;
+        const { search } = ctx.query ?? {};
         
         const lead = await validateEntityPermission( uuid, LEAD, {
             populate : {
@@ -209,7 +210,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
             },
         });
 
-        return lead.documents ?? [];
+        return search ? lead.documents.filter( doc => doc.file.name.toLowerCase().includes( search.toLowerCase() ) ) : lead.documents ?? [];
     },
 
     async uploadFile(ctx) {
@@ -261,6 +262,26 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         });
 
         return updatedLead;
+    },
+
+    async removeFile(ctx) {
+        const { uuid, documentUuid } = ctx.params;
+
+        await validateEntityPermission( uuid, LEAD );
+
+        const { id, file } = await findOneByUuid( documentUuid, DOCUMENT, {
+            populate : {
+                file : true,
+            },
+        });
+
+        await strapi.plugins.upload.services.upload.remove( file );
+
+        const deletedDocument = await strapi.entityService.delete( DOCUMENT, id, {
+            fields : ["uuid"],
+        });
+
+        return deletedDocument;
     },
 
     async delete(ctx) {

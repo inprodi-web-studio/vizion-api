@@ -25,7 +25,7 @@ const roles = {
                 user : ["find", "me", "toggle", "delete"],
             },
             [TAG]            : ["find", "create", "update", "delete"],
-            [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete", "uploadFile", "getFiles"],
+            [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete", "uploadFile", "getFiles", "removeFile"],
             [INVITATION]     : ["find", "create", "delete"],
             [CONTACT_GROUP]  : ["find", "create", "update", "delete"],
             [CONTACT_SOURCE] : ["find", "create", "update", "delete"],

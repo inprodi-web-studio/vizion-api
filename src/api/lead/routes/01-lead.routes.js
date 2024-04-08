@@ -66,6 +66,14 @@ module.exports = {
       },
       {
         method  : "DELETE",
+        path    : "/files/leads/:uuid/:documentUuid",
+        handler : "lead.removeFile",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "DELETE",
         path    : "/contacts/leads/:uuid",
         handler : "lead.delete",
         config : {
