@@ -92,6 +92,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::document.document"
+    },
+    "tasks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::task.task",
+      "mappedBy": "lead"
     }
   }
 }

@@ -1116,6 +1116,7 @@ export interface ApiLeadLead extends Schema.CollectionType {
       'oneToMany',
       'api::document.document'
     >;
+    tasks: Attribute.Relation<'api::lead.lead', 'oneToMany', 'api::task.task'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::lead.lead', 'oneToOne', 'admin::user'> &
@@ -1324,6 +1325,7 @@ export interface ApiTaskTask extends Schema.CollectionType {
     singularName: 'task';
     pluralName: 'tasks';
     displayName: 'Task';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1334,12 +1336,16 @@ export interface ApiTaskTask extends Schema.CollectionType {
     description: Attribute.String;
     dueDate: Attribute.DateTime;
     reminders: Attribute.JSON;
-    relation: Attribute.String;
-    entity: Attribute.String;
     responsible: Attribute.Relation<
       'api::task.task',
       'oneToOne',
       'plugin::users-permissions.user'
+    >;
+    lead: Attribute.Relation<'api::task.task', 'manyToOne', 'api::lead.lead'>;
+    company: Attribute.Relation<
+      'api::task.task',
+      'oneToOne',
+      'api::company.company'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

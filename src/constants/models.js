@@ -1,6 +1,7 @@
 module.exports = {
     TAG            : "api::tag.tag",
     LEAD           : "api::lead.lead",
+    TASK           : "api::task.task",
     USER           : "plugin::users-permissions.user",
     ROLE           : "plugin::users-permissions.role",
     COMPANY        : "api::company.company",

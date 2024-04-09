@@ -1,4 +1,4 @@
-const { LEAD, DOCUMENT }       = require('../../../constants/models');
+const { LEAD, DOCUMENT, TASK }       = require('../../../constants/models');
 const findMany                 = require('../../../helpers/findMany');
 const { validateCreate }       = require('../content-types/lead/lead.validation');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
@@ -282,6 +282,42 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         });
 
         return deletedDocument;
+    },
+
+    async getTasks(ctx) {
+        const tasks = await strapi.service( TASK ).getEntityTasks( "lead" );
+
+        return tasks;
+    },
+
+    async createTask(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "lead";
+        data.entity   = uuid;
+
+        const newTask = await strapi.service( TASK ).createEntityTask( data );
+
+        return newTask;
+    },
+
+    async updateTask(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "lead";
+        data.entity   = uuid;
+
+        const updatedTask = await strapi.service( TASK ).updateEntityTask( data );
+
+        return updatedTask;
+    },
+
+    async deleteTask(ctx) {
+        const deletedTask = await strapi.service( TASK ).deleteEntityTask( "lead" );
+
+        return deletedTask;
     },
 
     async delete(ctx) {
