@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "insiders",
+  "info": {
+    "singularName": "insider",
+    "pluralName": "insiders",
+    "displayName": "Insider",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "completeName": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contact.complete-name"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contact.phone"
+    },
+    "isPrimary": {
+      "type": "boolean"
+    },
+    "lead": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::lead.lead",
+      "inversedBy": "insiders"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "job": {
+      "type": "string"
+    }
+  }
+}

@@ -7,10 +7,13 @@ const { validateCreate } = require('../content-types/task/task.validation');
 const { createCoreService } = require('@strapi/strapi').factories;
 
 const taskFields = {
-    fields : ["uuid", "title", "description", "dueDate"],
+    fields : ["uuid", "title", "description", "dueDate", "reminders", "isCompleted", "completedAt"],
     populate : {
         lead : {
             fields : ["uuid"],
+        },
+        responsible : {
+            fields : ["uuid", "name", "middleName", "lastName", "email"],
         },
     },
 };
@@ -24,11 +27,17 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
         const ctx      = strapi.requestContext.get();
         const { uuid } = ctx.params;
 
-        const entity = await findOneByUuid( uuid, relationDictionary[relation] );
+        const entity = await validateEntityPermission( uuid, relationDictionary[relation] );
 
-        const tasks = await findMany( TASK, taskFields, {
+        const filters = {
+            $search : [
+                "title",
+                "description"
+            ],
             [relation] : entity.id,
-        });
+        };
+
+        const tasks = await findMany( TASK, taskFields, filters );
 
         return tasks;
     },
@@ -39,7 +48,7 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
+        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
 
         const responsible = await findOneByUuid( data.responsible, USER );
 
@@ -54,6 +63,8 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
             ...taskFields
         });
 
+        await strapi.service( TASK ).scheduleReminders( newTask );
+
         return newTask;
     },
 
@@ -61,7 +72,7 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
         const ctx          = strapi.requestContext.get();
         const { taskUuid } = ctx.params;
 
-        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
+        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
 
         const responsible = await findOneByUuid( data.responsible, USER );
 
@@ -80,15 +91,67 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
         return updatedTask;
     },
 
+    async toggleEntityTask( data ) {
+        const ctx = strapi.requestContext.get();
+        const { taskUuid } = ctx.params;
+
+        await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+
+        const task = await findOneByUuid( taskUuid, TASK );
+
+        const updatedTask = await strapi.entityService.update( TASK, task.id, {
+            data : {
+                isCompleted  : !task.completedAt,
+                completedAt  : task.isCompleted ? null : new Date(),
+            },
+            ...taskFields
+        });
+
+        return updatedTask;
+    },
+
     async deleteEntityTask(relation) {
         const ctx = strapi.requestContext.get();
         const { uuid, taskUuid } = ctx.params;
 
-        await findOneByUuid( uuid, relationDictionary[relation] );
+        await validateEntityPermission( uuid, relationDictionary[relation] );
         const task = await findOneByUuid( taskUuid, TASK );
 
         const deletedTask = await strapi.entityService.delete( TASK, task.id, taskFields );
 
         return deletedTask;
+    },
+
+    async scheduleReminders({ uuid, reminders }) {
+        for ( let i = 0; i < reminders.length; i++ ) {
+            const reminder = reminders[i];
+
+            await strapi.cron.add({
+                [`send-reminder-${ uuid }-${ i }`] : {
+                    task : async ({ strapi }) => {
+                        const task = await findOneByUuid( uuid, TASK, taskFields );
+
+                        if ( task.isCompleted ) {
+                           return;
+                        }
+
+                        const emailConfig = {
+                            subject : `[Recordatorio] - ${ task.title }`,
+                            text    : `Tienes un nuevo correo de Recordatorio - ${ task.title }`,
+                            html    : `<p></p>`,
+                        };
+
+                        await strapi.plugins["email"].services.email.sendTemplatedEmail(
+                            {
+                                to : task.responsible.email,
+                            },
+                            emailConfig,
+                            {}
+                        );
+                    },
+                    options : reminder,
+                },
+            });
+        }
     },
 }));

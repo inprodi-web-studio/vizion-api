@@ -5,11 +5,14 @@ const {
   USER,
   LEAD,
   TASK,
+  NOTE,
+  INSIDER,
   COMPANY,
   DOCUMENT,
   INVITATION,
   CONTACT_GROUP,
   CONTACT_SOURCE,
+  CONTACT_INTERACTION,
 } = require("./constants/models");
 
 module.exports = {
@@ -22,11 +25,14 @@ module.exports = {
         USER,
         LEAD,
         TASK,
+        NOTE,
+        INSIDER,
         COMPANY,
         DOCUMENT,
         INVITATION,
         CONTACT_GROUP,
         CONTACT_SOURCE,
+        CONTACT_INTERACTION,
       ],
       async beforeCreate( event ) {
         const { data } = event.params;

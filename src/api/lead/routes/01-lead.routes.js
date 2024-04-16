@@ -18,6 +18,14 @@ module.exports = {
       },
       {
         method  : "GET",
+        path    : "/insiders/leads/:uuid",
+        handler : "lead.getInsiders",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "GET",
         path    : "/files/leads/:uuid",
         handler : "lead.getFiles",
         config : {
@@ -33,9 +41,33 @@ module.exports = {
         },
       },
       {
+        method  : "GET",
+        path    : "/notes/leads/:uuid",
+        handler : "lead.getNotes",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "GET",
+        path    : "/interactions/leads/:uuid",
+        handler : "lead.getInteractions",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/contacts/leads",
         handler : "lead.create",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "POST",
+        path    : "/insiders/leads/:uuid",
+        handler : "lead.createInsider",
         config : {
           policies : ["global::userContext"],
         },
@@ -57,9 +89,33 @@ module.exports = {
         },
       },
       {
+        method  : "POST",
+        path    : "/notes/leads/:uuid",
+        handler : "lead.createNote",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "POST",
+        path    : "/interactions/leads/:uuid",
+        handler : "lead.createInteraction",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "PUT",
         path    : "/contacts/leads/:uuid",
         handler : "lead.update",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PUT",
+        path    : "/insiders/leads/:uuid/:insiderUuid",
+        handler : "lead.updateInsider",
         config : {
           policies : ["global::userContext"],
         },
@@ -74,8 +130,8 @@ module.exports = {
       },
       {
         method  : "PUT",
-        path    : "/contacts/leads/:uuid",
-        handler : "lead.update",
+        path    : "/notes/leads/:uuid/:noteUuid",
+        handler : "lead.updateNote",
         config : {
           policies : ["global::userContext"],
         },
@@ -97,6 +153,22 @@ module.exports = {
         },
       },
       {
+        method  : "PATCH",
+        path    : "/tasks/leads/:uuid/:taskUuid",
+        handler : "lead.toggleTask",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "DELETE",
+        path    : "/insiders/leads/:uuid/:insiderUuid",
+        handler : "lead.deleteInsider",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "DELETE",
         path    : "/files/leads/:uuid/:documentUuid",
         handler : "lead.removeFile",
@@ -108,6 +180,22 @@ module.exports = {
         method  : "DELETE",
         path    : "/tasks/leads/:uuid/:taskUuid",
         handler : "lead.deleteTask",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "DELETE",
+        path    : "/notes/leads/:uuid/:noteUuid",
+        handler : "lead.deleteNote",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "DELETE",
+        path    : "/interactions/leads/:uuid/:interactionUuid",
+        handler : "lead.deleteInteraction",
         config : {
           policies : ["global::userContext"],
         },

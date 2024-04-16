@@ -98,6 +98,24 @@
       "relation": "oneToMany",
       "target": "api::task.task",
       "mappedBy": "lead"
+    },
+    "notes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::note.note",
+      "mappedBy": "lead"
+    },
+    "interactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::contact-interaction.contact-interaction",
+      "mappedBy": "lead"
+    },
+    "insiders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::insider.insider",
+      "mappedBy": "lead"
     }
   }
 }

@@ -944,6 +944,54 @@ export interface ApiContactGroupContactGroup extends Schema.CollectionType {
   };
 }
 
+export interface ApiContactInteractionContactInteraction
+  extends Schema.CollectionType {
+  collectionName: 'contact_interactions';
+  info: {
+    singularName: 'contact-interaction';
+    pluralName: 'contact-interactions';
+    displayName: 'Contact Interaction';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String & Attribute.Unique;
+    type: Attribute.String;
+    content: Attribute.String;
+    lead: Attribute.Relation<
+      'api::contact-interaction.contact-interaction',
+      'manyToOne',
+      'api::lead.lead'
+    >;
+    user: Attribute.Relation<
+      'api::contact-interaction.contact-interaction',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    company: Attribute.Relation<
+      'api::contact-interaction.contact-interaction',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::contact-interaction.contact-interaction',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::contact-interaction.contact-interaction',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiContactSourceContactSource extends Schema.CollectionType {
   collectionName: 'contact_sources';
   info: {
@@ -1015,6 +1063,51 @@ export interface ApiDocumentDocument extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::document.document',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiInsiderInsider extends Schema.CollectionType {
+  collectionName: 'insiders';
+  info: {
+    singularName: 'insider';
+    pluralName: 'insiders';
+    displayName: 'Insider';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String & Attribute.Unique;
+    completeName: Attribute.Component<'contact.complete-name'>;
+    email: Attribute.String;
+    phone: Attribute.Component<'contact.phone'>;
+    isPrimary: Attribute.Boolean;
+    lead: Attribute.Relation<
+      'api::insider.insider',
+      'manyToOne',
+      'api::lead.lead'
+    >;
+    company: Attribute.Relation<
+      'api::insider.insider',
+      'oneToOne',
+      'api::company.company'
+    >;
+    job: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::insider.insider',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::insider.insider',
       'oneToOne',
       'admin::user'
     > &
@@ -1117,6 +1210,17 @@ export interface ApiLeadLead extends Schema.CollectionType {
       'api::document.document'
     >;
     tasks: Attribute.Relation<'api::lead.lead', 'oneToMany', 'api::task.task'>;
+    notes: Attribute.Relation<'api::lead.lead', 'oneToMany', 'api::note.note'>;
+    interactions: Attribute.Relation<
+      'api::lead.lead',
+      'oneToMany',
+      'api::contact-interaction.contact-interaction'
+    >;
+    insiders: Attribute.Relation<
+      'api::lead.lead',
+      'oneToMany',
+      'api::insider.insider'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::lead.lead', 'oneToOne', 'admin::user'> &
@@ -1155,6 +1259,41 @@ export interface ApiLeadStageLeadStage extends Schema.CollectionType {
       'oneToOne',
       'admin::user'
     > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiNoteNote extends Schema.CollectionType {
+  collectionName: 'notes';
+  info: {
+    singularName: 'note';
+    pluralName: 'notes';
+    displayName: 'Note';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    title: Attribute.String;
+    content: Attribute.String;
+    author: Attribute.Relation<
+      'api::note.note',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    lead: Attribute.Relation<'api::note.note', 'manyToOne', 'api::lead.lead'>;
+    company: Attribute.Relation<
+      'api::note.note',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::note.note', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::note.note', 'oneToOne', 'admin::user'> &
       Attribute.Private;
   };
 }
@@ -1347,6 +1486,8 @@ export interface ApiTaskTask extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
+    isCompleted: Attribute.Boolean & Attribute.DefaultTo<false>;
+    completedAt: Attribute.DateTime;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::task.task', 'oneToOne', 'admin::user'> &
@@ -1414,11 +1555,14 @@ declare module '@strapi/types' {
       'api::company.company': ApiCompanyCompany;
       'api::company-niche.company-niche': ApiCompanyNicheCompanyNiche;
       'api::contact-group.contact-group': ApiContactGroupContactGroup;
+      'api::contact-interaction.contact-interaction': ApiContactInteractionContactInteraction;
       'api::contact-source.contact-source': ApiContactSourceContactSource;
       'api::document.document': ApiDocumentDocument;
+      'api::insider.insider': ApiInsiderInsider;
       'api::invitation.invitation': ApiInvitationInvitation;
       'api::lead.lead': ApiLeadLead;
       'api::lead-stage.lead-stage': ApiLeadStageLeadStage;
+      'api::note.note': ApiNoteNote;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;
       'api::suscription-plan.suscription-plan': ApiSuscriptionPlanSuscriptionPlan;
       'api::suscription-status.suscription-status': ApiSuscriptionStatusSuscriptionStatus;

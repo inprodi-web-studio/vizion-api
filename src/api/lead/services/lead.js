@@ -4,14 +4,15 @@ const {
     USER,
     CONTACT_GROUP,
     CONTACT_SOURCE,
-} = require('../../../constants/models');
+    CONTACT_INTERACTION,
+} = require("../../../constants/models");
 
-const { BadRequestError } = require('../../../helpers/errors');
-const findOneByUuid       = require('../../../helpers/findOneByUuid');
+const { BadRequestError } = require("../../../helpers/errors");
+const findOneByUuid       = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
 
-const { createCoreService } = require('@strapi/strapi').factories;
+const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService( LEAD, ({ strapi }) => ({
     async addStats( leads ) {
@@ -32,11 +33,11 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             },
         });
 
-        const timeZone     = 'America/Mexico_City';
-        const startOfMonth = moment.tz( timeZone ).startOf('month').toISOString();
-        const endOfMonth   = moment.tz(timeZone).endOf('month').toISOString();
-        const startOfLastMonth = moment.tz(timeZone).subtract(1, 'month').startOf('month').toISOString();
-        const endOfLastMonth = moment.tz(timeZone).subtract(1, 'month').endOf('month').toISOString();
+        const timeZone         = "America/Mexico_City";
+        const startOfMonth     = moment.tz( timeZone ).startOf("month").toISOString();
+        const endOfMonth       = moment.tz(timeZone).endOf("month").toISOString();
+        const startOfLastMonth = moment.tz(timeZone).subtract(1, "month").startOf("month").toISOString();
+        const endOfLastMonth   = moment.tz(timeZone).subtract(1, "month").endOf("month").toISOString();
 
         const leadsThisMonth = await strapi.query( LEAD ).count({
             where : {
@@ -56,7 +57,27 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                     $lte : endOfLastMonth,
                 },
             },
-        })
+        });
+
+        const activitiesThisMonth = await strapi.query( CONTACT_INTERACTION ).count({
+            where : {
+                company  : company.id,
+                createdAt : {
+                    $gte : startOfMonth,
+                    $lte : endOfMonth,
+                },
+            },
+        });
+
+        const activitiesLastMonth = await strapi.query( CONTACT_INTERACTION ).count({
+            where : {
+                company  : company.id,
+                createdAt : {
+                    $gte : startOfLastMonth,
+                    $lte : endOfLastMonth,
+                },
+            },
+        });
 
         leads.stats = {
             active,
@@ -70,8 +91,8 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                 passed  : 0,
             },
             activities : {
-                current : 0,
-                passed  : 0,
+                current : activitiesThisMonth,
+                passed  : activitiesLastMonth,
             },
             value : {
                 current : 0,
@@ -186,6 +207,48 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
 
                 data.tags[i] = tagId;
             }
+        }
+    },
+
+    async getActivityStats( lead ) {
+        const timeZone = "America/Mexico_City";
+        const date     = moment.tz( timeZone ).startOf("week").add(1, "days");
+        
+        const weekDays = [ date.toISOString() ];
+
+        date.add(1, "days");
+
+        while ( date.day() !== 0 ) {
+            weekDays.push( date.toISOString() );
+            date.add(1, "days");
+        }
+
+        weekDays.push( date.toISOString() );
+
+        const data  = [];
+        let hasData = false;
+        
+        for ( let i = 0; i < weekDays.length - 1; i++ ) {
+            const day = weekDays[i];
+
+            const activities = await strapi.query( CONTACT_INTERACTION ).count({
+                where : {
+                    createdAt : {
+                        $gte : day,
+                        $lt  : weekDays[ i + 1 ],
+                    },
+                    lead : lead.id,
+                },
+            });
+
+            if ( activities > 0 ) hasData = true; 
+
+            data.push([i, activities]);
+        }
+
+        if ( hasData ) {
+            lead.stats = {};
+            lead.stats.activities = data;
         }
     },
 }));

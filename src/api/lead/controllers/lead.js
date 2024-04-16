@@ -1,4 +1,4 @@
-const { LEAD, DOCUMENT, TASK }       = require('../../../constants/models');
+const { LEAD, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, INSIDER } = require('../../../constants/models');
 const findMany                 = require('../../../helpers/findMany');
 const { validateCreate }       = require('../content-types/lead/lead.validation');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
@@ -20,6 +20,13 @@ const leadFields = {
         group        : true,
         source       : true,
         tags         : true,
+        insiders     : {
+            fields : ["uuid", "email", "isPrimary", "job"],
+            populate : {
+                completeName : true,
+                phone        : true,
+            },
+        },
         responsible  : {
             fields : ["uuid", "name", "middleName", "lastName"],
             populate : {
@@ -65,6 +72,8 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         const { uuid } = ctx.params;
         
         const lead = await validateEntityPermission( uuid, LEAD, leadFields );
+
+        await strapi.service( LEAD ).getActivityStats( lead );
 
         return lead;
     },
@@ -185,6 +194,42 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         });
 
         return updatedLead;
+    },
+
+    async getInsiders(ctx) {
+        const insiders = await strapi.service( INSIDER ).getEntityInsiders( "lead" );
+
+        return insiders;
+    },
+
+    async createInsider(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "lead";
+        data.entity   = uuid;
+
+        const newInsider = await strapi.service( INSIDER ).createEntityInsider( data );
+
+        return newInsider;
+    },
+
+    async updateInsider(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "lead";
+        data.entity   = uuid;
+
+        const updatedInsider = await strapi.service( INSIDER ).updateEntityInsider( data );
+
+        return updatedInsider;
+    },
+
+    async deleteInsider(ctx) {
+        const deletedInsider = await strapi.service( INSIDER ).deleteEntityInsider( "lead" );
+
+        return deletedInsider;
     },
 
     async getFiles(ctx) {
@@ -314,10 +359,83 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         return updatedTask;
     },
 
+    async toggleTask(ctx) {
+        const { uuid } = ctx.params;
+
+        const data = {
+            relation : "lead",
+            entity   : uuid,
+        };
+
+        const toggleTask = await strapi.service( TASK ).toggleEntityTask( data );
+
+        return toggleTask;
+    },
+
     async deleteTask(ctx) {
         const deletedTask = await strapi.service( TASK ).deleteEntityTask( "lead" );
 
         return deletedTask;
+    },
+
+    async getNotes(ctx) {
+        const notes = await strapi.service( NOTE ).getEntityNotes( "lead" );
+
+        return notes;
+    },
+
+    async createNote(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "lead";
+        data.entity   = uuid;
+
+        const newNote = await strapi.service( NOTE ).createEntityNote( data );
+
+        return newNote;
+    },
+
+    async updateNote(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "lead";
+        data.entity   = uuid;
+
+        const updateNote = await strapi.service( NOTE ).updateEntityNote( data );
+
+        return updateNote;
+    },
+
+    async deleteNote(ctx) {
+        const deletedNote = await strapi.service( NOTE ).deleteEntityNote( "lead" );
+
+        return deletedNote;
+    },
+
+    async getInteractions(ctx) {
+        const interactions = await strapi.service( CONTACT_INTERACTION ).getEntityInteractions( "lead" );
+
+        return interactions;
+    },
+
+    async createInteraction(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "lead";
+        data.entity   = uuid;
+
+        const newInteraction = await strapi.service( CONTACT_INTERACTION ).createEntityInteraction( data );
+
+        return newInteraction;
+    },
+
+    async deleteInteraction(ctx) {
+        const deletedInteraction = await strapi.service( CONTACT_INTERACTION ).deleteEntityInteraction( "lead" );
+
+        return deletedInteraction;
     },
 
     async delete(ctx) {

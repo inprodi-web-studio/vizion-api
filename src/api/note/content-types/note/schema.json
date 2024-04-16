@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "tasks",
+  "collectionName": "notes",
   "info": {
-    "singularName": "task",
-    "pluralName": "tasks",
-    "displayName": "Task",
+    "singularName": "note",
+    "pluralName": "notes",
+    "displayName": "Note",
     "description": ""
   },
   "options": {
@@ -13,22 +13,15 @@
   "pluginOptions": {},
   "attributes": {
     "uuid": {
-      "type": "string",
-      "unique": true
+      "type": "string"
     },
     "title": {
       "type": "string"
     },
-    "description": {
+    "content": {
       "type": "string"
     },
-    "dueDate": {
-      "type": "datetime"
-    },
-    "reminders": {
-      "type": "json"
-    },
-    "responsible": {
+    "author": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
@@ -37,19 +30,12 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::lead.lead",
-      "inversedBy": "tasks"
+      "inversedBy": "notes"
     },
     "company": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::company.company"
-    },
-    "isCompleted": {
-      "type": "boolean",
-      "default": false
-    },
-    "completedAt": {
-      "type": "datetime"
     }
   }
 }
