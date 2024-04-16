@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_lead_lead_metas",
+  "info": {
+    "displayName": "leadMeta"
+  },
+  "options": {},
+  "attributes": {
+    "daysToConvert": {
+      "type": "integer"
+    },
+    "convertedAt": {
+      "type": "datetime"
+    }
+  }
+}

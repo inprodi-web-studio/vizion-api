@@ -7,6 +7,7 @@ module.exports = {
     ROLE                : "plugin::users-permissions.role",
     COMPANY             : "api::company.company",
     INSIDER             : "api::insider.insider",
+    CUSTOMER            : "api::customer.customer",
     DOCUMENT            : "api::document.document",
     INVITATION          : "api::invitation.invitation",
     CONTACT_GROUP       : "api::contact-group.contact-group",

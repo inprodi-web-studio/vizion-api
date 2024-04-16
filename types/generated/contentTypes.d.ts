@@ -927,6 +927,11 @@ export interface ApiContactGroupContactGroup extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
+    customers: Attribute.Relation<
+      'api::contact-group.contact-group',
+      'oneToMany',
+      'api::customer.customer'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1017,6 +1022,11 @@ export interface ApiContactSourceContactSource extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
+    customers: Attribute.Relation<
+      'api::contact-source.contact-source',
+      'oneToMany',
+      'api::customer.customer'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1027,6 +1037,88 @@ export interface ApiContactSourceContactSource extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::contact-source.contact-source',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiCustomerCustomer extends Schema.CollectionType {
+  collectionName: 'customers';
+  info: {
+    singularName: 'customer';
+    pluralName: 'customers';
+    displayName: 'Customer';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    completeName: Attribute.Component<'contact.complete-name'>;
+    tradeName: Attribute.String;
+    email: Attribute.String;
+    phone: Attribute.Component<'contact.phone'>;
+    mainAddress: Attribute.Component<'address.address'>;
+    isArchived: Attribute.Boolean;
+    group: Attribute.Relation<
+      'api::customer.customer',
+      'manyToOne',
+      'api::contact-group.contact-group'
+    >;
+    source: Attribute.Relation<
+      'api::customer.customer',
+      'manyToOne',
+      'api::contact-source.contact-source'
+    >;
+    tags: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::tag.tag'
+    >;
+    responsible: Attribute.Relation<
+      'api::customer.customer',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    company: Attribute.Relation<
+      'api::customer.customer',
+      'oneToOne',
+      'api::company.company'
+    >;
+    rating: Attribute.Integer;
+    value: Attribute.Decimal;
+    cellphone: Attribute.Component<'contact.phone'>;
+    finalName: Attribute.String;
+    leadMeta: Attribute.Component<'lead.lead-meta'>;
+    tasks: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::task.task'
+    >;
+    notes: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::note.note'
+    >;
+    insiders: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::insider.insider'
+    >;
+    fiscalInfo: Attribute.Component<'fiscal.fiscal-info'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::customer.customer',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::customer.customer',
       'oneToOne',
       'admin::user'
     > &
@@ -1098,6 +1190,11 @@ export interface ApiInsiderInsider extends Schema.CollectionType {
       'api::company.company'
     >;
     job: Attribute.String;
+    customer: Attribute.Relation<
+      'api::insider.insider',
+      'manyToOne',
+      'api::customer.customer'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1288,6 +1385,11 @@ export interface ApiNoteNote extends Schema.CollectionType {
       'api::note.note',
       'oneToOne',
       'api::company.company'
+    >;
+    customer: Attribute.Relation<
+      'api::note.note',
+      'manyToOne',
+      'api::customer.customer'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1488,6 +1590,11 @@ export interface ApiTaskTask extends Schema.CollectionType {
     >;
     isCompleted: Attribute.Boolean & Attribute.DefaultTo<false>;
     completedAt: Attribute.DateTime;
+    customer: Attribute.Relation<
+      'api::task.task',
+      'manyToOne',
+      'api::customer.customer'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::task.task', 'oneToOne', 'admin::user'> &
@@ -1557,6 +1664,7 @@ declare module '@strapi/types' {
       'api::contact-group.contact-group': ApiContactGroupContactGroup;
       'api::contact-interaction.contact-interaction': ApiContactInteractionContactInteraction;
       'api::contact-source.contact-source': ApiContactSourceContactSource;
+      'api::customer.customer': ApiCustomerCustomer;
       'api::document.document': ApiDocumentDocument;
       'api::insider.insider': ApiInsiderInsider;
       'api::invitation.invitation': ApiInvitationInvitation;

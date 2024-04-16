@@ -53,6 +53,17 @@ export interface FiscalFiscalInfo extends Schema.Component {
   };
 }
 
+export interface LeadLeadMeta extends Schema.Component {
+  collectionName: 'components_lead_lead_metas';
+  info: {
+    displayName: 'leadMeta';
+  };
+  attributes: {
+    daysToConvert: Attribute.Integer;
+    convertedAt: Attribute.DateTime;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
@@ -60,6 +71,7 @@ declare module '@strapi/types' {
       'contact.complete-name': ContactCompleteName;
       'contact.phone': ContactPhone;
       'fiscal.fiscal-info': FiscalFiscalInfo;
+      'lead.lead-meta': LeadLeadMeta;
     }
   }
 }

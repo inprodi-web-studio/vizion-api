@@ -46,6 +46,12 @@
     },
     "job": {
       "type": "string"
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::customer.customer",
+      "inversedBy": "insiders"
     }
   }
 }

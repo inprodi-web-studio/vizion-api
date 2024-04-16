@@ -48,13 +48,11 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
                 "email",
                 "tradeName",
                 "phone.number",
-                "fiscalInfo.rfc",
                 "completeName.name",
-                "fiscalInfo.legalName",
                 "completeName.lastName",
                 "completeName.middleName",
             ],
-            ...( user.role.name === "sales-agent" && {
+            ...( user.role.name !== "owner" && {
                 responsible : user.id,
             }),
         };
@@ -84,7 +82,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        if ( user.role.name === "sales-agent" ) {
+        if ( user.role.name !== "owner" ) {
             data.responsible = user.id;
         }
 

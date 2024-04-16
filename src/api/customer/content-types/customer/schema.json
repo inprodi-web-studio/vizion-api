@@ -1,0 +1,113 @@
+{
+  "kind": "collectionType",
+  "collectionName": "customers",
+  "info": {
+    "singularName": "customer",
+    "pluralName": "customers",
+    "displayName": "Customer",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "completeName": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contact.complete-name"
+    },
+    "tradeName": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contact.phone"
+    },
+    "mainAddress": {
+      "type": "component",
+      "repeatable": false,
+      "component": "address.address"
+    },
+    "isArchived": {
+      "type": "boolean"
+    },
+    "group": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::contact-group.contact-group",
+      "inversedBy": "customers"
+    },
+    "source": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::contact-source.contact-source",
+      "inversedBy": "customers"
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::tag.tag"
+    },
+    "responsible": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "rating": {
+      "type": "integer"
+    },
+    "value": {
+      "type": "decimal"
+    },
+    "cellphone": {
+      "type": "component",
+      "repeatable": false,
+      "component": "contact.phone"
+    },
+    "finalName": {
+      "type": "string"
+    },
+    "leadMeta": {
+      "displayName": "leadMeta",
+      "type": "component",
+      "repeatable": false,
+      "component": "lead.lead-meta"
+    },
+    "tasks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::task.task",
+      "mappedBy": "customer"
+    },
+    "notes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::note.note",
+      "mappedBy": "customer"
+    },
+    "insiders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::insider.insider",
+      "mappedBy": "customer"
+    },
+    "fiscalInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "fiscal.fiscal-info"
+    }
+  }
+}
