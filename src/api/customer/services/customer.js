@@ -8,7 +8,65 @@ const { BadRequestError } = require('../../../helpers/errors');
 
 module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
     async addStats( customers ) {
+        const ctx         = strapi.requestContext.get();
+        const { company } = ctx.state;
 
+        const active = await strapi.query( CUSTOMER ).count({
+            where : {
+                company    : company.id,
+                isArchived : false,
+            },
+        });
+
+        const archived = await strapi.query( CUSTOMER ).count({
+            where : {
+                company    : company.id,
+                isArchived : true,
+            },
+        });
+
+        const timeZone         = "America/Mexico_City";
+        const startOfMonth     = moment.tz( timeZone ).startOf("month").toISOString();
+        const endOfMonth       = moment.tz(timeZone).endOf("month").toISOString();
+        const startOfLastMonth = moment.tz(timeZone).subtract(1, "month").startOf("month").toISOString();
+        const endOfLastMonth   = moment.tz(timeZone).subtract(1, "month").endOf("month").toISOString();
+
+        const customersThisMonth = await strapi.query( CUSTOMER ).count({
+            where : {
+                company    : company.id,
+                createdAt : {
+                    $gte : startOfMonth,
+                    $lte : endOfMonth,
+                },
+            },
+        });
+
+        const customersLastMonth = await strapi.query( CUSTOMER ).count({
+            where : {
+                company    : company.id,
+                createdAt : {
+                    $gte : startOfLastMonth,
+                    $lte : endOfLastMonth,
+                },
+            },
+        });
+
+        customers.stats = {
+            active,
+            archived,
+            new : {
+                current : customersThisMonth,
+                passed  : customersLastMonth,
+            },
+            activities : {
+                current : 0,
+                passed  : 0,
+            },
+            value : {
+                current : 0,
+                passed  : 0,
+            },
+        };
     },
 
     async keyFind({ key, value }, tags = []) {

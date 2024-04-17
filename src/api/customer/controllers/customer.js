@@ -14,7 +14,12 @@ const customerFields = {
         phone        : true,
         cellphone    : true,
         mainAddress  : true,
-        fiscalInfo   : true,
+        fiscalInfo   : {
+            fields : ["rfc", "legalName", "regime"],
+            populate : {
+                address : true,
+            }
+        },
         group        : true,
         source       : true,
         tags         : true,
@@ -109,7 +114,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
             },
             {
                 fiscalInfo : {
-                    legalName : data.fiscalInfo?.rfc
+                    legalName : data.fiscalInfo?.legalName
                 },
             },
         ], customerFields );
