@@ -1,4 +1,7 @@
 module.exports = ({ env }) => ({
+    "file-system" : {
+        enabled: true,
+    },
     email : {
         config : {
             provider        : "nodemailer",

@@ -108,6 +108,23 @@
       "type": "component",
       "repeatable": false,
       "component": "fiscal.fiscal-info"
+    },
+    "customerMeta": {
+      "displayName": "Customer Meta",
+      "type": "component",
+      "repeatable": false,
+      "component": "customer.customer-meta"
+    },
+    "documents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::document.document"
+    },
+    "interactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::contact-interaction.contact-interaction",
+      "mappedBy": "customer"
     }
   }
 }

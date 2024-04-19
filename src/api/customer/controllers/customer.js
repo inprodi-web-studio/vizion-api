@@ -1,9 +1,11 @@
-const { CUSTOMER } = require('../../../constants/models');
+const { CUSTOMER, INSIDER, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findMany = require('../../../helpers/findMany');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const { validateCreate } = require('../content-types/customer/customer.validation');
 const { validateKeyUpdate } = require('../../../helpers/validateKeyUpdate');
+const { UnprocessableContentError } = require('../../../helpers/errors');
+const findOneByUuid = require('../../../helpers/findOneByUuid');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
@@ -20,6 +22,7 @@ const customerFields = {
                 address : true,
             }
         },
+        customerMeta : true,
         group        : true,
         source       : true,
         tags         : true,
@@ -76,7 +79,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         
         const customer = await validateEntityPermission( uuid, CUSTOMER, customerFields );
 
-        await strapi.service( CUSTOMER ).getActivityStats( customer );
+        // await strapi.service( CUSTOMER ).getActivityStats( customer );
 
         return customer;
     },
@@ -207,6 +210,248 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         });
 
         return updatedCustomer;
+    },
+
+    async getInsiders(ctx) {
+        const insiders = await strapi.service( INSIDER ).getEntityInsiders( "customer" );
+
+        return insiders;
+    },
+
+    async createInsider(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "customer";
+        data.entity   = uuid;
+
+        const newInsider = await strapi.service( INSIDER ).createEntityInsider( data );
+
+        return newInsider;
+    },
+
+    async updateInsider(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "customer";
+        data.entity   = uuid;
+
+        const updatedInsider = await strapi.service( INSIDER ).updateEntityInsider( data );
+
+        return updatedInsider;
+    },
+
+    async deleteInsider(ctx) {
+        const deletedInsider = await strapi.service( INSIDER ).deleteEntityInsider( "customer" );
+
+        return deletedInsider;
+    },
+
+    async getFiles(ctx) {
+        const { uuid }   = ctx.params;
+        const { search } = ctx.query ?? {};
+        
+        const customer = await validateEntityPermission( uuid, CUSTOMER, {
+            populate : {
+                documents : {
+                    fields   : ["uuid"],
+                    populate : {
+                        user : {
+                            fields   : ["name, middleName, lastName"],
+                            populate : {
+                                image : {
+                                    fields : ["url"],
+                                },
+                            },
+                        },
+                        file : true,
+                    },
+                },
+            },
+        });
+
+        return search ? customer.documents.filter( doc => doc.file.name.toLowerCase().includes( search.toLowerCase() ) ) : customer.documents ?? [];
+    },
+
+    async uploadFile(ctx) {
+        const { user } = ctx.state;
+        const { uuid } = ctx.params;
+        const { file } = ctx.request.files ?? {};
+
+        if ( !file ) {
+            throw new UnprocessableContentError(["File is required"]);
+        }
+
+        const customer = await validateEntityPermission( uuid, CUSTOMER, customerFields );
+
+        const newDocument = await strapi.entityService.create( DOCUMENT, {
+            data : {
+                user : user.id,
+            },
+        });
+
+        await strapi.plugins.upload.services.upload.uploadToEntity({
+            id    : newDocument.id,
+            model : DOCUMENT,
+            field : "file",
+        }, file );
+
+        const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+            data : {
+                documents : {
+                    connect : [ newDocument.id ],
+                },
+            },
+            fields : ["uuid"],
+            populate : {
+                documents : {
+                    fields : ["uuid"],
+                    populate : {
+                        user : {
+                            fields   : ["name, middleName, lastName"],
+                            populate : {
+                                image : {
+                                    fields : ["url"],
+                                },
+                            },
+                        },
+                        file : true,
+                    }
+                },
+            }
+        });
+
+        return updatedCustomer;
+    },
+
+    async removeFile(ctx) {
+        const { uuid, documentUuid } = ctx.params;
+
+        await validateEntityPermission( uuid, CUSTOMER );
+
+        const { id, file } = await findOneByUuid( documentUuid, DOCUMENT, {
+            populate : {
+                file : true,
+            },
+        });
+
+        await strapi.plugins.upload.services.upload.remove( file );
+
+        const deletedDocument = await strapi.entityService.delete( DOCUMENT, id, {
+            fields : ["uuid"],
+        });
+
+        return deletedDocument;
+    },
+
+    async getTasks(ctx) {
+        const tasks = await strapi.service( TASK ).getEntityTasks( "customer" );
+
+        return tasks;
+    },
+
+    async createTask(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "customer";
+        data.entity   = uuid;
+
+        const newTask = await strapi.service( TASK ).createEntityTask( data );
+
+        return newTask;
+    },
+
+    async updateTask(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "customer";
+        data.entity   = uuid;
+
+        const updatedTask = await strapi.service( TASK ).updateEntityTask( data );
+
+        return updatedTask;
+    },
+
+    async toggleTask(ctx) {
+        const { uuid } = ctx.params;
+
+        const data = {
+            relation : "customer",
+            entity   : uuid,
+        };
+
+        const updatedTask = await strapi.service( TASK ).toggleEntityTask( data );
+
+        return updatedTask;
+    },
+
+    async deleteTask(ctx) {
+        const deletedTask = await strapi.service( TASK ).deleteEntityTask( "customer" );
+
+        return deletedTask;
+    },
+
+    async getNotes(ctx) {
+        const notes = await strapi.service( NOTE ).getEntityNotes( "customer" );
+
+        return notes;
+    },
+
+    async createNote(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "customer";
+        data.entity   = uuid;
+
+        const newNote = await strapi.service( NOTE ).createEntityNote( data );
+
+        return newNote;
+    },
+
+    async updateNote(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "customer";
+        data.entity   = uuid;
+
+        const updatedNote = await strapi.service( NOTE ).updateEntityNote( data );
+
+        return updatedNote;
+    },
+
+    async deleteNote(ctx) {
+        const deletedNote = await strapi.service( NOTE ).deleteEntityNote( "customer" );
+
+        return deletedNote;
+    },
+
+    async getInteractions(ctx) {
+        const interactions = await strapi.service( CONTACT_INTERACTION ).getEntityInteractions( "customer" );
+
+        return interactions;
+    },
+
+    async createInteraction(ctx) {
+        const data     = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        data.relation = "customer";
+        data.entity   = uuid;
+
+        const newInteraction = await strapi.service( CONTACT_INTERACTION ).createEntityInteraction( data );
+
+        return newInteraction;
+    },
+
+    async deleteInteraction(ctx) {
+        const deletedInteraction = await strapi.service( CONTACT_INTERACTION ).deleteEntityInteraction( "customer" );
+
+        return deletedInteraction;
     },
 
     async delete(ctx) {

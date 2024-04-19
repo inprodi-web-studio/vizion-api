@@ -2,6 +2,8 @@ const { USER }      = require("../../../constants/models");
 const handleSearch  = require("../../../helpers/handleSearch");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { BadRequestError } = require("../../../helpers/errors");
+const { validateUpdateProfile, validateUpdatePassword} = require("../content-types/user.validation");
+const validatePassword = require("../../../helpers/validatePassword");
 
 const userFields = {
     fields : ["uuid", "name", "middleName", "lastName", "email", "blocked", "createdAt"],
@@ -17,6 +19,7 @@ const userFields = {
                 },
             },
         },
+        phone : true,
         image : {
             fields : ["url"],
         },
@@ -31,6 +34,88 @@ module.exports = ( plugin ) => {
 
         return user;
     };
+
+    plugin.controllers.user["setProfileImage"] = async (ctx) => {
+        const { uuid }  = ctx.state.user;
+        const { image } = ctx.request.files ?? {};
+        const data = ctx.request.body;
+
+        const user = await findOneByUuid( uuid, USER, userFields );
+
+        if ( !image ) {
+            if ( !data.image ) {
+                throw new BadRequestError(["Image is required (either file or id)"]);
+            }
+
+            const updatedUser = await strapi.entityService.update( USER, user.id, {
+                data : {
+                    image : data.image,
+                },
+            });
+
+            return updatedUser;
+        }
+
+        await strapi.plugins.upload.services.upload.uploadToEntity({
+            id    : user.id,
+            model : USER,
+            field : "image",
+        }, image );
+
+        return user;
+    };
+
+    plugin.controllers.user["removeProfileImage"] = async (ctx) => {
+        const { uuid } = ctx.state.user;
+
+        const user = await findOneByUuid( uuid, USER, userFields );
+
+        const updatedUser = await strapi.entityService.update( USER, user.id, {
+            data : {
+                image : null,
+            },
+        });
+
+        return updatedUser;
+    };
+
+    plugin.controllers.user["updateProfile"] = async (ctx) => {
+        const { uuid } = ctx.state.user;
+        const data = ctx.request.body;
+
+        await validateUpdateProfile( data );
+
+        const user = await findOneByUuid( uuid, USER, userFields );
+
+        const updatedUser = await strapi.entityService.update( USER, user.id, {
+            data : data,
+            ...userFields,
+        });
+
+        return updatedUser;
+    },
+
+    plugin.controllers.user["updatePassword"] = async (ctx) => {
+        const { uuid } = ctx.state.user;
+        const data = ctx.request.body;
+
+        await validateUpdatePassword( data );
+
+        const user = await findOneByUuid( uuid, USER, {
+            fields : "*",
+        });
+
+        await validatePassword( data.current, user.password );
+
+        const updatedUser = await strapi.entityService.update( USER, user.id, {
+            data : {
+                password : data.new,
+            },
+            ...userFields,
+        });
+
+        return updatedUser;
+    },
 
     plugin.controllers.user["find"] = async (ctx) => {
         const user      = ctx.state.user;

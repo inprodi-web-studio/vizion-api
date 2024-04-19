@@ -5,6 +5,7 @@ const {
     CONTACT_GROUP,
     CONTACT_SOURCE,
     CONTACT_INTERACTION,
+    CUSTOMER,
 } = require("../../../constants/models");
 
 const { BadRequestError } = require("../../../helpers/errors");
@@ -59,13 +60,107 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             },
         });
 
-        const activitiesThisMonth = await strapi.query( CONTACT_INTERACTION ).count({
+        const convertedButCreatedThisMonth = await strapi.query( CUSTOMER ).count({
             where : {
                 company  : company.id,
+                leadMeta : {
+                    daysToConvert : {
+                        $notNull : true,
+                    },
+                    leadCreatedAt : {
+                        $gte : startOfMonth,
+                        $lte : endOfMonth,
+                    },
+                },
+            },
+        });
+
+        const convertedButCreatedLastMonth = await strapi.query( CUSTOMER ).count({
+            where : {
+                company  : company.id,
+                leadMeta : {
+                    daysToConvert : {
+                        $notNull : true,
+                    },
+                    leadCreatedAt : {
+                        $gte : startOfLastMonth,
+                        $lte : endOfLastMonth,
+                    },
+                },
+            },
+        });
+
+        const leadsConvertedThisMonth = await strapi.query( CUSTOMER ).count({
+            where : {
+                company  : company.id,
+                leadMeta : {
+                    daysToConvert : {
+                        $notNull : true,
+                    },
+                },
                 createdAt : {
                     $gte : startOfMonth,
                     $lte : endOfMonth,
                 },
+            },
+        });
+
+        const leadsConvertedLastMonth = await strapi.query( CUSTOMER ).count({
+            where : {
+                company  : company.id,
+                leadMeta : {
+                    daysToConvert : {
+                        $notNull : true,
+                    },
+                },
+                createdAt : {
+                    $gte : startOfLastMonth,
+                    $lte : endOfLastMonth,
+                },
+            },
+        });
+
+        const activitiesThisMonth = await strapi.query( CONTACT_INTERACTION ).count({
+            where : {
+                company : company.id,
+                $or : [
+                    {
+                        $and : [
+                            {
+                                lead : {
+                                    id : {
+                                        $notNull : true,
+                                    },
+                                },
+                            },
+                            {
+                                createdAt : {
+                                    $gte : startOfMonth,
+                                    $lte : endOfMonth,
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        $and : [
+                            {
+                                customer : {
+                                    leadMeta : {
+                                        daysToConvert : {
+                                            $notNull : true,
+                                        },
+                                    },
+                                },
+                            },
+                            {
+                                // createdAt : {
+                                //     $gte : startOfMonth,
+                                //     $lte : strapi.query( CUSTOMER ).model,
+                                // }, 
+                            },
+                        ],
+                    },
+                ],
             },
         });
 
@@ -83,12 +178,12 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             active,
             inactive,
             new : {
-                current : leadsThisMonth,
-                passed  : leadsLastMonth,
+                current : leadsThisMonth + convertedButCreatedThisMonth,
+                passed  : leadsLastMonth + convertedButCreatedLastMonth,
             },
             converted : {
-                current : 0,
-                passed  : 0,
+                current : leadsConvertedThisMonth,
+                passed  : leadsConvertedLastMonth,
             },
             activities : {
                 current : activitiesThisMonth,

@@ -1,4 +1,4 @@
-const { CONTACT_INTERACTION, LEAD } = require('../../../constants/models');
+const { CONTACT_INTERACTION, LEAD, CUSTOMER } = require('../../../constants/models');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
@@ -16,7 +16,8 @@ const interactionFields = {
 };
 
 const relationDictionary = {
-    lead : LEAD,
+    lead     : LEAD,
+    customer : CUSTOMER,
 };
 
 module.exports = createCoreService(CONTACT_INTERACTION, ({ strapi }) => ({

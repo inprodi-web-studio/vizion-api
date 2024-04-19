@@ -1,4 +1,4 @@
-const { TASK, LEAD, USER } = require('../../../constants/models');
+const { TASK, LEAD, USER, CUSTOMER } = require('../../../constants/models');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
@@ -19,7 +19,8 @@ const taskFields = {
 };
 
 const relationDictionary = {
-    lead : LEAD,
+    lead     : LEAD,
+    customer : CUSTOMER,
 };
 
 module.exports = createCoreService( TASK, ({ strapi }) => ({

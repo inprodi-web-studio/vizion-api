@@ -12,6 +12,9 @@ const sourceFields = {
         leads : {
             count : true,
         },
+        customers : {
+            count : true,
+        },
     },
 };
 

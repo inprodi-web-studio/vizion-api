@@ -1,4 +1,4 @@
-const { LEAD, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, INSIDER } = require('../../../constants/models');
+const { LEAD, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, INSIDER, CUSTOMER } = require('../../../constants/models');
 const findMany                 = require('../../../helpers/findMany');
 const { validateCreate }       = require('../content-types/lead/lead.validation');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
@@ -6,11 +6,12 @@ const checkForDuplicates       = require('../../../helpers/checkForDuplicates');
 const { validateKeyUpdate }    = require('../../../helpers/validateKeyUpdate');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { UnprocessableContentError } = require('../../../helpers/errors');
+const dayjs = require('dayjs');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const leadFields = {
-    fields   : ["uuid", "tradeName", "email", "rating", "isActive", "value", "potential", "createdAt"],
+    fields   : ["uuid", "tradeName", "finalName", "email", "rating", "isActive", "value", "potential", "createdAt"],
     populate : {
         completeName : true,
         phone        : true,
@@ -192,6 +193,58 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         });
 
         return updatedLead;
+    },
+
+    async convert(ctx) {
+        const { uuid } = ctx.params;
+        const data    = ctx.request.body;
+        const company = ctx.state.company;
+
+        const lead = await validateEntityPermission( uuid, LEAD, {
+            fields : [ ...leadFields.fields ],
+            populate : {
+                ...leadFields.populate,
+                ...( data.tasks && {
+                    tasks : true,
+                }),
+                ...( data.documents && {
+                    documents : true,
+                }),
+                ...( data.notes && {
+                    notes : true,
+                }),
+                ...( data.interactions && {
+                    interactions : true,
+                }),
+            },
+        });
+
+        const leadCreation = dayjs( lead.createdAt );
+        const today        = dayjs();
+        const difference   = today.diff( leadCreation, "day" );
+
+        const leadId = lead.id;
+
+        delete lead.createdAt;
+        delete lead.id;
+
+        const newCustomer = await strapi.entityService.create( CUSTOMER, {
+            data : {
+                ...lead,
+                leadMeta : {
+                    daysToConvert : difference,
+                    convertedAt   : new Date(),
+                    leadCreatedAt : leadCreation,
+                },
+                isArchived : false,
+                company    : company.id,
+            },
+            fields : ["uuid"],
+        });
+
+        await strapi.entityService.delete( LEAD, leadId );
+
+        return newCustomer;
     },
 
     async getInsiders(ctx) {

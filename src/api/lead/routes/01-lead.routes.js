@@ -66,6 +66,14 @@ module.exports = {
       },
       {
         method  : "POST",
+        path    : "/contacts/leads/:uuid/convert",
+        handler : "lead.convert",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "POST",
         path    : "/insiders/leads/:uuid",
         handler : "lead.createInsider",
         config : {

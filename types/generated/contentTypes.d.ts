@@ -980,6 +980,11 @@ export interface ApiContactInteractionContactInteraction
       'oneToOne',
       'api::company.company'
     >;
+    customer: Attribute.Relation<
+      'api::contact-interaction.contact-interaction',
+      'manyToOne',
+      'api::customer.customer'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1109,6 +1114,17 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
       'api::insider.insider'
     >;
     fiscalInfo: Attribute.Component<'fiscal.fiscal-info'>;
+    customerMeta: Attribute.Component<'customer.customer-meta'>;
+    documents: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::document.document'
+    >;
+    interactions: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::contact-interaction.contact-interaction'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

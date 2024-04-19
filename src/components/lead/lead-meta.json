@@ -1,7 +1,8 @@
 {
   "collectionName": "components_lead_lead_metas",
   "info": {
-    "displayName": "leadMeta"
+    "displayName": "leadMeta",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -9,6 +10,9 @@
       "type": "integer"
     },
     "convertedAt": {
+      "type": "datetime"
+    },
+    "leadCreatedAt": {
       "type": "datetime"
     }
   }

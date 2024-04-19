@@ -12,6 +12,9 @@ const groupFields = {
         leads : {
             count : true,
         },
+        customers : {
+            count : true,
+        },
     },
 };
 

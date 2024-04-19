@@ -23,10 +23,10 @@ const roles = {
     "owner" : {
         permissions : {
             [USER] : {
-                user : ["find", "me", "toggle", "delete"],
+                user : ["find", "me", "setProfileImage", "removeProfileImage", "updateProfile", "updatePassword", "toggle", "delete"],
             },
             [TAG]            : ["find", "create", "update", "delete"],
-            [LEAD]           : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete", "uploadFile", "getFiles", "removeFile", "createTask", "getTasks", "updateTask", "toggleTask", "deleteTask", "getNotes", "createNote", "updateNote", "deleteNote", "getInteracitons", "createInteraction", "deleteInteraction", "getInsiders", "createInsider", "updateInsider", "deleteInsider"],
+            [LEAD]           : ["find", "findOne", "create", "convert", "update", "toggle", "keyUpdate", "delete", "uploadFile", "getFiles", "removeFile", "createTask", "getTasks", "updateTask", "toggleTask", "deleteTask", "getNotes", "createNote", "updateNote", "deleteNote", "getInteracitons", "createInteraction", "deleteInteraction", "getInsiders", "createInsider", "updateInsider", "deleteInsider"],
             [CUSTOMER]       : ["find", "findOne", "create", "update", "toggle", "keyUpdate", "delete", "uploadFile", "getFiles", "removeFile", "createTask", "getTasks", "updateTask", "toggleTask", "deleteTask", "getNotes", "createNote", "updateNote", "deleteNote", "getInteracitons", "createInteraction", "deleteInteraction", "getInsiders", "createInsider", "updateInsider", "deleteInsider"],
             [INVITATION]     : ["find", "create", "delete"],
             [CONTACT_GROUP]  : ["find", "create", "update", "delete"],

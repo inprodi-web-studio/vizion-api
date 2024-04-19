@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_customer_customer_metas",
+  "info": {
+    "displayName": "Customer Meta"
+  },
+  "options": {},
+  "attributes": {
+    "lastSale": {
+      "type": "datetime"
+    },
+    "totalSales": {
+      "type": "decimal"
+    }
+  }
+}

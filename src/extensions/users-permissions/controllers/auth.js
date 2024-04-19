@@ -33,6 +33,8 @@ module.exports = ( plugin ) => {
             id : user.id,
         });
 
+        delete user.password;
+
         return {
             token : TOKEN,
             user,

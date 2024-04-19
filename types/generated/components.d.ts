@@ -40,6 +40,17 @@ export interface ContactPhone extends Schema.Component {
   };
 }
 
+export interface CustomerCustomerMeta extends Schema.Component {
+  collectionName: 'components_customer_customer_metas';
+  info: {
+    displayName: 'Customer Meta';
+  };
+  attributes: {
+    lastSale: Attribute.DateTime;
+    totalSales: Attribute.Decimal;
+  };
+}
+
 export interface FiscalFiscalInfo extends Schema.Component {
   collectionName: 'components_fiscal_fiscal_infos';
   info: {
@@ -57,10 +68,12 @@ export interface LeadLeadMeta extends Schema.Component {
   collectionName: 'components_lead_lead_metas';
   info: {
     displayName: 'leadMeta';
+    description: '';
   };
   attributes: {
     daysToConvert: Attribute.Integer;
     convertedAt: Attribute.DateTime;
+    leadCreatedAt: Attribute.DateTime;
   };
 }
 
@@ -70,6 +83,7 @@ declare module '@strapi/types' {
       'address.address': AddressAddress;
       'contact.complete-name': ContactCompleteName;
       'contact.phone': ContactPhone;
+      'customer.customer-meta': CustomerCustomerMeta;
       'fiscal.fiscal-info': FiscalFiscalInfo;
       'lead.lead-meta': LeadLeadMeta;
     }
