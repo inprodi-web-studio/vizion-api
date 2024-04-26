@@ -17,6 +17,7 @@
     "@strapi/provider-email-nodemailer": "^4.20.2",
     "@strapi/strapi": "4.20.2",
     "dayjs": "^1.11.10",
+    "facturapi": "^3.5.0",
     "moment-timezone": "^0.5.45",
     "mysql": "2.18.1",
     "react": "^18.0.0",

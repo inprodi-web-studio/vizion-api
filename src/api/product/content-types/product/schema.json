@@ -1,0 +1,86 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "type": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "dimensions": {
+      "displayName": "Dimensions",
+      "type": "component",
+      "repeatable": false,
+      "component": "product.dimensions"
+    },
+    "url": {
+      "type": "string"
+    },
+    "satCode": {
+      "type": "string"
+    },
+    "taxType": {
+      "type": "string"
+    },
+    "saleInfo": {
+      "displayName": "Sale Information",
+      "type": "component",
+      "repeatable": false,
+      "component": "product.sale-information"
+    },
+    "purchaseInfo": {
+      "displayName": "Purchase Info",
+      "type": "component",
+      "repeatable": false,
+      "component": "product.purchase-info"
+    },
+    "stockInfo": {
+      "displayName": "Stock Info",
+      "type": "component",
+      "repeatable": false,
+      "component": "product.stock-info"
+    },
+    "isDraft": {
+      "type": "boolean"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product-category.product-category",
+      "inversedBy": "products"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    }
+  }
+}

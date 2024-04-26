@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_product_sale_informations",
+  "info": {
+    "displayName": "Sale Information",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "price": {
+      "type": "decimal"
+    },
+    "iva": {
+      "type": "string"
+    },
+    "deliveryTime": {
+      "type": "integer"
+    },
+    "note": {
+      "type": "string"
+    },
+    "unity": {
+      "type": "string"
+    }
+  }
+}

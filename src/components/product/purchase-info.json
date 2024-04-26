@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_product_purchase_infos",
+  "info": {
+    "displayName": "Purchase Info",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "price": {
+      "type": "decimal"
+    },
+    "iva": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    },
+    "unity": {
+      "type": "string"
+    }
+  }
+}

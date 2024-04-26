@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_product_stock_infos",
+  "info": {
+    "displayName": "Stock Info",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "lowAlert": {
+      "type": "float"
+    },
+    "alertTo": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "minQuantity": {
+      "type": "float"
+    },
+    "maxQuantity": {
+      "type": "float"
+    },
+    "noStockPolicy": {
+      "type": "string"
+    },
+    "hasBatches": {
+      "type": "boolean"
+    }
+  }
+}

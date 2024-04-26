@@ -36,18 +36,16 @@ module.exports = ( plugin ) => {
     };
 
     plugin.controllers.user["setProfileImage"] = async (ctx) => {
-        const { uuid }  = ctx.state.user;
+        const { uuid, id }  = ctx.state.user;
         const { image } = ctx.request.files ?? {};
         const data = ctx.request.body;
-
-        const user = await findOneByUuid( uuid, USER, userFields );
 
         if ( !image ) {
             if ( !data.image ) {
                 throw new BadRequestError(["Image is required (either file or id)"]);
             }
 
-            const updatedUser = await strapi.entityService.update( USER, user.id, {
+            const updatedUser = await strapi.entityService.update( USER, id, {
                 data : {
                     image : data.image,
                 },
@@ -57,20 +55,20 @@ module.exports = ( plugin ) => {
         }
 
         await strapi.plugins.upload.services.upload.uploadToEntity({
-            id    : user.id,
+            id    : id,
             model : USER,
             field : "image",
         }, image );
 
-        return user;
+        return {
+            uuid,
+        };
     };
 
     plugin.controllers.user["removeProfileImage"] = async (ctx) => {
-        const { uuid } = ctx.state.user;
+        const { id } = ctx.state.user;
 
-        const user = await findOneByUuid( uuid, USER, userFields );
-
-        const updatedUser = await strapi.entityService.update( USER, user.id, {
+        const updatedUser = await strapi.entityService.update( USER, id, {
             data : {
                 image : null,
             },
@@ -80,14 +78,12 @@ module.exports = ( plugin ) => {
     };
 
     plugin.controllers.user["updateProfile"] = async (ctx) => {
-        const { uuid } = ctx.state.user;
+        const { id } = ctx.state.user;
         const data = ctx.request.body;
 
         await validateUpdateProfile( data );
 
-        const user = await findOneByUuid( uuid, USER, userFields );
-
-        const updatedUser = await strapi.entityService.update( USER, user.id, {
+        const updatedUser = await strapi.entityService.update( USER, id, {
             data : data,
             ...userFields,
         });

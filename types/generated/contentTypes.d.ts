@@ -798,6 +798,41 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiAttributeValueAttributeValue extends Schema.CollectionType {
+  collectionName: 'attribute_values';
+  info: {
+    singularName: 'attribute-value';
+    pluralName: 'attribute-values';
+    displayName: 'Attribute Value';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    attribute: Attribute.Relation<
+      'api::attribute-value.attribute-value',
+      'manyToOne',
+      'api::product-attribute.product-attribute'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::attribute-value.attribute-value',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::attribute-value.attribute-value',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiCompanyCompany extends Schema.CollectionType {
   collectionName: 'companies';
   info: {
@@ -1416,6 +1451,145 @@ export interface ApiNoteNote extends Schema.CollectionType {
   };
 }
 
+export interface ApiProductProduct extends Schema.CollectionType {
+  collectionName: 'products';
+  info: {
+    singularName: 'product';
+    pluralName: 'products';
+    displayName: 'Product';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    images: Attribute.Media;
+    type: Attribute.String;
+    name: Attribute.String;
+    description: Attribute.String;
+    sku: Attribute.String;
+    dimensions: Attribute.Component<'product.dimensions'>;
+    url: Attribute.String;
+    satCode: Attribute.String;
+    taxType: Attribute.String;
+    saleInfo: Attribute.Component<'product.sale-information'>;
+    purchaseInfo: Attribute.Component<'product.purchase-info'>;
+    stockInfo: Attribute.Component<'product.stock-info'>;
+    isDraft: Attribute.Boolean;
+    category: Attribute.Relation<
+      'api::product.product',
+      'manyToOne',
+      'api::product-category.product-category'
+    >;
+    company: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiProductAttributeProductAttribute
+  extends Schema.CollectionType {
+  collectionName: 'product_attributes';
+  info: {
+    singularName: 'product-attribute';
+    pluralName: 'product-attributes';
+    displayName: 'Product Attribute';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    values: Attribute.Relation<
+      'api::product-attribute.product-attribute',
+      'oneToMany',
+      'api::attribute-value.attribute-value'
+    >;
+    company: Attribute.Relation<
+      'api::product-attribute.product-attribute',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product-attribute.product-attribute',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product-attribute.product-attribute',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiProductCategoryProductCategory
+  extends Schema.CollectionType {
+  collectionName: 'product_categories';
+  info: {
+    singularName: 'product-category';
+    pluralName: 'product-categories';
+    displayName: 'Product Category';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    color: Attribute.String;
+    icon: Attribute.String;
+    name: Attribute.String;
+    products: Attribute.Relation<
+      'api::product-category.product-category',
+      'oneToMany',
+      'api::product.product'
+    >;
+    company: Attribute.Relation<
+      'api::product-category.product-category',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product-category.product-category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product-category.product-category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSuscriptionPaymentSuscriptionPayment
   extends Schema.CollectionType {
   collectionName: 'suscription_payments';
@@ -1675,6 +1849,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::attribute-value.attribute-value': ApiAttributeValueAttributeValue;
       'api::company.company': ApiCompanyCompany;
       'api::company-niche.company-niche': ApiCompanyNicheCompanyNiche;
       'api::contact-group.contact-group': ApiContactGroupContactGroup;
@@ -1687,6 +1862,9 @@ declare module '@strapi/types' {
       'api::lead.lead': ApiLeadLead;
       'api::lead-stage.lead-stage': ApiLeadStageLeadStage;
       'api::note.note': ApiNoteNote;
+      'api::product.product': ApiProductProduct;
+      'api::product-attribute.product-attribute': ApiProductAttributeProductAttribute;
+      'api::product-category.product-category': ApiProductCategoryProductCategory;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;
       'api::suscription-plan.suscription-plan': ApiSuscriptionPlanSuscriptionPlan;
       'api::suscription-status.suscription-status': ApiSuscriptionStatusSuscriptionStatus;

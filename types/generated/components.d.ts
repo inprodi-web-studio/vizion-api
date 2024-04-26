@@ -77,6 +77,68 @@ export interface LeadLeadMeta extends Schema.Component {
   };
 }
 
+export interface ProductDimensions extends Schema.Component {
+  collectionName: 'components_product_dimensions';
+  info: {
+    displayName: 'Dimensions';
+  };
+  attributes: {
+    weight: Attribute.Float;
+    long: Attribute.Float;
+    width: Attribute.Float;
+    height: Attribute.Float;
+  };
+}
+
+export interface ProductPurchaseInfo extends Schema.Component {
+  collectionName: 'components_product_purchase_infos';
+  info: {
+    displayName: 'Purchase Info';
+    description: '';
+  };
+  attributes: {
+    price: Attribute.Decimal;
+    iva: Attribute.String;
+    note: Attribute.String;
+    unity: Attribute.String;
+  };
+}
+
+export interface ProductSaleInformation extends Schema.Component {
+  collectionName: 'components_product_sale_informations';
+  info: {
+    displayName: 'Sale Information';
+    description: '';
+  };
+  attributes: {
+    price: Attribute.Decimal;
+    iva: Attribute.String;
+    deliveryTime: Attribute.Integer;
+    note: Attribute.String;
+    unity: Attribute.String;
+  };
+}
+
+export interface ProductStockInfo extends Schema.Component {
+  collectionName: 'components_product_stock_infos';
+  info: {
+    displayName: 'Stock Info';
+    description: '';
+  };
+  attributes: {
+    lowAlert: Attribute.Float;
+    alertTo: Attribute.Relation<
+      'product.stock-info',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    minQuantity: Attribute.Float;
+    maxQuantity: Attribute.Float;
+    noStockPolicy: Attribute.String;
+    hasBatches: Attribute.Boolean;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
@@ -86,6 +148,10 @@ declare module '@strapi/types' {
       'customer.customer-meta': CustomerCustomerMeta;
       'fiscal.fiscal-info': FiscalFiscalInfo;
       'lead.lead-meta': LeadLeadMeta;
+      'product.dimensions': ProductDimensions;
+      'product.purchase-info': ProductPurchaseInfo;
+      'product.sale-information': ProductSaleInformation;
+      'product.stock-info': ProductStockInfo;
     }
   }
 }
