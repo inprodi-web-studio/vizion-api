@@ -1487,6 +1487,11 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
+    tags: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::tag.tag'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

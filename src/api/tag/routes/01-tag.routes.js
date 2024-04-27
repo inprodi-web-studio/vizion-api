@@ -17,17 +17,17 @@ module.exports = {
         },
       },
       {
-        method  : "PUT",
-        path    : "/contacts/tags/:uuid",
-        handler : "tag.update",
+        method  : "GET",
+        path    : "/product-tags",
+        handler : "tag.find",
         config : {
           policies : ["global::userContext"],
         },
       },
       {
-        method  : "DELETE",
-        path    : "/contacts/tags/:uuid",
-        handler : "tag.delete",
+        method  : "POST",
+        path    : "/product-tags",
+        handler : "tag.create",
         config : {
           policies : ["global::userContext"],
         },

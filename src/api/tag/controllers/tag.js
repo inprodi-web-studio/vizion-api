@@ -31,11 +31,16 @@ module.exports = createCoreController( TAG, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        await checkForDuplicates( TAG, [
-            { name : data.name },
-        ]);
-
         const entity = await strapi.service( TAG ).getEntity();
+
+        await checkForDuplicates( TAG, [
+            {
+                $and : [
+                    { name : data.name },
+                    { entity : entity },
+                ],
+            },
+        ]);
 
         const newTag = await strapi.entityService.create( TAG, {
             data : {

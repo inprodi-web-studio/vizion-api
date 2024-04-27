@@ -13,6 +13,10 @@ module.exports = createCoreService( TAG, ({ strapi }) => ({
             entity = "contact";
         }
 
+        if ( url.includes( "product-tags" ) ) {
+            entity = "product";
+        }
+
         return entity;
     },
 }));
