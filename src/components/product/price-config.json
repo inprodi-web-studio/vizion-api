@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_product_price_configs",
+  "info": {
+    "displayName": "Price Config"
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "string"
+    },
+    "config": {
+      "type": "json"
+    }
+  }
+}

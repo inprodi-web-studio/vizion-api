@@ -1160,6 +1160,12 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
       'oneToMany',
       'api::contact-interaction.contact-interaction'
     >;
+    priceList: Attribute.Relation<
+      'api::customer.customer',
+      'manyToOne',
+      'api::price-list.price-list'
+    >;
+    deliveryAddresses: Attribute.Component<'address.address', true>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1206,6 +1212,83 @@ export interface ApiDocumentDocument extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::document.document',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiEstimateEstimate extends Schema.CollectionType {
+  collectionName: 'estimates';
+  info: {
+    singularName: 'estimate';
+    pluralName: 'estimates';
+    displayName: 'Estimate';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    stage: Attribute.Relation<
+      'api::estimate.estimate',
+      'manyToOne',
+      'api::estimate-stage.estimate-stage'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::estimate.estimate',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::estimate.estimate',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiEstimateStageEstimateStage extends Schema.CollectionType {
+  collectionName: 'estimate_stages';
+  info: {
+    singularName: 'estimate-stage';
+    pluralName: 'estimate-stages';
+    displayName: 'Estimate Stage';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    potential: Attribute.Integer;
+    estimates: Attribute.Relation<
+      'api::estimate-stage.estimate-stage',
+      'oneToMany',
+      'api::estimate.estimate'
+    >;
+    company: Attribute.Relation<
+      'api::estimate-stage.estimate-stage',
+      'oneToOne',
+      'api::company.company'
+    >;
+    isDefault: Attribute.Boolean & Attribute.DefaultTo<false>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::estimate-stage.estimate-stage',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::estimate-stage.estimate-stage',
       'oneToOne',
       'admin::user'
     > &
@@ -1378,39 +1461,6 @@ export interface ApiLeadLead extends Schema.CollectionType {
   };
 }
 
-export interface ApiLeadStageLeadStage extends Schema.CollectionType {
-  collectionName: 'lead_stages';
-  info: {
-    singularName: 'lead-stage';
-    pluralName: 'lead-stages';
-    displayName: 'Lead Stage';
-    description: '';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    uuid: Attribute.String & Attribute.Unique;
-    name: Attribute.String;
-    color: Attribute.String;
-    order: Attribute.Integer;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::lead-stage.lead-stage',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::lead-stage.lead-stage',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-  };
-}
-
 export interface ApiNoteNote extends Schema.CollectionType {
   collectionName: 'notes';
   info: {
@@ -1451,6 +1501,48 @@ export interface ApiNoteNote extends Schema.CollectionType {
   };
 }
 
+export interface ApiPriceListPriceList extends Schema.CollectionType {
+  collectionName: 'price_lists';
+  info: {
+    singularName: 'price-list';
+    pluralName: 'price-lists';
+    displayName: 'Price List';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    company: Attribute.Relation<
+      'api::price-list.price-list',
+      'oneToOne',
+      'api::company.company'
+    >;
+    customers: Attribute.Relation<
+      'api::price-list.price-list',
+      'oneToMany',
+      'api::customer.customer'
+    >;
+    discount: Attribute.Decimal;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::price-list.price-list',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::price-list.price-list',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Schema.CollectionType {
   collectionName: 'products';
   info: {
@@ -1467,7 +1559,7 @@ export interface ApiProductProduct extends Schema.CollectionType {
     images: Attribute.Media;
     type: Attribute.String;
     name: Attribute.String;
-    description: Attribute.String;
+    description: Attribute.Text;
     sku: Attribute.String;
     dimensions: Attribute.Component<'product.dimensions'>;
     url: Attribute.String;
@@ -1862,11 +1954,13 @@ declare module '@strapi/types' {
       'api::contact-source.contact-source': ApiContactSourceContactSource;
       'api::customer.customer': ApiCustomerCustomer;
       'api::document.document': ApiDocumentDocument;
+      'api::estimate.estimate': ApiEstimateEstimate;
+      'api::estimate-stage.estimate-stage': ApiEstimateStageEstimateStage;
       'api::insider.insider': ApiInsiderInsider;
       'api::invitation.invitation': ApiInvitationInvitation;
       'api::lead.lead': ApiLeadLead;
-      'api::lead-stage.lead-stage': ApiLeadStageLeadStage;
       'api::note.note': ApiNoteNote;
+      'api::price-list.price-list': ApiPriceListPriceList;
       'api::product.product': ApiProductProduct;
       'api::product-attribute.product-attribute': ApiProductAttributeProductAttribute;
       'api::product-category.product-category': ApiProductCategoryProductCategory;

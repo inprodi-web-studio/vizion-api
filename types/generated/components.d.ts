@@ -90,6 +90,17 @@ export interface ProductDimensions extends Schema.Component {
   };
 }
 
+export interface ProductPriceConfig extends Schema.Component {
+  collectionName: 'components_product_price_configs';
+  info: {
+    displayName: 'Price Config';
+  };
+  attributes: {
+    type: Attribute.String;
+    config: Attribute.JSON;
+  };
+}
+
 export interface ProductPurchaseInfo extends Schema.Component {
   collectionName: 'components_product_purchase_infos';
   info: {
@@ -116,6 +127,12 @@ export interface ProductSaleInformation extends Schema.Component {
     deliveryTime: Attribute.Integer;
     note: Attribute.String;
     unity: Attribute.String;
+    priceConfig: Attribute.Component<'product.price-config'>;
+    upsells: Attribute.Relation<
+      'product.sale-information',
+      'oneToMany',
+      'api::product.product'
+    >;
   };
 }
 
@@ -149,6 +166,7 @@ declare module '@strapi/types' {
       'fiscal.fiscal-info': FiscalFiscalInfo;
       'lead.lead-meta': LeadLeadMeta;
       'product.dimensions': ProductDimensions;
+      'product.price-config': ProductPriceConfig;
       'product.purchase-info': ProductPurchaseInfo;
       'product.sale-information': ProductSaleInformation;
       'product.stock-info': ProductStockInfo;

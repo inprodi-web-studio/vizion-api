@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * lead-stage router
+ * price-list router
  */
 
 const { createCoreRouter } = require('@strapi/strapi').factories;
 
-module.exports = createCoreRouter('api::lead-stage.lead-stage');
+module.exports = createCoreRouter('api::price-list.price-list');

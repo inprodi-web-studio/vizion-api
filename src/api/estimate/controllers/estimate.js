@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * lead-stage controller
+ * estimate controller
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
-module.exports = createCoreController('api::lead-stage.lead-stage');
+module.exports = createCoreController('api::estimate.estimate');

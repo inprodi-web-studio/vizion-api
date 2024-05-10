@@ -8,14 +8,16 @@ const {
   NOTE,
   INSIDER,
   COMPANY,
+  PRODUCT,
   CUSTOMER,
   DOCUMENT,
   INVITATION,
+  PRICE_LIST,
   CONTACT_GROUP,
+  ESTIMATE_STAGE,
   CONTACT_SOURCE,
-  CONTACT_INTERACTION,
-  PRODUCT,
   PRODUCT_CATEGORY,
+  CONTACT_INTERACTION,
 } = require("./constants/models");
 
 module.exports = {
@@ -35,7 +37,9 @@ module.exports = {
         CUSTOMER,
         DOCUMENT,
         INVITATION,
+        PRICE_LIST,
         CONTACT_GROUP,
+        ESTIMATE_STAGE,
         CONTACT_SOURCE,
         PRODUCT_CATEGORY,
         CONTACT_INTERACTION,

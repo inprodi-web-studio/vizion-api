@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "estimates",
+  "info": {
+    "singularName": "estimate",
+    "pluralName": "estimates",
+    "displayName": "Estimate"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "stage": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::estimate-stage.estimate-stage",
+      "inversedBy": "estimates"
+    }
+  }
+}

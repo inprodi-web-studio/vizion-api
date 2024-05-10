@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * lead-stage service
+ * price-list service
  */
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::lead-stage.lead-stage');
+module.exports = createCoreService('api::price-list.price-list');

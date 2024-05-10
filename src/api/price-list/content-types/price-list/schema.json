@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "price_lists",
+  "info": {
+    "singularName": "price-list",
+    "pluralName": "price-lists",
+    "displayName": "Price List",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "customers": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::customer.customer",
+      "mappedBy": "priceList"
+    },
+    "discount": {
+      "type": "decimal"
+    }
+  }
+}

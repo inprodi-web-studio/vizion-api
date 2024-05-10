@@ -125,6 +125,17 @@
       "relation": "oneToMany",
       "target": "api::contact-interaction.contact-interaction",
       "mappedBy": "customer"
+    },
+    "priceList": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::price-list.price-list",
+      "inversedBy": "customers"
+    },
+    "deliveryAddresses": {
+      "type": "component",
+      "repeatable": true,
+      "component": "address.address"
     }
   }
 }

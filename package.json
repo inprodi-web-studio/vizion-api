@@ -26,6 +26,7 @@
     "strapi-plugin-file-system": "^1.0.8",
     "strapi-provider-upload-do": "^3.6.9",
     "styled-components": "5.3.3",
+    "twilio": "^5.0.4",
     "uuidv4": "^6.2.13"
   },
   "author": {

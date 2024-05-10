@@ -67,4 +67,16 @@ module.exports = createCoreService( PRODUCT, ({ strapi }) => ({
 
         return entityId;
     },
+
+    async validateUpsells(data) {
+        const ids = [];
+
+        for ( const item of data ) {
+            const { id : productId } = await findOneByUuid( item, PRODUCT );
+
+            ids.push( productId );
+        }
+
+        return ids;
+    },
 }));

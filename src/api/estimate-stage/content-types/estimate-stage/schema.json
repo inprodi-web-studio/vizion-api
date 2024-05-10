@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "estimate_stages",
+  "info": {
+    "singularName": "estimate-stage",
+    "pluralName": "estimate-stages",
+    "displayName": "Estimate Stage",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "potential": {
+      "type": "integer"
+    },
+    "estimates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::estimate.estimate",
+      "mappedBy": "stage"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "isDefault": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

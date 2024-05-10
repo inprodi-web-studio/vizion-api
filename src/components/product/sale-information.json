@@ -20,6 +20,17 @@
     },
     "unity": {
       "type": "string"
+    },
+    "priceConfig": {
+      "displayName": "Price Config",
+      "type": "component",
+      "repeatable": false,
+      "component": "product.price-config"
+    },
+    "upsells": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product.product"
     }
   }
 }

@@ -87,23 +87,33 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
             data.responsible = user.id;
         }
 
-        await checkForDuplicates( LEAD, [
-            {
+        const criteria = [];
+
+        if ( data.email ) {
+            criteria.push({
                 email : data.email,
-            },
-            {
+            });
+        }
+
+        if ( data.phone?.number ) {
+            criteria.push({
                 phone : {
                     code   : data.phone?.code,
                     number : data.phone?.number,
                 },
-            },
-            {
+            });
+        }
+
+        if ( data.cellphone?.number ) {
+            criteria.push({
                 cellphone : {
                     code   : data.cellphone?.code,
                     number : data.cellphone?.number,
                 },
-            },
-        ], leadFields );
+            });
+        }
+
+        await checkForDuplicates( LEAD, criteria, leadFields );
 
         await strapi.service( LEAD ).validateParallelData( data );
 
@@ -127,25 +137,35 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         await validateCreate( data );
 
-       const lead = await validateEntityPermission( uuid, LEAD, leadFields );
+        const lead = await validateEntityPermission( uuid, LEAD, leadFields );
 
-        await checkForDuplicates( LEAD, [
-            {
+        const criteria = [];
+
+        if ( data.email ) {
+            criteria.push({
                 email : data.email,
-            },
-            {
+            });
+        }
+
+        if ( data.phone?.number ) {
+            criteria.push({
                 phone : {
                     code   : data.phone?.code,
                     number : data.phone?.number,
                 },
-            },
-            {
+            });
+        }
+
+        if ( data.cellphone?.number ) {
+            criteria.push({
                 cellphone : {
                     code   : data.cellphone?.code,
                     number : data.cellphone?.number,
                 },
-            },
-        ], leadFields );
+            });
+        }
+
+        await checkForDuplicates( LEAD, criteria, leadFields );
 
         await strapi.service( LEAD ).validateParallelData( data );
 

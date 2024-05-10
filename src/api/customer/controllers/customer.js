@@ -10,7 +10,7 @@ const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const customerFields = {
-    fields   : ["uuid", "tradeName", "email", "rating", "isArchived", "value", "createdAt"],
+    fields   : ["uuid", "tradeName", "email", "rating", "isArchived", "value", "finalName", "createdAt"],
     populate : {
         completeName : true,
         phone        : true,
@@ -94,33 +94,49 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
             data.responsible = user.id;
         }
 
-        await checkForDuplicates( CUSTOMER, [
-            {
+        const criteria = [];
+
+        if ( data.email ) {
+            criteria.push({
                 email : data.email,
-            },
-            {
+            });
+        }
+
+        if ( data.phone?.number ) {
+            criteria.push({
                 phone : {
                     code   : data.phone?.code,
                     number : data.phone?.number,
                 },
-            },
-            {
+            });
+        }
+
+        if ( data.cellphone?.number ) {
+            criteria.push({
                 cellphone : {
                     code   : data.cellphone?.code,
                     number : data.cellphone?.number,
                 },
-            },
-            {
+            });
+        }
+
+        if ( data.fiscalInfo?.rfc ) {
+            criteria.push({
                 fiscalInfo : {
                     rfc : data.fiscalInfo?.rfc
                 },
-            },
-            {
+            });
+        }
+
+        if ( data.fiscalInfo?.legalName ) {
+            criteria.push({
                 fiscalInfo : {
                     legalName : data.fiscalInfo?.legalName
                 },
-            },
-        ], customerFields );
+            });
+        }
+
+        await checkForDuplicates( CUSTOMER, criteria, customerFields );
 
         await strapi.service( CUSTOMER ).validateParallelData( data );
 
@@ -146,23 +162,49 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
        const customer = await validateEntityPermission( uuid, CUSTOMER, customerFields );
 
-        await checkForDuplicates( CUSTOMER, [
-            {
-                email : data.email,
-            },
-            {
-                phone : {
-                    code   : data.phone?.code,
-                    number : data.phone?.number,
-                },
-            },
-            {
-                cellphone : {
-                    code   : data.cellphone?.code,
-                    number : data.cellphone?.number,
-                },
-            },
-        ], customerFields );
+       const criteria = [];
+
+       if ( data.email ) {
+           criteria.push({
+               email : data.email,
+           });
+       }
+
+       if ( data.phone?.number ) {
+           criteria.push({
+               phone : {
+                   code   : data.phone?.code,
+                   number : data.phone?.number,
+               },
+           });
+       }
+
+       if ( data.cellphone?.number ) {
+           criteria.push({
+               cellphone : {
+                   code   : data.cellphone?.code,
+                   number : data.cellphone?.number,
+               },
+           });
+       }
+
+       if ( data.fiscalInfo?.rfc ) {
+           criteria.push({
+               fiscalInfo : {
+                   rfc : data.fiscalInfo?.rfc
+               },
+           });
+       }
+
+       if ( data.fiscalInfo?.legalName ) {
+           criteria.push({
+               fiscalInfo : {
+                   legalName : data.fiscalInfo?.legalName
+               },
+           });
+       }
+
+       await checkForDuplicates( CUSTOMER, criteria, customerFields );
 
         await strapi.service( CUSTOMER ).validateParallelData( data );
 
