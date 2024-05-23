@@ -7,6 +7,27 @@ const findOneByUuid = require("../../../helpers/findOneByUuid");
 const generateToken = require("../../../helpers/generateToken");
 const { validateRegister, validateCodeValidation, validateLogin } = require("../content-types/auth.validation");
 
+const userFields = {
+    fields : ["uuid", "name", "middleName", "lastName", "email", "blocked", "confirmed", "password", "createdAt"],
+    populate : {
+        role : {
+            fields : ["id", "name"],
+        },
+        company : {
+            fields : ["uuid", "name", "isActive", "completedOnboarding", "urlParam"],
+            populate : {
+                logotype : {
+                    fields : ["url"],
+                },
+            },
+        },
+        phone : true,
+        image : {
+            fields : ["url"],
+        },
+    },
+};
+
 module.exports = ( plugin ) => {
     plugin.controllers.auth["login"] = async (ctx) => {
         const data = ctx.request.body;
@@ -18,14 +39,7 @@ module.exports = ( plugin ) => {
             password,
         } = data;
 
-        const user = await findOneByAny( email, USER, "email", {
-            fields : "*",
-            populate : {
-                role    : true,
-                company : true,
-                image   : true,
-            },
-        });
+        const user = await findOneByAny( email, USER, "email", userFields );
 
         await plugin.services.validateUserContext(password, user);
 

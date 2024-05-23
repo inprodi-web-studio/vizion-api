@@ -82,6 +82,17 @@ module.exports = ( plugin ) => {
         const data = ctx.request.body;
 
         await validateUpdateProfile( data );
+        
+        const criteria = [];
+
+        if ( data.phone?.number ) {
+            criteria.push({
+                phone : {
+                    code   : data.phone?.code,
+                    number : data.phone?.number,
+                },
+            });
+        }
 
         const updatedUser = await strapi.entityService.update( USER, id, {
             data : data,
