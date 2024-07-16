@@ -2,6 +2,11 @@ module.exports = ({ env }) => ({
     "file-system" : {
         enabled: true,
     },
+    "import-export-entries": {
+        enabled : true,
+        config : {
+        },
+    },
     email : {
         config : {
             provider        : "nodemailer",

@@ -2,7 +2,7 @@ const { yup, validateYupSchema } = require("../../../../helpers/validators");
 
 const createSchema = yup.object().shape({
     isDraft     : yup.boolean().required(),
-    images      : yup.array().of( yup.object() ).nullable(),
+    images      : yup.array().of( yup.number() ).nullable(),
     type        : yup.string().oneOf([ "simple", "variable" ]).required(),
     name        : yup.string().required(),
     description : yup.string().nullable(),
@@ -19,24 +19,25 @@ const createSchema = yup.object().shape({
     taxType     : yup.string().nullable(),
     saleInfo    : yup.object().shape({
         price        : yup.number().required(),
-        iva          : yup.string().required(),
+        iva          : yup.string().nullable(),
         deliveryTime : yup.number().nullable(),
-        unity        : yup.string().required(),
+        unity        : yup.string().nullable(),
         note         : yup.string().nullable(),
     }).strict().required(),
     purchaseInfo : yup.object().shape({
         price : yup.number().required(),
-        iva   : yup.string().required(),
-        unity : yup.string().required(),
+        iva   : yup.string().nullable(),
+        unity : yup.string().nullable(),
         note  : yup.string().nullable(),
     }).strict().nullable(),
     stockInfo : yup.object().shape({
         lowAlert      : yup.number().nullable(),
         alertTo       : yup.string().uuid().nullable(),
-        minQuantity   : yup.number().required(),
-        maxQuantity   : yup.number().required(),
+        minQuantity   : yup.number().nullable(),
+        maxQuantity   : yup.number().nullable(),
         noStockPolicy : yup.string().nullable(),
         hasBatches    : yup.boolean().required(),
+        isPerishable  : yup.boolean().required(),
     }),
 }).strict();
 

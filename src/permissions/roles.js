@@ -17,8 +17,9 @@ const roles = {
     public : {
         permissions : {
             [USER] : {
-                auth : ["login", "register", "validateCode"],
+                auth : ["login", "loginCompany", "register", "validateCode"],
             },
+            [COMPANY] : ["findByUrlParam"],
         },
         meta : {
             type        : "public",

@@ -11,7 +11,7 @@ const dayjs = require('dayjs');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const leadFields = {
-    fields   : ["uuid", "tradeName", "finalName", "email", "rating", "isActive", "value", "potential", "createdAt"],
+    fields   : ["uuid", "tradeName", "finalName", "email", "website", "rating", "isActive", "value", "potential", "createdAt"],
     populate : {
         completeName : true,
         phone        : true,
@@ -293,6 +293,12 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         data.entity   = uuid;
 
         const updatedInsider = await strapi.service( INSIDER ).updateEntityInsider( data );
+
+        return updatedInsider;
+    },
+
+    async setPrimaryInsider(ctx) {
+        const updatedInsider = await strapi.service( INSIDER ).setPrimary( "lead" );
 
         return updatedInsider;
     },

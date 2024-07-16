@@ -154,6 +154,14 @@ module.exports = {
       },
       {
         method  : "PATCH",
+        path    : "/insiders/leads/:uuid/:insiderUuid",
+        handler : "lead.setPrimaryInsider",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PATCH",
         path    : "/contacts/leads/:uuid",
         handler : "lead.keyUpdate",
         config : {

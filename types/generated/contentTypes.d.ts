@@ -1452,6 +1452,7 @@ export interface ApiLeadLead extends Schema.CollectionType {
       'oneToMany',
       'api::insider.insider'
     >;
+    website: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::lead.lead', 'oneToOne', 'admin::user'> &

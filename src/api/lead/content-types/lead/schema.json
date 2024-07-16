@@ -116,6 +116,9 @@
       "relation": "oneToMany",
       "target": "api::insider.insider",
       "mappedBy": "lead"
+    },
+    "website": {
+      "type": "string"
     }
   }
 }

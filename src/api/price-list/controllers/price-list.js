@@ -32,8 +32,6 @@ module.exports = createCoreController( PRICE_LIST, ({ strapi }) => ({
         const { company } = ctx.state;
         const data = ctx.request.body;
 
-        console.log( ctx.state );
-
         await validateCreate( data );
 
         await checkForDuplicates( PRICE_LIST, [

@@ -24,6 +24,7 @@ const createSchema = yup.object().shape({
         code   : yup.string().nullable(),
         number : yup.string().nullable(),
     }).strict().nullable(),
+    website : yup.string().nullable(),
     cellphone : yup.object().shape({
         code   : yup.string().nullable(),
         number : yup.string().nullable(),

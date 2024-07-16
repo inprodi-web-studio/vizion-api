@@ -10,6 +10,15 @@ module.exports = ( plugin ) => {
 
     plugin.routes["content-api"].routes.push({
         method  : "POST",
+        path    : "/auth/login/:urlParam",
+        handler : "auth.loginCompany",
+        config  : {
+            prefix : "",
+        },
+    });
+
+    plugin.routes["content-api"].routes.push({
+        method  : "POST",
         path    : "/auth/register",
         handler : "auth.register",
         config  : {

@@ -25,6 +25,9 @@
     },
     "hasBatches": {
       "type": "boolean"
+    },
+    "isPerishable": {
+      "type": "boolean"
     }
   }
 }

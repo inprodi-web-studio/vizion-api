@@ -153,6 +153,7 @@ export interface ProductStockInfo extends Schema.Component {
     maxQuantity: Attribute.Float;
     noStockPolicy: Attribute.String;
     hasBatches: Attribute.Boolean;
+    isPerishable: Attribute.Boolean;
   };
 }
 

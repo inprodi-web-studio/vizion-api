@@ -1,7 +1,7 @@
 const userSession = require("../../../api/user-session/controllers/user-session");
 const { USER } = require("../../../constants/models");
 const checkForDuplicates = require("../../../helpers/checkForDuplicates");
-const { BadRequestError } = require("../../../helpers/errors");
+const { BadRequestError, NotFoundError } = require("../../../helpers/errors");
 const findOneByAny = require("../../../helpers/findOneByAny");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const generateToken = require("../../../helpers/generateToken");
@@ -40,6 +40,50 @@ module.exports = ( plugin ) => {
         } = data;
 
         const user = await findOneByAny( email, USER, "email", userFields );
+
+        await plugin.services.validateUserContext(password, user);
+
+        const TOKEN = generateToken({
+            id : user.id,
+        });
+
+        delete user.password;
+
+        return {
+            token : TOKEN,
+            user,
+        };
+    };
+
+    plugin.controllers.auth["loginCompany"] = async (ctx) => {
+        const data = ctx.request.body;
+        const { urlParam } = ctx.params;
+
+        await validateLogin( data );
+
+        const {
+            email,
+            password,
+        } = data;
+
+        const query = await strapi.entityService.findMany( USER, {
+            filters : {
+                email,
+                company : {
+                    urlParam,
+                },
+            },
+            ...userFields,
+        });
+
+        if ( query.length === 0 ) {
+            throw new NotFoundError( "User in company not found", {
+                key : "auth.userNotFoundInCompany",
+                path : ctx.request.url,
+            });
+        }
+
+        const user = query[0];
 
         await plugin.services.validateUserContext(password, user);
 

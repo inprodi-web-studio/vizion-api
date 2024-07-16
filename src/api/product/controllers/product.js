@@ -11,7 +11,7 @@ const productFields = {
     fields : ["uuid", "name", "sku", "type", "isDraft", "description", "url", "satCode", "taxType"],
     populate : {
         images : {
-            fields : ["url"],
+            fields : ["url", "name", "size", "mime"],
         },
         category : {
             fields : ["uuid", "name", "icon", "color"],

@@ -1,6 +1,11 @@
 module.exports = {
     routes : [
       {
+        method  : "GET",
+        path    : "/companies/:urlParam",
+        handler : "company.findByUrlParam",
+      },
+      {
         method  : "PATCH",
         path    : "/company/logotype",
         handler : "company.setLogotype",
