@@ -883,6 +883,7 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
       'api::suscription-status.suscription-status'
     >;
     urlParam: Attribute.String;
+    website: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1165,7 +1166,12 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
       'manyToOne',
       'api::price-list.price-list'
     >;
-    deliveryAddresses: Attribute.Component<'address.address', true>;
+    deliveryAddresses: Attribute.Component<'address.delivery-addresses', true>;
+    estimates: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::estimate.estimate'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1225,16 +1231,41 @@ export interface ApiEstimateEstimate extends Schema.CollectionType {
     singularName: 'estimate';
     pluralName: 'estimates';
     displayName: 'Estimate';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
     uuid: Attribute.String;
+    fol: Attribute.Integer;
+    responsible: Attribute.Relation<
+      'api::estimate.estimate',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    closingDate: Attribute.Date;
     stage: Attribute.Relation<
       'api::estimate.estimate',
       'manyToOne',
       'api::estimate-stage.estimate-stage'
+    >;
+    customer: Attribute.Relation<
+      'api::estimate.estimate',
+      'manyToOne',
+      'api::customer.customer'
+    >;
+    lead: Attribute.Relation<
+      'api::estimate.estimate',
+      'manyToOne',
+      'api::lead.lead'
+    >;
+    deliveryAddress: Attribute.Component<'address.delivery-addresses'>;
+    versions: Attribute.Component<'estimate.version', true>;
+    company: Attribute.Relation<
+      'api::estimate.estimate',
+      'oneToOne',
+      'api::company.company'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -1453,6 +1484,12 @@ export interface ApiLeadLead extends Schema.CollectionType {
       'api::insider.insider'
     >;
     website: Attribute.String;
+    deliveryAddresses: Attribute.Component<'address.delivery-addresses', true>;
+    estimates: Attribute.Relation<
+      'api::lead.lead',
+      'oneToMany',
+      'api::estimate.estimate'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::lead.lead', 'oneToOne', 'admin::user'> &
@@ -1502,6 +1539,44 @@ export interface ApiNoteNote extends Schema.CollectionType {
   };
 }
 
+export interface ApiPreferencePreference extends Schema.CollectionType {
+  collectionName: 'preferences';
+  info: {
+    singularName: 'preference';
+    pluralName: 'preferences';
+    displayName: 'Preference';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    app: Attribute.String;
+    module: Attribute.String;
+    config: Attribute.JSON;
+    company: Attribute.Relation<
+      'api::preference.preference',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::preference.preference',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::preference.preference',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiPriceListPriceList extends Schema.CollectionType {
   collectionName: 'price_lists';
   info: {
@@ -1527,6 +1602,7 @@ export interface ApiPriceListPriceList extends Schema.CollectionType {
       'api::customer.customer'
     >;
     discount: Attribute.Decimal;
+    isDefault: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1961,6 +2037,7 @@ declare module '@strapi/types' {
       'api::invitation.invitation': ApiInvitationInvitation;
       'api::lead.lead': ApiLeadLead;
       'api::note.note': ApiNoteNote;
+      'api::preference.preference': ApiPreferencePreference;
       'api::price-list.price-list': ApiPriceListPriceList;
       'api::product.product': ApiProductProduct;
       'api::product-attribute.product-attribute': ApiProductAttributeProductAttribute;

@@ -119,6 +119,17 @@
     },
     "website": {
       "type": "string"
+    },
+    "deliveryAddresses": {
+      "type": "component",
+      "repeatable": true,
+      "component": "address.delivery-addresses"
+    },
+    "estimates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::estimate.estimate",
+      "mappedBy": "lead"
     }
   }
 }

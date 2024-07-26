@@ -60,6 +60,23 @@ const createSchema = yup.object().shape({
     tags        : yup.array().of( yup.string().uuid() ).nullable(),
 }, [["completeName", "tradeName"]]).strict();
 
+const createDeliveryAddressSchema = yup.object().shape({
+    name : yup.string().required(),
+    address : yup.object().shape({
+        street    : yup.string().required(),
+        extNumber : yup.string().required(),
+        intNumber : yup.string().nullable(),
+        suburb    : yup.string().required(),
+        cp        : yup.string().required().min(5).max(5),
+        city      : yup.string().required(),
+        state     : yup.string().required(),
+        country   : yup.string().required(),
+    }).strict().required(),
+    references : yup.string().nullable(),
+    isMain : yup.bool().required(),
+}).strict();
+
 module.exports = {
     validateCreate : validateYupSchema( createSchema ),
+    validateCreateDeliveryAddress : validateYupSchema( createDeliveryAddressSchema ),
 };

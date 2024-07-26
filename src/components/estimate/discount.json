@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_estimate_discounts",
+  "info": {
+    "displayName": "Discount"
+  },
+  "options": {},
+  "attributes": {
+    "percent": {
+      "type": "decimal"
+    },
+    "amount": {
+      "type": "decimal"
+    }
+  }
+}

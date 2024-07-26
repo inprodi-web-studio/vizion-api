@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_estimate_resumes",
+  "info": {
+    "displayName": "resume"
+  },
+  "options": {},
+  "attributes": {
+    "subtotal": {
+      "type": "decimal"
+    },
+    "individualDiscounts": {
+      "type": "decimal"
+    },
+    "globalDiscount": {
+      "type": "component",
+      "repeatable": false,
+      "component": "estimate.discount"
+    },
+    "taxes": {
+      "type": "decimal"
+    },
+    "shipping": {
+      "type": "decimal"
+    },
+    "total": {
+      "type": "decimal"
+    }
+  }
+}

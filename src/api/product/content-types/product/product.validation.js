@@ -23,7 +23,7 @@ const createSchema = yup.object().shape({
         deliveryTime : yup.number().nullable(),
         unity        : yup.string().nullable(),
         note         : yup.string().nullable(),
-    }).strict().required(),
+    }).strict().nullable(),
     purchaseInfo : yup.object().shape({
         price : yup.number().required(),
         iva   : yup.string().nullable(),
@@ -35,10 +35,10 @@ const createSchema = yup.object().shape({
         alertTo       : yup.string().uuid().nullable(),
         minQuantity   : yup.number().nullable(),
         maxQuantity   : yup.number().nullable(),
-        noStockPolicy : yup.string().nullable(),
+        noStockPolicy : yup.string().oneOf(["none", "estimates", "both"]).nullable(),
         hasBatches    : yup.boolean().required(),
         isPerishable  : yup.boolean().required(),
-    }),
+    }).strict().nullable(),
 }).strict();
 
 const setPricingSchema = yup.object().shape({

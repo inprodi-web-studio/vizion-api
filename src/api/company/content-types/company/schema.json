@@ -85,6 +85,9 @@
     },
     "urlParam": {
       "type": "string"
+    },
+    "website": {
+      "type": "string"
     }
   }
 }

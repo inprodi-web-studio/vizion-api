@@ -1,11 +1,11 @@
 const { LEAD, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, INSIDER, CUSTOMER } = require('../../../constants/models');
 const findMany                 = require('../../../helpers/findMany');
-const { validateCreate }       = require('../content-types/lead/lead.validation');
+const { validateCreate, validateCreateDeliveryAddress }       = require('../content-types/lead/lead.validation');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const checkForDuplicates       = require('../../../helpers/checkForDuplicates');
 const { validateKeyUpdate }    = require('../../../helpers/validateKeyUpdate');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const { UnprocessableContentError } = require('../../../helpers/errors');
+const { UnprocessableContentError, ConflictError } = require('../../../helpers/errors');
 const dayjs = require('dayjs');
 
 const { createCoreController } = require('@strapi/strapi').factories;
@@ -34,6 +34,12 @@ const leadFields = {
                 image : {
                     fields : ["url"],
                 },
+            },
+        },
+        deliveryAddresses : {
+            fields : ["name", "references", "isMain"],
+            populate : {
+                address : true,
             },
         },
     },
@@ -307,6 +313,43 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         const deletedInsider = await strapi.service( INSIDER ).deleteEntityInsider( "lead" );
 
         return deletedInsider;
+    },
+
+    async createDeliveryAddress(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        await validateCreateDeliveryAddress(data);
+
+        const lead = await findOneByUuid( uuid, LEAD, leadFields );
+
+        const leadAddresses = lead.deliveryAddresses;
+
+        const conflictingAddress = leadAddresses.find( address => address.name === data.name );
+
+        if ( conflictingAddress ) {
+            throw new ConflictError( "Delivery address with this name already exists", {
+                key : "lead.duplicated_DeliveryAddress",
+                path : ctx.request.path,
+            });
+        }
+
+        if ( data.isMain && leadAddresses.length > 0 ) {
+            const index = leadAddresses.findIndex( address => address.isMain );
+            leadAddresses[index].isMain = false;
+        }
+
+        const updatedLead = await strapi.entityService.update( LEAD, lead.id, {
+            data : {
+                deliveryAddresses : [
+                    ...leadAddresses,
+                    data,
+                ],
+            },
+            ...leadFields
+        });
+
+        return updatedLead.deliveryAddresses.find( address => address.name === data.name );
     },
 
     async getFiles(ctx) {

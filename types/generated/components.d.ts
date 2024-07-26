@@ -17,6 +17,20 @@ export interface AddressAddress extends Schema.Component {
   };
 }
 
+export interface AddressDeliveryAddresses extends Schema.Component {
+  collectionName: 'components_address_delivery_addresses';
+  info: {
+    displayName: 'deliveryAddresses';
+    description: '';
+  };
+  attributes: {
+    address: Attribute.Component<'address.address'>;
+    name: Attribute.String;
+    references: Attribute.Text;
+    isMain: Attribute.Boolean;
+  };
+}
+
 export interface ContactCompleteName extends Schema.Component {
   collectionName: 'components_contact_complete_names';
   info: {
@@ -48,6 +62,74 @@ export interface CustomerCustomerMeta extends Schema.Component {
   attributes: {
     lastSale: Attribute.DateTime;
     totalSales: Attribute.Decimal;
+  };
+}
+
+export interface EstimateDiscount extends Schema.Component {
+  collectionName: 'components_estimate_discounts';
+  info: {
+    displayName: 'Discount';
+  };
+  attributes: {
+    percent: Attribute.Decimal;
+    amount: Attribute.Decimal;
+  };
+}
+
+export interface EstimateEstimateItem extends Schema.Component {
+  collectionName: 'components_estimate_estimate_items';
+  info: {
+    displayName: 'Estimate Item';
+    description: '';
+  };
+  attributes: {
+    product: Attribute.Relation<
+      'estimate.estimate-item',
+      'oneToOne',
+      'api::product.product'
+    >;
+    quantity: Attribute.Decimal;
+    price: Attribute.Decimal;
+    iva: Attribute.String;
+    dicount: Attribute.Component<'estimate.discount'>;
+  };
+}
+
+export interface EstimateResume extends Schema.Component {
+  collectionName: 'components_estimate_resumes';
+  info: {
+    displayName: 'resume';
+  };
+  attributes: {
+    subtotal: Attribute.Decimal;
+    individualDiscounts: Attribute.Decimal;
+    globalDiscount: Attribute.Component<'estimate.discount'>;
+    taxes: Attribute.Decimal;
+    shipping: Attribute.Decimal;
+    total: Attribute.Decimal;
+  };
+}
+
+export interface EstimateVersion extends Schema.Component {
+  collectionName: 'components_estimate_versions';
+  info: {
+    displayName: 'Version';
+  };
+  attributes: {
+    date: Attribute.Date;
+    dueDate: Attribute.Date;
+    deliveryTime: Attribute.Integer;
+    paymentScheme: Attribute.String;
+    priceList: Attribute.Relation<
+      'estimate.version',
+      'oneToOne',
+      'api::price-list.price-list'
+    >;
+    subject: Attribute.String;
+    items: Attribute.Component<'estimate.estimate-item', true>;
+    resume: Attribute.Component<'estimate.resume'>;
+    comments: Attribute.String;
+    terms: Attribute.String;
   };
 }
 
@@ -161,9 +243,14 @@ declare module '@strapi/types' {
   export module Shared {
     export interface Components {
       'address.address': AddressAddress;
+      'address.delivery-addresses': AddressDeliveryAddresses;
       'contact.complete-name': ContactCompleteName;
       'contact.phone': ContactPhone;
       'customer.customer-meta': CustomerCustomerMeta;
+      'estimate.discount': EstimateDiscount;
+      'estimate.estimate-item': EstimateEstimateItem;
+      'estimate.resume': EstimateResume;
+      'estimate.version': EstimateVersion;
       'fiscal.fiscal-info': FiscalFiscalInfo;
       'lead.lead-meta': LeadLeadMeta;
       'product.dimensions': ProductDimensions;

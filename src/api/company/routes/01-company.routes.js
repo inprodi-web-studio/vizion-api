@@ -2,6 +2,14 @@ module.exports = {
     routes : [
       {
         method  : "GET",
+        path    : "/companies/me",
+        handler : "company.findOne",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "GET",
         path    : "/companies/:urlParam",
         handler : "company.findByUrlParam",
       },

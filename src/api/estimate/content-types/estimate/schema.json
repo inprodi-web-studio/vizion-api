@@ -4,7 +4,8 @@
   "info": {
     "singularName": "estimate",
     "pluralName": "estimates",
-    "displayName": "Estimate"
+    "displayName": "Estimate",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -14,11 +15,50 @@
     "uuid": {
       "type": "string"
     },
+    "fol" : {
+      "type" : "integer"
+    },
+    "responsible": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "closingDate": {
+      "type": "date"
+    },
     "stage": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::estimate-stage.estimate-stage",
       "inversedBy": "estimates"
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::customer.customer",
+      "inversedBy": "estimates"
+    },
+    "lead": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::lead.lead",
+      "inversedBy": "estimates"
+    },
+    "deliveryAddress": {
+      "type": "component",
+      "repeatable": false,
+      "component": "address.delivery-addresses"
+    },
+    "versions": {
+      "displayName": "Version",
+      "type": "component",
+      "repeatable": true,
+      "component": "estimate.version"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
     }
   }
 }

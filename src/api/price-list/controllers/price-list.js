@@ -17,11 +17,29 @@ const listFields = {
 
 module.exports = createCoreController( PRICE_LIST, ({ strapi }) => ({
     async find(ctx) {
+        const { company } = ctx.state;
+
         const filters = {
             $search : [
                 "name",
             ],
         };
+
+        const priceListCount = await strapi.query( PRICE_LIST ).count({
+            where : {
+                company : ctx.state.company.id,
+            },
+        });
+
+        if ( priceListCount === 0 ) {
+            await strapi.entityService.create( PRICE_LIST, {
+                data : {
+                    name : "Lista Predeterminada",
+                    isDefault : true,
+                    company : company.id,
+                },
+            });
+        }
 
         const priceLists = await findMany( PRICE_LIST, listFields, filters );
 

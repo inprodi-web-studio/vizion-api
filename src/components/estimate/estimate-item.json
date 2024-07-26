@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_estimate_estimate_items",
+  "info": {
+    "displayName": "Estimate Item",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product"
+    },
+    "quantity": {
+      "type": "decimal"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "iva": {
+      "type": "string"
+    },
+    "dicount": {
+      "type": "component",
+      "repeatable": false,
+      "component": "estimate.discount"
+    }
+  }
+}

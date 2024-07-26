@@ -18,11 +18,38 @@ const stageFields = {
 
 module.exports = createCoreController( ESTIMATE_STAGE, ({ strapi }) => ({
     async find(ctx) {
+        const { company } = ctx.state;
         const filters = {
             $search : [
                 "name",
             ],
         };
+
+        const stageCount = await strapi.query( ESTIMATE_STAGE ).count({
+            where : {
+                company : company.id,
+            },
+        });
+
+        if ( stageCount === 0 ) {
+            await strapi.entityService.create( ESTIMATE_STAGE, {
+                data : {
+                    name : "Borrador",
+                    potential : 0,
+                    isDefault : true,
+                    company : company.id,
+                },
+            });
+
+            await strapi.entityService.create( ESTIMATE_STAGE, {
+                data : {
+                    name : "Cerrada",
+                    potential : 100,
+                    isDefault : true,
+                    company : company.id,
+                },
+            });
+        }
 
         const stages = await findMany( ESTIMATE_STAGE, stageFields, filters );
 

@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_address_delivery_addresses",
+  "info": {
+    "displayName": "deliveryAddresses",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "address": {
+      "type": "component",
+      "repeatable": false,
+      "component": "address.address"
+    },
+    "name": {
+      "type": "string"
+    },
+    "references": {
+      "type": "text"
+    },
+    "isMain": {
+      "type": "boolean"
+    }
+  }
+}

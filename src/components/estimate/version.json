@@ -1,0 +1,47 @@
+{
+  "collectionName": "components_estimate_versions",
+  "info": {
+    "displayName": "Version"
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "date"
+    },
+    "dueDate": {
+      "type": "date"
+    },
+    "deliveryTime": {
+      "type": "integer"
+    },
+    "paymentScheme": {
+      "type": "string"
+    },
+    "priceList": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::price-list.price-list"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "items" : {
+      "displayName" : "Estimate Item",
+      "type" : "component",
+      "repeatable" : true,
+      "component" : "estimate.estimate-item"
+    },
+    "resume" : {
+      "displayName": "Resume",
+      "type": "component",
+      "repeatable": false,
+      "component": "estimate.resume"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "terms": {
+      "type": "string"
+    }
+  }
+}

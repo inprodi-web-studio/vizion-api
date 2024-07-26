@@ -82,6 +82,14 @@ module.exports = {
       },
       {
         method  : "POST",
+        path    : "/delivery-addresses/leads/:uuid",
+        handler : "lead.createDeliveryAddress",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "POST",
         path    : "/files/leads/:uuid",
         handler : "lead.uploadFile",
         config : {

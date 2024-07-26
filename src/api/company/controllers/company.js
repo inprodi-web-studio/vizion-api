@@ -1,10 +1,37 @@
-const { COMPANY } = require('../../../constants/models');
+const { COMPANY, USER } = require('../../../constants/models');
 const { UnprocessableContentError } = require('../../../helpers/errors');
 const findOneByAny = require('../../../helpers/findOneByAny');
+const findOneByUuid = require('../../../helpers/findOneByUuid');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
 module.exports = createCoreController( COMPANY, ({ strapi }) => ({
+    async findOne(ctx) {
+        const { user } = ctx.state;
+
+        const { company } = await findOneByUuid( user.uuid, USER, {
+            populate : {
+                company : {
+                    fields : ["uuid", "name", "website"],
+                    populate : {
+                        logotype : {
+                            fields : ["url", "name"],
+                        },
+                        fiscalInfo : {
+                            fields : ["legalName", "rfc", "regime"],
+                            populate : {
+                                address : true,
+                            },
+                        },
+                        address : true,
+                    },
+                },
+            },
+        });
+
+        return company;
+    },
+
     async findByUrlParam (ctx) {
         const { urlParam } = ctx.params;
 
