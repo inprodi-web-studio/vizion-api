@@ -1,4 +1,5 @@
 const { ESTIMATE, ESTIMATE_STAGE, USER, CUSTOMER, LEAD, PRICE_LIST, PRODUCT } = require("../../../constants/models");
+const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
 const { createCoreService } = require("@strapi/strapi").factories;
@@ -32,6 +33,11 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
             const { id : productId } = await findOneByUuid( item.product, PRODUCT );
             data.items[i].product = productId;
         }
+
+        if ( data.deliveryAddress ) {
+            delete data.deliveryAddress.id;
+            delete data.deliveryAddress.address.id;
+        }
     },
 
     async generateNextFol( company ) {
@@ -51,5 +57,54 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         }
 
         return lastFol[0].fol + 1;
+    },
+
+    async generateNextVersionFol(versions) {
+        const maxFol = versions.reduce((max, obj) => {
+            return obj.fol > max ? obj.fol : max;
+        }, 0);
+
+        return maxFol + 1;
+    },
+
+    async removeActiveVersion(versions) {
+        const index = versions.findIndex( v => v.isActive );
+        versions[index].isActive = false;
+    },
+
+    async setActiveVersion(versions, activeFol) {
+        const index = versions.findIndex( v => v.fol === Number(activeFol) );
+        versions[index].isActive = true;
+    },
+
+    async removeVersion(versions, fol) {
+        const index = versions.findIndex( v => v.fol === Number(fol) );
+        versions.splice(index, 1);
+    },
+
+    async keyFind({ key, value }) {
+        const ctx = strapi.requestContext.get();
+
+        let entityId;
+
+        switch ( key ) {
+            case "responsible":
+                const { id : responsibleId } = await findOneByUuid( value, USER );
+                entityId = responsibleId;
+            break;
+
+            case "stage":
+                const { id : stageId } = await findOneByUuid( value, ESTIMATE_STAGE );
+                entityId = stageId;
+            break;
+
+            default:
+                throw new BadRequestError( `The key ${key} is not supported in key update`, {
+                    key  : "estimate.unkownKey",
+                    path : ctx.request.url,
+                });
+        }
+
+        return entityId;
     },
 }));

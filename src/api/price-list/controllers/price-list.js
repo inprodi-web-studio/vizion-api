@@ -7,7 +7,7 @@ const { validateCreate } = require("../content-types/price-list/price-list.valid
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const listFields = {
-    fields   : ["uuid", "name", "discount"],
+    fields   : ["uuid", "name", "discount", "isDefault"],
     populate : {
         customers : {
             count : true,
@@ -36,6 +36,7 @@ module.exports = createCoreController( PRICE_LIST, ({ strapi }) => ({
                 data : {
                     name : "Lista Predeterminada",
                     isDefault : true,
+                    discount : 0,
                     company : company.id,
                 },
             });

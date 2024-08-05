@@ -20,7 +20,7 @@
     "iva": {
       "type": "string"
     },
-    "dicount": {
+    "discount": {
       "type": "component",
       "repeatable": false,
       "component": "estimate.discount"

@@ -91,7 +91,7 @@ export interface EstimateEstimateItem extends Schema.Component {
     quantity: Attribute.Decimal;
     price: Attribute.Decimal;
     iva: Attribute.String;
-    dicount: Attribute.Component<'estimate.discount'>;
+    discount: Attribute.Component<'estimate.discount'>;
   };
 }
 
@@ -116,6 +116,7 @@ export interface EstimateVersion extends Schema.Component {
     displayName: 'Version';
   };
   attributes: {
+    fol: Attribute.Integer;
     date: Attribute.Date;
     dueDate: Attribute.Date;
     deliveryTime: Attribute.Integer;
@@ -128,8 +129,9 @@ export interface EstimateVersion extends Schema.Component {
     subject: Attribute.String;
     items: Attribute.Component<'estimate.estimate-item', true>;
     resume: Attribute.Component<'estimate.resume'>;
-    comments: Attribute.String;
-    terms: Attribute.String;
+    comments: Attribute.Text;
+    terms: Attribute.Text;
+    isActive: Attribute.Boolean;
   };
 }
 

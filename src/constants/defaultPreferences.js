@@ -1,12 +1,16 @@
 const defaultPreferences = {
     crm : {
         estimates : {
-            "showRFC": true,
-            "autoInvoice": true,
-            "showAddress": true,
             "showLogotype": true,
-            "addressToShow": "fiscal",
+            "showRFC": true,
             "showLegalName": true,
+            "showAddress": true,
+            "addressToShow": "fiscal",
+            "autoInvoice": true,
+            "showContactRFC" : true,
+            "showContactLegalName" : true,
+            "showContactAddress" : true,
+            "contactAddressToShow" : "fiscal",
             "defaultDueDays": 30,
             "defaultCloseDays": 20,
             "defaultDeliveryDays" : 10,

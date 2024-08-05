@@ -5,6 +5,9 @@
   },
   "options": {},
   "attributes": {
+    "fol": {
+      "type": "integer"
+    },
     "date": {
       "type": "date"
     },
@@ -38,10 +41,13 @@
       "component": "estimate.resume"
     },
     "comments": {
-      "type": "string"
+      "type": "text"
     },
     "terms": {
-      "type": "string"
+      "type": "text"
+    },
+    "isActive": {
+      "type": "boolean"
     }
   }
 }
