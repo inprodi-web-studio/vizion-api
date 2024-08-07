@@ -16,7 +16,7 @@
       "type": "integer"
     },
     "note": {
-      "type": "string"
+      "type": "text"
     },
     "unity": {
       "type": "string"

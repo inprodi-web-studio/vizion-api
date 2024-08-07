@@ -13,7 +13,7 @@
       "type": "string"
     },
     "note": {
-      "type": "string"
+      "type": "text"
     },
     "unity": {
       "type": "string"
