@@ -1764,6 +1764,27 @@ export interface ApiProductCategoryProductCategory
   };
 }
 
+export interface ApiSaleSale extends Schema.CollectionType {
+  collectionName: 'sales';
+  info: {
+    singularName: 'sale';
+    pluralName: 'sales';
+    displayName: 'Sale';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSuscriptionPaymentSuscriptionPayment
   extends Schema.CollectionType {
   collectionName: 'suscription_payments';
@@ -2042,6 +2063,7 @@ declare module '@strapi/types' {
       'api::product.product': ApiProductProduct;
       'api::product-attribute.product-attribute': ApiProductAttributeProductAttribute;
       'api::product-category.product-category': ApiProductCategoryProductCategory;
+      'api::sale.sale': ApiSaleSale;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;
       'api::suscription-plan.suscription-plan': ApiSuscriptionPlanSuscriptionPlan;
       'api::suscription-status.suscription-status': ApiSuscriptionStatusSuscriptionStatus;
