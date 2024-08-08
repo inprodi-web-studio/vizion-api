@@ -143,6 +143,24 @@
       "relation": "oneToMany",
       "target": "api::estimate.estimate",
       "mappedBy": "customer"
+    },
+    "sales": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::sale.sale",
+      "mappedBy": "customer"
+    },
+    "payments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::payment.payment",
+      "mappedBy": "customer"
+    },
+    "credit": {
+      "displayName": "credit",
+      "type": "component",
+      "repeatable": false,
+      "component": "customer.credit"
     }
   }
 }

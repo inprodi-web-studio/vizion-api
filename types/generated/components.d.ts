@@ -54,6 +54,17 @@ export interface ContactPhone extends Schema.Component {
   };
 }
 
+export interface CustomerCredit extends Schema.Component {
+  collectionName: 'components_customer_credits';
+  info: {
+    displayName: 'credit';
+  };
+  attributes: {
+    daysToPay: Attribute.Integer;
+    amountLimit: Attribute.Decimal;
+  };
+}
+
 export interface CustomerCustomerMeta extends Schema.Component {
   collectionName: 'components_customer_customer_metas';
   info: {
@@ -248,6 +259,7 @@ declare module '@strapi/types' {
       'address.delivery-addresses': AddressDeliveryAddresses;
       'contact.complete-name': ContactCompleteName;
       'contact.phone': ContactPhone;
+      'customer.credit': CustomerCredit;
       'customer.customer-meta': CustomerCustomerMeta;
       'estimate.discount': EstimateDiscount;
       'estimate.estimate-item': EstimateEstimateItem;

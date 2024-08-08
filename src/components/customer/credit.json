@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_customer_credits",
+  "info": {
+    "displayName": "credit"
+  },
+  "options": {},
+  "attributes": {
+    "daysToPay": {
+      "type": "integer"
+    },
+    "amountLimit": {
+      "type": "decimal"
+    }
+  }
+}

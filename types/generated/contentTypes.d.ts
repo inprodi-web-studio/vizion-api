@@ -1172,6 +1172,17 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
       'oneToMany',
       'api::estimate.estimate'
     >;
+    sales: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::sale.sale'
+    >;
+    payments: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::payment.payment'
+    >;
+    credit: Attribute.Component<'customer.credit'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1539,6 +1550,51 @@ export interface ApiNoteNote extends Schema.CollectionType {
   };
 }
 
+export interface ApiPaymentPayment extends Schema.CollectionType {
+  collectionName: 'payments';
+  info: {
+    singularName: 'payment';
+    pluralName: 'payments';
+    displayName: 'Payment';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    customer: Attribute.Relation<
+      'api::payment.payment',
+      'manyToOne',
+      'api::customer.customer'
+    >;
+    amount: Attribute.Decimal;
+    date: Attribute.Date;
+    fol: Attribute.Integer;
+    paymenthForm: Attribute.String;
+    comments: Attribute.String;
+    sales: Attribute.Relation<
+      'api::payment.payment',
+      'manyToMany',
+      'api::sale.sale'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiPreferencePreference extends Schema.CollectionType {
   collectionName: 'preferences';
   info: {
@@ -1770,12 +1826,48 @@ export interface ApiSaleSale extends Schema.CollectionType {
     singularName: 'sale';
     pluralName: 'sales';
     displayName: 'Sale';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
     uuid: Attribute.String;
+    fol: Attribute.Integer;
+    responsible: Attribute.Relation<
+      'api::sale.sale',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+    deliveryDate: Attribute.Date;
+    customer: Attribute.Relation<
+      'api::sale.sale',
+      'manyToOne',
+      'api::customer.customer'
+    >;
+    deliveryAddress: Attribute.Component<'address.delivery-addresses'>;
+    date: Attribute.Date;
+    paymenthScheme: Attribute.String;
+    priceList: Attribute.Relation<
+      'api::sale.sale',
+      'oneToOne',
+      'api::price-list.price-list'
+    >;
+    subject: Attribute.String;
+    items: Attribute.Component<'estimate.estimate-item', true>;
+    resume: Attribute.Component<'estimate.resume'>;
+    comments: Attribute.Text;
+    terms: Attribute.Text;
+    company: Attribute.Relation<
+      'api::sale.sale',
+      'oneToOne',
+      'api::company.company'
+    >;
+    payments: Attribute.Relation<
+      'api::sale.sale',
+      'manyToMany',
+      'api::payment.payment'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &
@@ -2058,6 +2150,7 @@ declare module '@strapi/types' {
       'api::invitation.invitation': ApiInvitationInvitation;
       'api::lead.lead': ApiLeadLead;
       'api::note.note': ApiNoteNote;
+      'api::payment.payment': ApiPaymentPayment;
       'api::preference.preference': ApiPreferencePreference;
       'api::price-list.price-list': ApiPriceListPriceList;
       'api::product.product': ApiProductProduct;

@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "payments",
+  "info": {
+    "singularName": "payment",
+    "pluralName": "payments",
+    "displayName": "Payment",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::customer.customer",
+      "inversedBy": "payments"
+    },
+    "amount": {
+      "type": "decimal"
+    },
+    "date": {
+      "type": "date"
+    },
+    "fol": {
+      "type": "integer"
+    },
+    "paymenthForm": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "sales": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::sale.sale",
+      "inversedBy": "payments"
+    }
+  }
+}

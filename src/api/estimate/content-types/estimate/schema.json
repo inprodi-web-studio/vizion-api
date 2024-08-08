@@ -15,8 +15,8 @@
     "uuid": {
       "type": "string"
     },
-    "fol" : {
-      "type" : "integer"
+    "fol": {
+      "type": "integer"
     },
     "responsible": {
       "type": "relation",

@@ -4,7 +4,8 @@
   "info": {
     "singularName": "sale",
     "pluralName": "sales",
-    "displayName": "Sale"
+    "displayName": "Sale",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -13,6 +14,69 @@
   "attributes": {
     "uuid": {
       "type": "string"
+    },
+    "fol": {
+      "type": "integer"
+    },
+    "responsible": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "deliveryDate": {
+      "type": "date"
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::customer.customer",
+      "inversedBy": "sales"
+    },
+    "deliveryAddress": {
+      "type": "component",
+      "repeatable": false,
+      "component": "address.delivery-addresses"
+    },
+    "date": {
+      "type": "date"
+    },
+    "paymenthScheme": {
+      "type": "string"
+    },
+    "priceList": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::price-list.price-list"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "estimate.estimate-item"
+    },
+    "resume": {
+      "type": "component",
+      "repeatable": false,
+      "component": "estimate.resume"
+    },
+    "comments": {
+      "type": "text"
+    },
+    "terms": {
+      "type": "text"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "payments": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::payment.payment",
+      "mappedBy": "sales"
     }
   }
 }
