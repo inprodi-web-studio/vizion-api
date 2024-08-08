@@ -23,6 +23,7 @@ const customerFields = {
             }
         },
         customerMeta : true,
+        credit       : true,
         group        : true,
         source       : true,
         tags         : true,
