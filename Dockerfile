@@ -26,7 +26,7 @@ ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium-browser
 WORKDIR /app
 
 # Copy built files from the builder stage
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app /app
 
 # Copy package.json and yarn.lock
 COPY package.json .
