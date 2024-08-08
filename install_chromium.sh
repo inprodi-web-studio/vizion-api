@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Actualiza la lista de paquetes
-apt-get update
+sudo apt-get update
 
 # Instala las dependencias necesarias para Chromium
-apt-get install -y \
+sudo apt-get install -y \
     gconf-service \
     libasound2 \
     libatk1.0-0 \
@@ -33,4 +33,4 @@ apt-get install -y \
     wget
 
 # Instala Chromium
-apt-get install -y chromium-browser
+sudo apt-get install -y chromium-browser
