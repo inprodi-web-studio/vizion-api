@@ -23,9 +23,6 @@ COPY . .
 # Build the application
 RUN yarn build
 
-# Etapa 2: Imagen final
-FROM node:18-alpine AS final
-
 # Set working directory
 WORKDIR /app
 
