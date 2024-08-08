@@ -47,10 +47,7 @@ RUN yarn install --frozen-lockfile --production
 EXPOSE 8080
 
 # Log current directory and its contents for debugging
-RUN echo "Current directory: $(pwd)" && ls -la
-
-# Clean any potential cache issues
-RUN rm -rf /var/cache/apk/*
+RUN echo "Current directory: $(pwd)" && ls -la && echo "Contents of /app: " && ls -la /app
 
 # Run the application
 CMD ["yarn", "start"]
