@@ -29,13 +29,10 @@ WORKDIR /app
 COPY --from=builder /app /app
 
 # Copy package.json and yarn.lock
-COPY package.json .
-COPY yarn.lock .
+COPY package*.json ./
 
 # Install production dependencies
-RUN yarn install --frozen-lockfile --production
-RUN echo "Contents of /app/node_modules after yarn install --production:" && ls -la /app/node_module
-RUN echo "Si alcanzó a instalar las dependencias de producción"
+RUN yarn install
 
 # Expose the port the app runs on
 EXPOSE 8080
