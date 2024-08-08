@@ -58,10 +58,12 @@ export interface CustomerCredit extends Schema.Component {
   collectionName: 'components_customer_credits';
   info: {
     displayName: 'credit';
+    description: '';
   };
   attributes: {
     daysToPay: Attribute.Integer;
     amountLimit: Attribute.Decimal;
+    amountUsed: Attribute.Decimal;
   };
 }
 

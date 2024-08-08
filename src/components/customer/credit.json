@@ -1,7 +1,8 @@
 {
   "collectionName": "components_customer_credits",
   "info": {
-    "displayName": "credit"
+    "displayName": "credit",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -9,6 +10,9 @@
       "type": "integer"
     },
     "amountLimit": {
+      "type": "decimal"
+    },
+    "amountUsed": {
       "type": "decimal"
     }
   }
