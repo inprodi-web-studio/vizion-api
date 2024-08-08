@@ -321,7 +321,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
 
         try {
             const browser = await puppeteer.launch({
-                executablePath : process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
+                executablePath : process.env.PUPPETEER_EXECUTABLE_PATH,
                 args : [
                     "--disable-gpu",
                     "--disable-setuid-sandbox",
