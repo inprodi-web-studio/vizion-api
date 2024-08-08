@@ -4,47 +4,39 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Install Chromium and necessary dependencies
-RUN apk add --no-cache chromium ca-certificates
-
-# Set environment variables for Puppeteer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# Copy package.json and yarn.lock
-COPY package*.json ./
+# Copy the rest of the application code
+COPY . .
 
 # Install dependencies
 RUN yarn install --frozen-lockfile
 
-# Copy the rest of the application code
-COPY . .
-
 # Build the application
 RUN yarn build
 
-# Set working directory
-WORKDIR /app
+FROM node:18-alpine AS final
 
 # Install Chromium and necessary dependencies
 RUN apk add --no-cache chromium ca-certificates
 
-# Copy built files from the builder stage
-COPY --from=builder /app /app
-
 # Set environment variables for Puppeteer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
-    NODE_ENV=production
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium-browser
+
+# Set working directory
+WORKDIR /app
+
+# Copy built files from the builder stage
+COPY --from=builder /app/dist ./dist
+
+# Copy package.json and yarn.lock
+COPY package.json .
+COPY yarn.lock .
 
 # Install production dependencies
 RUN yarn install --frozen-lockfile --production
 
 # Expose the port the app runs on
 EXPOSE 8080
-
-# Log current directory and its contents for debugging
-RUN echo "Current directory: $(pwd)" && ls -la && echo "Contents of /app: " && ls -la /app
 
 # Run the application
 CMD ["yarn", "start"]
