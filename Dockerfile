@@ -37,16 +37,20 @@ COPY --from=builder /app /app
 
 # Set environment variables for Puppeteer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# Set environment variables for production
-ENV NODE_ENV=production
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
+    NODE_ENV=production
 
 # Install production dependencies
 RUN yarn install --frozen-lockfile --production
 
 # Expose the port the app runs on
 EXPOSE 8080
+
+# Log current directory and its contents for debugging
+RUN echo "Current directory: $(pwd)" && ls -la
+
+# Clean any potential cache issues
+RUN rm -rf /var/cache/apk/*
 
 # Run the application
 CMD ["yarn", "start"]
