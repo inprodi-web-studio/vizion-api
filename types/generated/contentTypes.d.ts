@@ -1847,7 +1847,7 @@ export interface ApiSaleSale extends Schema.CollectionType {
     >;
     deliveryAddress: Attribute.Component<'address.delivery-addresses'>;
     date: Attribute.Date;
-    paymenthScheme: Attribute.String;
+    paymentScheme: Attribute.String;
     priceList: Attribute.Relation<
       'api::sale.sale',
       'oneToOne',

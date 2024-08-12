@@ -5,6 +5,7 @@ const createSchema = yup.object().shape({
     deliveryAddress : yup.object().nullable(),
     date : yup.string().required(),
     deliveryTime : yup.number().nullable(),
+    deliveryDate : yup.string().nullable(),
     responsible : yup.string().uuid().required(),
     paymentScheme : yup.string().oneOf(["undefined", "anticipated", "on-deliver", "on-advance", "deferred", "credit"]).required(),
     creditPolicy : yup.string().oneOf(["on-sale", "on-deliver"]).nullable(),

@@ -40,7 +40,7 @@
     "date": {
       "type": "date"
     },
-    "paymenthScheme": {
+    "paymentScheme": {
       "type": "string"
     },
     "priceList": {

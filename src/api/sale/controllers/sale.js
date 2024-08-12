@@ -52,6 +52,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         const newEstimate = await strapi.entityService.create( SALE, {
             data : {
                 fol,
+                company : company.id,
                 ...data,
             },
         });
