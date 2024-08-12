@@ -1,3 +1,4 @@
+const dayjs = require("dayjs");
 const { ESTIMATE, ESTIMATE_STAGE, USER, CUSTOMER, LEAD, PRICE_LIST, PRODUCT } = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
@@ -188,7 +189,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         return entityId;
     },
 
-    async editConvertedEstimate(company, estimate) {
+    async updateConvertedEstimate(company, estimate, version) {
         const lastStage = await strapi.query( ESTIMATE_STAGE ).findOne({
             where : {
                 company : company.id,
@@ -201,7 +202,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 stage : lastStage.id,
                 saleMeta : {
                     closingDate   : dayjs().format("YYYY-MM-DD"),
-                    daysToClose   : dayjs().diff( dayjs( selectedVersion.date, "day" )),
+                    daysToClose   : dayjs().diff( dayjs( version.date, "day" )),
                     closedVersion : Number( version ),
                 },
             },

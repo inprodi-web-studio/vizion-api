@@ -24,6 +24,7 @@ const estimateFields = {
         stage : {
             fields : ["uuid", "name"],
         },
+        saleMeta : true,
         customer : {
             fields : ["uuid", "finalName"],
             populate : {
