@@ -1870,6 +1870,7 @@ export interface ApiSaleSale extends Schema.CollectionType {
     >;
     creditPolicy: Attribute.String;
     limitPaymentDate: Attribute.Date;
+    isAuthorized: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &

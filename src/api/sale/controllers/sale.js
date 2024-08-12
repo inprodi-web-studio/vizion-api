@@ -6,12 +6,69 @@ const { validateCreate } = require("../content-types/sale/sale.validation");
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const saleFields = {
-    fields : [],
-    populate : {}
+    fields : ["uuid", "fol", "deliveryDate", "date", "paymentScheme", "subject", "comments", "terms", "creditPolicy", "limitPaymentDate", "isAuthorized"],
+    populate : {
+        responsible : {
+            fields : ["uuid", "name", "middleName", "lastName"],
+            populate : {
+                image : {
+                    fields : ["url"],
+                },
+            },
+        },
+        customer : {
+            fields : ["uuid", "finalName"],
+            populate : {
+                credit : true,
+                mainAddress : true,
+                fiscalInfo : {
+                    fields : ["legalName", "rfc", "regime"],
+                    populate : {
+                        address : true,
+                    },
+                },
+                deliveryAddresses : {
+                    fields : ["name", "isMain"],
+                    populate : {
+                        address : true,
+                    },
+                },
+            },
+        },
+        deliveryAddress : {
+            fields : ["name", "isMain"],
+            populate : {
+                address : true,
+            },
+        },
+        priceList : {
+            fields : ["uuid", "name"],
+        },
+        items : {
+            fields : ["quantity", "price", "iva"],
+            populate : {
+                product : {
+                    fields : ["uuid", "name", "sku", "description"],
+                    populate : {
+                        images : {
+                            fields : ["url"],
+                        },
+                    },
+                },
+                discount : true,
+            },
+        },
+        resume : {
+            fields : ["subtotal", "individualDiscounts", "taxes", "shipping", "total"],
+            populate : {
+                globalDiscount : true,
+            },
+        },
+    }
 };
 
 module.exports = createCoreController(SALE, ({ strapi }) => ({
-    async find() {
+    async find(ctx) {
         const query = ctx.query;
 
         const filters = {

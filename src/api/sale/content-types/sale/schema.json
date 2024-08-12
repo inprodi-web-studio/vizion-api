@@ -83,6 +83,9 @@
     },
     "limitPaymentDate": {
       "type": "date"
+    },
+    "isAuthorized": {
+      "type": "boolean"
     }
   }
 }
