@@ -8,7 +8,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const { id : responsibleId } = await findOneByUuid( data.responsible, USER );
         data.responsible = responsibleId;
 
-        const { id : customerId } = await findOneByUuid( data.contact, CUSTOMER );
+        const { id : customerId } = await findOneByUuid( data.customer, CUSTOMER );
         data.customer = customerId;
 
         const { id : priceListId } = await findOneByUuid( data.priceList, PRICE_LIST );
