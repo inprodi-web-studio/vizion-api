@@ -116,4 +116,33 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         return newEstimate;
     },
+
+    async update(ctx) {
+        const { uuid } = ctx.params;
+        const data = ctx.request.body;
+
+        await validateCreate( data );
+
+        const sale = await findOneByUuid( uuid, SALE, saleFields );
+
+        await strapi.service( SALE ).validateParallelData( data );
+
+        const updatedSale = await strapi.entityService.update( SALE, sale.id, {
+            data : {
+                ...data,
+            },
+        });
+
+        return updatedSale;
+    },
+
+    async delete(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id } = await findOneByUuid( uuid, SALE );
+
+        const deletedSale = await strapi.entityService.delete( SALE, id );
+
+        return deletedSale;
+    },
 }));

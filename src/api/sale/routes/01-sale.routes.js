@@ -24,5 +24,21 @@ module.exports = {
           policies : ["global::userContext"],
         },
       },
+      {
+        method  : "PUT",
+        path    : "/sales/:uuid",
+        handler : "sale.update",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "DELETE",
+        path    : "/sales/:uuid",
+        handler : "sale.delete",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
     ],
 }

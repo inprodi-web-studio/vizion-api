@@ -86,6 +86,9 @@
     },
     "isAuthorized": {
       "type": "boolean"
+    },
+    "deliveryTime": {
+      "type": "integer"
     }
   }
 }
