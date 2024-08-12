@@ -1,5 +1,5 @@
 const { default: puppeteer } = require("puppeteer");
-const { ESTIMATE, COMPANY, PREFERENCE, SALE, LEAD } = require("../../../constants/models");
+const { ESTIMATE, COMPANY, PREFERENCE, SALE, LEAD, ESTIMATE_STAGE } = require("../../../constants/models");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { validateCreate } = require("../content-types/estimate/estimate.validation");
@@ -312,6 +312,8 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
             },
             fields : ["uuid"],
         });
+
+        await strapi.service( ESTIMATE ).updateConvertedEstimate( company, estimate, selectedVersion );
 
         return newSale;
     },

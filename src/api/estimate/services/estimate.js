@@ -187,4 +187,24 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
 
         return entityId;
     },
+
+    async editConvertedEstimate(company, estimate) {
+        const lastStage = await strapi.query( ESTIMATE_STAGE ).findOne({
+            where : {
+                company : company.id,
+                potential : 100,
+            },
+        });
+
+        await strapi.entityService.update( ESTIMATE, estimate.id, {
+            data : {
+                stage : lastStage.id,
+                saleMeta : {
+                    closingDate   : dayjs().format("YYYY-MM-DD"),
+                    daysToClose   : dayjs().diff( dayjs( selectedVersion.date, "day" )),
+                    closedVersion : Number( version ),
+                },
+            },
+        });
+    },
 }));
