@@ -7,6 +7,7 @@ dayjs.extend(localizedFormat);
 
 const schemeDictionary = {
     "undefined" : "Sin Definir",
+    "ancitipated" : "Pago Anticipado",
     "on-deliver" : "Pago contra Entrega",
     "on-advance" : "Anticipo y Liquidación",
     "deferred" : "Pagos Diferidos",
@@ -441,7 +442,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                     <p class="info-text">${ version.deliveryTime } ${ version.deliveryTime === 1 ? "Día" : "Días" }</p>
                 </div>`}
                 <div class="scheme-container">
-                    <p class="label">Esquema de Pago:</p>
+                    <p class="label">Términos de Pago:</p>
                     <p class="info-text">${ schemeDictionary[ version.paymentScheme ] }</p>
                 </div>
             </div>

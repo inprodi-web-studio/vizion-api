@@ -88,8 +88,6 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
     },
 
     async validateParallelData(data) {
-        const ctx = strapi.requestContext.get();
-
         const { id : responsibleId } = await findOneByUuid( data.responsible, USER );
         data.responsible = responsibleId;
 

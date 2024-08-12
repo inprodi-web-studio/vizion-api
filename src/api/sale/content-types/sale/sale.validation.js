@@ -1,16 +1,14 @@
 const { yup, validateYupSchema } = require("../../../../helpers/validators");
 
 const createSchema = yup.object().shape({
-    stage : yup.string().uuid().required(),
-    contact : yup.string().uuid().required(),
-    contactType : yup.string().oneOf(["customer", "lead"]).required(),
+    customer : yup.string().uuid().required(),
     deliveryAddress : yup.object().nullable(),
     date : yup.string().required(),
-    dueDate : yup.string().required(),
-    closingDate : yup.string().required(),
     deliveryTime : yup.number().nullable(),
     responsible : yup.string().uuid().required(),
     paymentScheme : yup.string().oneOf(["undefined", "anticipated", "on-deliver", "on-advance", "deferred", "credit"]).required(),
+    creditPolicy : yup.string().oneOf(["on-sale", "on-deliver"]).nullable(),
+    limitPaymentDate : yup.string().nullable(),
     priceList : yup.string().uuid().required(),
     subject : yup.string().required(),
     items : yup.array().of( yup.object().shape({

@@ -26,6 +26,7 @@ const estimateFields = {
         customer : {
             fields : ["uuid", "finalName"],
             populate : {
+                credit : true,
                 mainAddress : true,
                 fiscalInfo : {
                     fields : ["legalName", "rfc", "regime"],

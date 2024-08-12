@@ -23,7 +23,10 @@ const defaultPreferences = {
             "defaultCustomerNote": "",
             "defaultTermsAndConditions": "",
             "showWebsite": true,
-          }
+          },
+          sales : {
+            "needsAuthorization": true,
+          },
     },
 };
 

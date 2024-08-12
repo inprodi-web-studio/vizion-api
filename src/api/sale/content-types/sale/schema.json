@@ -77,6 +77,12 @@
       "relation": "manyToMany",
       "target": "api::payment.payment",
       "mappedBy": "sales"
+    },
+    "creditPolicy": {
+      "type": "string"
+    },
+    "limitPaymentDate": {
+      "type": "date"
     }
   }
 }

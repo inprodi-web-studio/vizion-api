@@ -5,6 +5,7 @@ module.exports = {
     NOTE                : "api::note.note",
     USER                : "plugin::users-permissions.user",
     ROLE                : "plugin::users-permissions.role",
+    SALE                : "api::sale.sale",
     COMPANY             : "api::company.company",
     PRODUCT             : "api::product.product",
     INSIDER             : "api::insider.insider",
