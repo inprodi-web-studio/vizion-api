@@ -59,6 +59,18 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::company.company"
+    },
+    "saleMeta": {
+      "displayName": "Sales Meta",
+      "type": "component",
+      "repeatable": false,
+      "component": "estimate.sales-meta"
+    },
+    "sales": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::sale.sale",
+      "mappedBy": "estimate"
     }
   }
 }

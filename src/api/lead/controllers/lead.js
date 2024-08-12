@@ -226,49 +226,11 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         const data    = ctx.request.body;
         const company = ctx.state.company;
 
-        const lead = await validateEntityPermission( uuid, LEAD, {
-            fields : [ ...leadFields.fields ],
-            populate : {
-                ...leadFields.populate,
-                ...( data.tasks && {
-                    tasks : true,
-                }),
-                ...( data.documents && {
-                    documents : true,
-                }),
-                ...( data.notes && {
-                    notes : true,
-                }),
-                ...( data.interactions && {
-                    interactions : true,
-                }),
-            },
-        });
+        const lead = await strapi.service( LEAD ).prepareLeadData( uuid, data );
 
-        const leadCreation = dayjs( lead.createdAt );
-        const today        = dayjs();
-        const difference   = today.diff( leadCreation, "day" );
+        const newCustomer = await strapi.service( LEAD ).convertLeadToCustomer( lead, company );
 
-        const leadId = lead.id;
-
-        delete lead.createdAt;
-        delete lead.id;
-
-        const newCustomer = await strapi.entityService.create( CUSTOMER, {
-            data : {
-                ...lead,
-                leadMeta : {
-                    daysToConvert : difference,
-                    convertedAt   : new Date(),
-                    leadCreatedAt : leadCreation,
-                },
-                isArchived : false,
-                company    : company.id,
-            },
-            fields : ["uuid"],
-        });
-
-        await strapi.entityService.delete( LEAD, leadId );
+        await strapi.entityService.delete( LEAD, lead.id );
 
         return newCustomer;
     },

@@ -89,6 +89,12 @@
     },
     "deliveryTime": {
       "type": "integer"
+    },
+    "estimate": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::estimate.estimate",
+      "inversedBy": "sales"
     }
   }
 }

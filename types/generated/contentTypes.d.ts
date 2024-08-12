@@ -1278,6 +1278,12 @@ export interface ApiEstimateEstimate extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
+    saleMeta: Attribute.Component<'estimate.sales-meta'>;
+    sales: Attribute.Relation<
+      'api::estimate.estimate',
+      'oneToMany',
+      'api::sale.sale'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1872,6 +1878,11 @@ export interface ApiSaleSale extends Schema.CollectionType {
     limitPaymentDate: Attribute.Date;
     isAuthorized: Attribute.Boolean;
     deliveryTime: Attribute.Integer;
+    estimate: Attribute.Relation<
+      'api::sale.sale',
+      'manyToOne',
+      'api::estimate.estimate'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &

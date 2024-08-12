@@ -1,3 +1,4 @@
+const dayjs = require("dayjs");
 const {
     TAG,
     LEAD,
@@ -12,6 +13,42 @@ const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid       = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
+const validateEntityPermission = require("../../../helpers/validateEntityPermission");
+
+const leadFields = {
+    fields   : ["uuid", "tradeName", "finalName", "email", "website", "rating", "isActive", "value", "potential", "createdAt"],
+    populate : {
+        completeName : true,
+        phone        : true,
+        cellphone    : true,
+        mainAddress  : true,
+        fiscalInfo   : true,
+        group        : true,
+        source       : true,
+        tags         : true,
+        insiders     : {
+            fields : ["uuid", "email", "isPrimary", "job"],
+            populate : {
+                completeName : true,
+                phone        : true,
+            },
+        },
+        responsible  : {
+            fields : ["uuid", "name", "middleName", "lastName"],
+            populate : {
+                image : {
+                    fields : ["url"],
+                },
+            },
+        },
+        deliveryAddresses : {
+            fields : ["name", "references", "isMain"],
+            populate : {
+                address : true,
+            },
+        },
+    },
+};
 
 const { createCoreService } = require("@strapi/strapi").factories;
 
@@ -345,5 +382,49 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             lead.stats = {};
             lead.stats.activities = data;
         }
+    },
+
+    async prepareLeadInfo(uuid, data = {}) {
+        await validateEntityPermission( uuid, LEAD, {
+            fields : [ ...leadFields.fields ],
+            populate : {
+                ...leadFields.populate,
+                ...( data?.tasks && {
+                    tasks : true,
+                }),
+                ...( data?.documents && {
+                    documents : true,
+                }),
+                ...( data?.notes && {
+                    notes : true,
+                }),
+                ...( data?.interactions && {
+                    interactions : true,
+                }),
+            },
+        });
+    },
+
+    async convertLeadToCustomer(lead, company) {
+        const leadCreation = dayjs( lead.createdAt );
+        const today        = dayjs();
+        const difference   = today.diff( leadCreation, "day" );
+
+        delete lead.createdAt;
+        delete lead.id;
+
+        return await strapi.entityService.create( CUSTOMER, {
+            data : {
+                ...lead,
+                leadMeta : {
+                    daysToConvert : difference,
+                    convertedAt   : new Date(),
+                    leadCreatedAt : leadCreation,
+                },
+                isArchived : false,
+                company    : company.id,
+            },
+            fields : ["uuid"],
+        });
     },
 }));

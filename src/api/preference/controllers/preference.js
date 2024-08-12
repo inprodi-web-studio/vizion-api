@@ -30,25 +30,7 @@ module.exports = createCoreController( PREFERENCE, ({ strapi }) => ({
             });
         }
 
-        const preference = await strapi.query(PREFERENCE).findOne({
-            where : {
-                company : company.id,
-                app,
-                module,
-            },
-        });
-
-        if ( !preference ) {
-            return await strapi.entityService.create( PREFERENCE, {
-                data : {
-                    app,
-                    module,
-                    config  : defaultPreferences[ app ][ module ],
-                    company : company.id,
-                },
-                ...preferenceFields
-            });
-        }
+        const preference = await strapi.service( PREFERENCE ).findOrCreate( company, app, module );
 
         return preference;
     },

@@ -123,6 +123,18 @@ export interface EstimateResume extends Schema.Component {
   };
 }
 
+export interface EstimateSalesMeta extends Schema.Component {
+  collectionName: 'components_estimate_sales_metas';
+  info: {
+    displayName: 'Sales Meta';
+  };
+  attributes: {
+    closingDate: Attribute.Date;
+    daysToClose: Attribute.Integer;
+    closedVersion: Attribute.Integer;
+  };
+}
+
 export interface EstimateVersion extends Schema.Component {
   collectionName: 'components_estimate_versions';
   info: {
@@ -266,6 +278,7 @@ declare module '@strapi/types' {
       'estimate.discount': EstimateDiscount;
       'estimate.estimate-item': EstimateEstimateItem;
       'estimate.resume': EstimateResume;
+      'estimate.sales-meta': EstimateSalesMeta;
       'estimate.version': EstimateVersion;
       'fiscal.fiscal-info': FiscalFiscalInfo;
       'lead.lead-meta': LeadLeadMeta;

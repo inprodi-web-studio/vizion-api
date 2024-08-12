@@ -1,11 +1,12 @@
 const { default: puppeteer } = require("puppeteer");
-const { ESTIMATE, COMPANY, PREFERENCE } = require("../../../constants/models");
+const { ESTIMATE, COMPANY, PREFERENCE, SALE, LEAD } = require("../../../constants/models");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { validateCreate } = require("../content-types/estimate/estimate.validation");
 const { BadRequestError, NotFoundError } = require("../../../helpers/errors");
 const defaultEstimate = require("../../../templates/defaultEstimate.template");
 const {validateKeyUpdate} = require("../../../helpers/validateKeyUpdate");
+const dayjs = require("dayjs");
 
 const { createCoreController } = require("@strapi/strapi").factories;
 
@@ -264,6 +265,55 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
         });
 
         return updatedEstimate;
+    },
+
+    async convert(ctx) {
+        const { uuid, version } = ctx.params;
+        const { company } = ctx.state;
+
+        const estimate = await findOneByUuid( uuid, ESTIMATE, estimateFields );
+        const selectedVersion = estimate.versions.find( v => v.fol === Number( version ) );
+
+        const preference = await strapi.service( PREFERENCE ).findOrCreate( company, "crm", "sales" );
+
+        const fol = await strapi.service( SALE ).generateNextFol( company );
+
+        let newCustomer;
+
+        if ( estimate.lead ) {
+            const lead = await strapi.service( LEAD ).prepareLeadData( uuid );
+
+            newCustomer = await strapi.service( LEAD ).convertLeadToCustomer( lead, company );
+
+            await strapi.entityService.delete( LEAD, estimate.lead.id );
+        }
+
+        const newSale = await strapi.entityService.create( SALE, {
+            data : {
+                fol,
+                responsible : estimate.responsible,
+                deliveryDate : selectedVersion.deliveryTime !== -1 ? dayjs().add( selectedVersion.deliveryTime, "day" ).format("YYYY-MM-DD") : null,
+                customer : estimate.lead ? newCustomer.id : estimate.customer.id,
+                deliveryAddress : estimate.deliveryAddress,
+                date : dayjs().format("YYYY-MM-DD"),
+                paymentScheme : selectedVersion.paymentScheme,
+                priceList : selectedVersion.priceList.id,
+                subject : selectedVersion.subject,
+                items : selectedVersion.items,
+                resume : selectedVersion.resume,
+                comments : selectedVersion.comments,
+                terms : selectedVersion.terms,
+                company : company.id,
+                creditPolicy : selectedVersion.paymentScheme === "credit" ? "on-sale" : null,
+                limitPaymentDay : dayjs().add( estimate.customer.daysToPay, "day" ).format("YYYY-MM-DD"),
+                isAuthorized : preference.config.needsAuthorization ? false : true,
+                deliveryTime : selectedVersion.deliveryTime,
+                estimate : estimate.id,
+            },
+            fields : ["uuid"],
+        });
+
+        return newSale;
     },
 
     async removeVersion(ctx) {

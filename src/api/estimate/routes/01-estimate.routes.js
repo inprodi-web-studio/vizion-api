@@ -34,6 +34,14 @@ module.exports = {
       },
       {
         method  : "POST",
+        path    : "/estimates/:uuid/:version/convert",
+        handler : "estimate.convert",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "POST",
         path    : "/estimates/:uuid/:version/pdf",
         handler : "estimate.generatePdf",
         config : {

@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_estimate_sales_metas",
+  "info": {
+    "displayName": "Sales Meta"
+  },
+  "options": {},
+  "attributes": {
+    "closingDate": {
+      "type": "date"
+    },
+    "daysToClose": {
+      "type": "integer"
+    },
+    "closedVersion": {
+      "type": "integer"
+    }
+  }
+}
