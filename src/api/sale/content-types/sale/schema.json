@@ -92,9 +92,9 @@
     },
     "estimate": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "oneToOne",
       "target": "api::estimate.estimate",
-      "inversedBy": "sales"
+      "mappedBy": "sale"
     }
   }
 }

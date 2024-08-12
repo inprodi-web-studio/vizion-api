@@ -66,11 +66,11 @@
       "repeatable": false,
       "component": "estimate.sales-meta"
     },
-    "sales": {
+    "sale": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "oneToOne",
       "target": "api::sale.sale",
-      "mappedBy": "estimate"
+      "inversedBy": "estimate"
     }
   }
 }

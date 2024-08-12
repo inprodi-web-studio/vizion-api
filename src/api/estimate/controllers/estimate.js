@@ -314,7 +314,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
             fields : ["uuid"],
         });
 
-        await strapi.service( ESTIMATE ).updateConvertedEstimate( company, estimate, selectedVersion );
+        await strapi.service( ESTIMATE ).updateConvertedEstimate( company, estimate, selectedVersion.fol );
 
         return newSale;
     },

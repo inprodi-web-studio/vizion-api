@@ -1279,9 +1279,9 @@ export interface ApiEstimateEstimate extends Schema.CollectionType {
       'api::company.company'
     >;
     saleMeta: Attribute.Component<'estimate.sales-meta'>;
-    sales: Attribute.Relation<
+    sale: Attribute.Relation<
       'api::estimate.estimate',
-      'oneToMany',
+      'oneToOne',
       'api::sale.sale'
     >;
     createdAt: Attribute.DateTime;
@@ -1880,7 +1880,7 @@ export interface ApiSaleSale extends Schema.CollectionType {
     deliveryTime: Attribute.Integer;
     estimate: Attribute.Relation<
       'api::sale.sale',
-      'manyToOne',
+      'oneToOne',
       'api::estimate.estimate'
     >;
     createdAt: Attribute.DateTime;
