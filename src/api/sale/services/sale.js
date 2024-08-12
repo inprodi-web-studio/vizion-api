@@ -32,7 +32,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
             where : {
                 company : company.id,
             },
-            select : [ "closingDate" ],
+            select : [],
             orderBy : {
                 fol : "desc",
             },
