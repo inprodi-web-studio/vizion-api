@@ -136,6 +136,20 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         return updatedSale;
     },
 
+    async authorize(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id } = await findOneByUuid( uuid, SALE );
+
+        const updatedSale = await strapi.entityService.update( SALE, id, {
+            data : {
+                isAuthorized : true,
+            },
+        });
+
+        return updatedSale;
+    },
+
     async delete(ctx) {
         const { uuid } = ctx.params;
 

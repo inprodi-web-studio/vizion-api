@@ -33,6 +33,14 @@ module.exports = {
         },
       },
       {
+        method  : "PATCH",
+        path    : "/sales/:uuid/authorize",
+        handler : "sale.authorize",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "DELETE",
         path    : "/sales/:uuid",
         handler : "sale.delete",
