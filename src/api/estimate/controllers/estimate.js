@@ -297,7 +297,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
                 customer : estimate.lead ? newCustomer.id : estimate.customer.id,
                 deliveryAddress : estimate.deliveryAddress,
                 date : dayjs().format("YYYY-MM-DD"),
-                paymentScheme : selectedVersion.paymentScheme,
+                paymentScheme : selectedVersion.paymentScheme === "undefined" ? "anticipated" : selectedVersion.paymentScheme,
                 priceList : selectedVersion.priceList.id,
                 subject : selectedVersion.subject,
                 items : selectedVersion.items,
