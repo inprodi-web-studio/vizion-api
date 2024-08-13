@@ -17,7 +17,7 @@ const saleFields = {
             },
         },
         customer : {
-            fields : ["uuid", "finalName"],
+            fields : ["uuid", "finalName", "isArchived"],
             populate : {
                 credit : true,
                 mainAddress : true,
@@ -62,6 +62,12 @@ const saleFields = {
             fields : ["subtotal", "individualDiscounts", "taxes", "shipping", "total"],
             populate : {
                 globalDiscount : true,
+            },
+        },
+        estimate : {
+            fields : ["uuid", "fol"],
+            populate : {
+                saleMeta : true,
             },
         },
     }

@@ -19,6 +19,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const salesThisMonth = await strapi.query(SALE).count({
             where : {
                 company  : company.id,
+                isAuthorized : true,
                 createdAt : {
                     $gte : startOfMonth,
                     $lte : endOfMonth,
@@ -29,6 +30,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const salesLastMonth = await strapi.query(SALE).count({
             where : {
                 company  : company.id,
+                isAuthorized : true,
                 createdAt : {
                     $gte : startOfLastMonth,
                     $lte : endOfLastMonth,

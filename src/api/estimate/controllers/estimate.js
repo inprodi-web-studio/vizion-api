@@ -26,7 +26,7 @@ const estimateFields = {
         },
         saleMeta : true,
         customer : {
-            fields : ["uuid", "finalName"],
+            fields : ["uuid", "finalName", "isArchived"],
             populate : {
                 credit : true,
                 mainAddress : true,
@@ -45,7 +45,7 @@ const estimateFields = {
             },
         },
         lead : {
-            fields : ["uuid", "finalName"],
+            fields : ["uuid", "finalName", "isActive"],
             populate : {
                 mainAddress : true,
                 deliveryAddresses : {
