@@ -48,7 +48,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
             JOIN components_estimate_versions AS ver ON est_components.component_id = ver.id
             JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
             JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
-            WHERE est_company.company_id = 1
+            WHERE est_company.company_id = ${ company.id }
                 AND est_components.component_type = 'estimate.version'
                 AND ver.is_active = 1
                 AND ver_components.component_type = 'estimate.resume'
@@ -65,7 +65,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
             JOIN components_estimate_versions AS ver ON est_components.component_id = ver.id
             JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
             JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
-            WHERE est_company.company_id = 1
+            WHERE est_company.company_id = ${ company.id }
                 AND est_components.component_type = 'estimate.version'
                 AND ver.is_active = 1
                 AND ver_components.component_type = 'estimate.resume'
