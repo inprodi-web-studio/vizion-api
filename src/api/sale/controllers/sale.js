@@ -68,6 +68,9 @@ const saleFields = {
             fields : ["uuid", "fol"],
             populate : {
                 saleMeta : true,
+                versions : {
+                    fields : ["subject"]
+                },
             },
         },
     }
