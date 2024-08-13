@@ -69,7 +69,7 @@ const saleFields = {
             populate : {
                 saleMeta : true,
                 versions : {
-                    fields : ["subject"]
+                    fields : ["subject", "fol"]
                 },
             },
         },
