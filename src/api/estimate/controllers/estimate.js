@@ -276,6 +276,11 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
         const estimate = await findOneByUuid( uuid, ESTIMATE, estimateFields );
         const selectedVersion = estimate.versions.find( v => v.fol === Number( version ) );
 
+        if ( !selectedVersion.isActive ) {
+            await strapi.service(ESTIMATE).removeActiveVersion(estimate.versions);
+            await strapi.service(ESTIMATE).setActiveVersion(estimate.versions, version);
+        }
+
         const preference = await strapi.service( PREFERENCE ).findOrCreate( company, "crm", "sales" );
 
         const fol = await strapi.service( SALE ).generateNextFol( company );
