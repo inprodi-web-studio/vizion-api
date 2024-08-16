@@ -74,16 +74,16 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
 
         return {
             new : {
-                current : estimatesThisMonth,
-                passed  : estimatesLastMonth,
+                current : estimatesThisMonth ?? 0,
+                passed  : estimatesLastMonth ?? 0,
             },
             total : {
-                current : totalThisMonthQuery[0][0].totalSum,
-                passed  : totalLastMonthQuery[0][0].totalSum,
+                current : totalThisMonthQuery[0][0].totalSum ?? 0,
+                passed  : totalLastMonthQuery[0][0].totalSum ?? 0,
             },
             average : {
-                current : totalThisMonthQuery[0][0].averageTicket,
-                passed  : totalLastMonthQuery[0][0].averageTicket,
+                current : totalThisMonthQuery[0][0].averageTicket ?? 0,
+                passed  : totalLastMonthQuery[0][0].averageTicket ?? 0,
             },
         };
     },

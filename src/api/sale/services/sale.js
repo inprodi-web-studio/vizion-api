@@ -6,7 +6,7 @@ const moment = require("moment-timezone");
 const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService(SALE, ({ strapi }) => ({
-    async addStats(sales) {
+    async getStats() {
         const ctx = strapi.requestContext.get();
         const { company } = ctx.state;
 
@@ -38,7 +38,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
             },
         });
 
-        sales.stats = {
+        return {
             new : {
                 current : salesThisMonth,
                 passed  : salesLastMonth,

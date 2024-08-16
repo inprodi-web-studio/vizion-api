@@ -10,6 +10,14 @@ module.exports = {
       },
       {
         method  : "GET",
+        path    : "/sales/stats",
+        handler : "sale.getStats",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "GET",
         path    : "/sales/:uuid",
         handler : "sale.findOne",
         config : {

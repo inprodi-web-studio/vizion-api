@@ -90,11 +90,11 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         const sales = await findMany( SALE, saleFields, filters );
 
-        if ( query?.stats ) {
-            await strapi.service( SALE ).addStats( sales );
-        }
-
         return sales;
+    },
+
+    async getStats() {
+        return await strapi.service( SALE ).getStats();
     },
 
     async findOne(ctx) {
