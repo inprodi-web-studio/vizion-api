@@ -53,7 +53,7 @@ const leadFields = {
 const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService( LEAD, ({ strapi }) => ({
-    async addStats( leads ) {
+    async getStats() {
         const ctx         = strapi.requestContext.get();
         const { company } = ctx.state;
 
@@ -211,7 +211,7 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             },
         });
 
-        leads.stats = {
+        return {
             active,
             inactive,
             new : {

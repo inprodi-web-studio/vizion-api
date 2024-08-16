@@ -509,7 +509,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                 }).join('')}
 
                 <div class="resume-container" style="margin-top: 20px">
-                    ${ version.comments ? `
+                    ${ (version.comments && version.comments !== "<p></p>") ? `
                         <div class="comments-container" style="width: 100%;">
                             <p class="label" style="margin-bottom: 4px">Comentarios</p>
                             <span class="comments">
@@ -566,7 +566,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                     </div>
                 </div>
 
-                ${ version.terms ? `
+                ${ (version.terms && version.terms !== "<p></p>") ? `
                     <div class="terms-container" style="margin-top: 30px">
                         <p class="label">Terminos y Condiciones</p>
                         <span class="terms">${ version.terms }</span>

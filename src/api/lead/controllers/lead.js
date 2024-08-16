@@ -48,7 +48,6 @@ const leadFields = {
 module.exports = createCoreController( LEAD, ({ strapi }) => ({
     async find(ctx) {
         const user  = ctx.state.user;
-        const query = ctx.query;
 
         const filters = {
             $search : [
@@ -66,11 +65,11 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         const leads = await findMany( LEAD, leadFields, filters );
 
-        if ( query?.stats ) {
-            await strapi.service( LEAD ).addStats( leads );
-        }
-
         return leads;
+    },
+
+    async getStats() {
+        return await strapi.service( LEAD ).getStats();
     },
 
     async findOne(ctx) {

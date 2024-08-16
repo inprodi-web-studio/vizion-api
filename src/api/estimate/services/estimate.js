@@ -8,7 +8,7 @@ const moment = require("moment-timezone");
 const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
-    async addStats(estimates) {
+    async getStats() {
         const ctx = strapi.requestContext.get();
         const { company } = ctx.state;
 
@@ -72,7 +72,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 AND est.created_at BETWEEN '${ startOfLastMonth }' AND '${ endOfLastMonth }'
         `);
 
-        estimates.stats = {
+        return {
             new : {
                 current : estimatesThisMonth,
                 passed  : estimatesLastMonth,

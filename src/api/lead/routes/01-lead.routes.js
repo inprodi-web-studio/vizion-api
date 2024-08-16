@@ -10,6 +10,14 @@ module.exports = {
       },
       {
         method  : "GET",
+        path    : "/contacts/leads/stats",
+        handler : "lead.getStats",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "GET",
         path    : "/contacts/leads/:uuid",
         handler : "lead.findOne",
         config : {

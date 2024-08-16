@@ -95,8 +95,6 @@ const estimateFields = {
 
 module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
     async find(ctx) {
-        const query = ctx.query;
-
         const filters = {
             $search : [
                 "fol",
@@ -108,11 +106,11 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
 
         const estimates = await findMany( ESTIMATE, estimateFields, filters );
 
-        if ( query?.stats ) {
-            await strapi.service( ESTIMATE ).addStats( estimates );
-        }
-
         return estimates;
+    },
+
+    async getStats() {
+        return await strapi.service( ESTIMATE ).getStats();
     },
 
     async findOne(ctx) {

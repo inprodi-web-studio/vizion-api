@@ -7,7 +7,7 @@ const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { BadRequestError } = require('../../../helpers/errors');
 
 module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
-    async addStats( customers ) {
+    async getStats() {
         const ctx         = strapi.requestContext.get();
         const { company } = ctx.state;
 
@@ -51,7 +51,7 @@ module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
             },
         });
 
-        customers.stats = {
+        return {
             active,
             archived,
             new : {

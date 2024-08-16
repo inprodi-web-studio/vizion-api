@@ -57,7 +57,6 @@ const customerFields = {
 module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
     async find(ctx) {
         const user  = ctx.state.user;
-        const query = ctx.query;
 
         const filters = {
             $search : [
@@ -77,11 +76,11 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         const customers = await findMany( CUSTOMER, customerFields, filters );
 
-        if ( query?.stats ) {
-            await strapi.service( CUSTOMER ).addStats( customers );
-        }
-
         return customers;
+    },
+
+    async getStats() {
+        return await strapi.service( CUSTOMER ).getStats();
     },
 
     async findOne(ctx) {
