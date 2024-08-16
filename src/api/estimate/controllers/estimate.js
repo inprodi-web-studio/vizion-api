@@ -90,6 +90,9 @@ const estimateFields = {
                 },
             },
         },
+        sale : {
+            fields : ["uuid", "fol", "subject"],
+        },
     },
 };
 
