@@ -320,7 +320,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
             fields : ["uuid"],
         });
 
-        await strapi.service( ESTIMATE ).updateConvertedEstimate( company, estimate, selectedVersion.fol );
+        await strapi.service( ESTIMATE ).updateConvertedEstimate( company, estimate, selectedVersion.fol, estimate.versions );
 
         return newSale;
     },
