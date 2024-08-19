@@ -540,7 +540,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                         ${ (version.resume.globalDiscount && version.resume.globalDiscount?.amount > 0) ? `
                             <div class="item">
                                 <p class="label">Descuento Global</p>
-                                <p class="number">- ${ formatCurrency( globalDiscount ) } (${globalDiscount.percent}%)</p>
+                                <p class="number">- ${ formatCurrency( globalDiscount ) } (${version.resume.globalDiscount.percent}%)</p>
                             </div>
                             
                             <hr>
