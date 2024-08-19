@@ -540,7 +540,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                         ${ (version.resume.globalDiscount && version.resume.globalDiscount?.amount > 0) ? `
                             <div class="item">
                                 <p class="label">Descuento Global</p>
-                                <p class="number">- ${ formatCurrency( globalDiscount ) }</p>
+                                <p class="number">- ${ formatCurrency( globalDiscount ) } (${globalDiscount.percent}%)</p>
                             </div>
                             
                             <hr>
@@ -549,7 +549,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                         ${ (version.resume.globalDiscount?.amount || version.resume.individualDiscounts) ? `
                             <div class="item">
                                 <p class="label">Total Bruto</p>
-                                <p class="number">- ${ formatCurrency( version.resume.subtotal - individualDiscounts - globalDiscount ) }</p>
+                                <p class="number">${ formatCurrency( version.resume.subtotal - individualDiscounts - globalDiscount ) }</p>
                             </div>
                             
                             <hr>
