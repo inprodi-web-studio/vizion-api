@@ -572,7 +572,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                         ` : ""}
 
                         <div class="item total">
-                            <p class="label">Total</p>
+                            <p class="label">TOTAL NETO</p>
                             <p class="number">${ formatCurrency( version.resume.total ) }</p>
                         </div>
                     </div>

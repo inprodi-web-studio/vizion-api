@@ -71,6 +71,31 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 AND ver_components.component_type = 'estimate.resume'
                 AND est.created_at BETWEEN '${ startOfLastMonth }' AND '${ endOfLastMonth }'
         `);
+        
+
+        const totalClosedThisMonthQuery = await strapi.db.connection.raw(`
+            SELECT
+                SUM(meta.closed_total) AS totalSum
+            FROM estimates as est
+            JOIN estimates_company_links as est_company ON est.id = est_company.estimate_id
+            JOIN estimates_components as est_components ON est.id = est_components.entity_id
+            JOIN components_estimate_sales_metas as meta ON est_components.component_id = meta.id
+            WHERE est_company.company_id = ${ company.id }
+                AND est_components.component_type = 'estimate.sales-meta'
+                AND meta.closing_date BETWEEN '${ startOfMonth.split("T")[0] }' AND '${ endOfMonth.split("T")[0] }'
+        `);
+
+        const totalClosedLastMonthQuery = await strapi.db.connection.raw(`
+            SELECT
+                SUM(meta.closed_total) AS totalSum
+            FROM estimates as est
+            JOIN estimates_company_links as est_company ON est.id = est_company.estimate_id
+            JOIN estimates_components as est_components ON est.id = est_components.entity_id
+            JOIN components_estimate_sales_metas as meta ON est_components.component_id = meta.id
+            WHERE est_company.company_id = ${ company.id }
+                AND est_components.component_type = 'estimate.sales-meta'
+                AND meta.closing_date BETWEEN '${ startOfLastMonth.split("T")[0] }' AND '${ endOfLastMonth.split("T")[0] }'
+        `);
 
         return {
             new : {
@@ -84,6 +109,10 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
             average : {
                 current : totalThisMonthQuery[0][0].averageTicket ?? 0,
                 passed  : totalLastMonthQuery[0][0].averageTicket ?? 0,
+            },
+            closed : {
+                current : totalClosedThisMonthQuery[0][0].totalSum ?? 0,
+                passed  : totalClosedLastMonthQuery[0][0].totalSum ?? 0,
             },
         };
     },
@@ -204,7 +233,8 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 saleMeta : {
                     closingDate   : dayjs().format("YYYY-MM-DD"),
                     daysToClose   : dayjs().diff( dayjs( version.date, "day" )),
-                    closedVersion : Number( version ),
+                    closedVersion : Number( version.fol ),
+                    closedTotal   : version.resume.total,
                 },
             },
         });
