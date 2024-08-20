@@ -211,6 +211,15 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             },
         });
 
+        const totalValue = await strapi.db.connection.raw(`
+            SELECT
+                SUM(leads.value) AS totalValue
+            FROM leads
+            JOIN leads_company_links as leads_company ON leads.id = leads_company.lead_id
+            WHERE leads_company.company_id = ${company.id}
+                AND leads.is_active = 1
+        `);
+
         return {
             active,
             inactive,
@@ -230,6 +239,7 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                 current : 0,
                 passed  : 0,
             },
+            totalValue : totalValue[0][0].totalValue ?? 0,
         };
     },
 

@@ -79,6 +79,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         await strapi.service( LEAD ).getActivityStats( lead );
 
+        // TODO: REMOVE
         await strapi.service(ESTIMATE).setContactValue({
             contactType : "lead",
             lead : lead.id,

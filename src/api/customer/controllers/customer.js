@@ -88,6 +88,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         
         const customer = await validateEntityPermission( uuid, CUSTOMER, customerFields );
 
+        // TODO: REMOVE
         await strapi.service(ESTIMATE).setContactValue({
             contactType : "customer",
             lead : customer.id,
