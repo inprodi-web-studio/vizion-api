@@ -1,4 +1,4 @@
-const { LEAD, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, INSIDER, CUSTOMER } = require('../../../constants/models');
+const { LEAD, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, INSIDER, CUSTOMER, ESTIMATE } = require('../../../constants/models');
 const findMany                 = require('../../../helpers/findMany');
 const { validateCreate, validateCreateDeliveryAddress }       = require('../content-types/lead/lead.validation');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
@@ -78,6 +78,11 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         const lead = await validateEntityPermission( uuid, LEAD, leadFields );
 
         await strapi.service( LEAD ).getActivityStats( lead );
+
+        await strapi.service(ESTIMATE).setContactValue({
+            contactType : "lead",
+            lead : lead.id,
+        });
 
         return lead;
     },
