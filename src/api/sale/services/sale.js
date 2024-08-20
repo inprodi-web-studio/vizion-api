@@ -38,10 +38,46 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
             },
         });
 
+        const totalThisMonthQuery = await strapi.db.connection.raw(`
+            SELECT
+                SUM(res.total) AS totalSum,
+                AVG(res.total) AS averageTicket
+            FROM sales as sale
+            JOIN sales_company_links as sale_company ON sale.id = sale_company.sale_id
+            JOIN sales_components as sale_components ON sale.id = sale_components.entity_id
+            JOIN components_estimate_resumes AS res ON sale_components.component_id = res.id
+            WHERE sale_company.company_id = ${company.id}
+                AND sale_components.component_type = 'estimate.resume'
+                AND sale.is_authorized = 1
+                AND sale.created_at BETWEEN '${startOfMonth}' AND '${endOfMonth}'
+        `);
+
+        const totalLastMonthQuery = await strapi.db.connection.raw(`
+            SELECT
+                SUM(res.total) AS totalSum,
+                AVG(res.total) AS averageTicket
+            FROM sales as sale
+            JOIN sales_company_links as sale_company ON sale.id = sale_company.sale_id
+            JOIN sales_components as sale_components ON sale.id = sale_components.entity_id
+            JOIN components_estimate_resumes AS res ON sale_components.component_id = res.id
+            WHERE sale_company.company_id = ${company.id}
+                AND sale_components.component_type = 'estimate.resume'
+                AND sale.is_authorized = 1
+                AND sale.created_at BETWEEN '${startOfLastMonth}' AND '${endOfLastMonth}'
+        `);
+
         return {
             new : {
                 current : salesThisMonth,
                 passed  : salesLastMonth,
+            },
+            total : {
+                current : totalThisMonthQuery[0][0].totalSum ?? 0,
+                passed  : totalLastMonthQuery[0][0].totalSum ?? 0,
+            },
+            average : {
+                current : totalThisMonthQuery[0][0].averageTicket ?? 0,
+                passed  : totalLastMonthQuery[0][0].averageTicket ?? 0,
             },
         };
     },

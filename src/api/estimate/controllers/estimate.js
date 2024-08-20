@@ -162,6 +162,8 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
             ...estimateFields
         });
 
+        await strapi.service(ESTIMATE).setContactValue(data);
+
         return newEstimate;
     },
 
@@ -199,6 +201,8 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
             },
             ...estimateFields
         });
+
+        await strapi.service(ESTIMATE).setContactValue(data);
 
         return updatedEstimate;
     },
@@ -242,6 +246,8 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
             ...estimateFields
         });
 
+        await strapi.service(ESTIMATE).setContactValue(data);
+
         return {
             newFol   : versionFol,
             estimate : updatedEstimate
@@ -264,6 +270,12 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
                 versions,
             },
             ...estimateFields
+        });
+
+        await strapi.service(ESTIMATE).setContactValue({
+            contactType : estimate.lead ? "lead" : "customer",
+            lead : estimate.lead?.id,
+            customer : estimate.customer?.id,
         });
 
         return updatedEstimate;
@@ -321,6 +333,11 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
         });
 
         await strapi.service( ESTIMATE ).updateConvertedEstimate( company, estimate, selectedVersion, estimate.versions );
+
+        await strapi.service(ESTIMATE).setContactValue({
+            contactType : "customer",
+            customer : estimate.lead ? newCustomer.id : estimate.customer.id
+        });
 
         return newSale;
     },
@@ -452,9 +469,15 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
     async delete(ctx) {
         const { uuid } = ctx.params;
 
-        const { id } = await findOneByUuid( uuid, ESTIMATE );
+        const { id, lead, customer } = await findOneByUuid( uuid, ESTIMATE, estimateFields );
 
         const deletedEstimate = await strapi.entityService.delete( ESTIMATE, id );
+
+        await strapi.service(ESTIMATE).setContactValue({
+            contactType : lead ? "lead" : "customer",
+            lead : lead?.id,
+            customer : customer?.id,
+        });
 
         return deletedEstimate;
     },

@@ -169,6 +169,70 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         return lastFol[0].fol + 1;
     },
 
+    async setContactValue({contactType, lead, customer}) {
+        if (contactType === "customer") {
+            const totalEstimates = await strapi.db.connection.raw(`
+                SELECT
+                    SUM(res.total) AS totalSum
+                FROM estimates as est
+                JOIN estimates_customer_links as est_customer ON est.id = est_customer.estimate_id
+                JOIN estimates_components as est_components ON est.id = est_components.entity_id
+                JOIN components_estimate_versions AS ver ON est_components.component_id = ver.id
+                JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
+                JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
+                LEFT JOIN estimates_sale_links as est_sale ON est.id = est_sale.estimate_id
+                WHERE est_customer.customer_id = ${customer}
+                    AND est_components.component_type = 'estimate.version'
+                    AND ver.is_active = 1
+                    AND ver_components.component_type = 'estimate.resume'
+                    AND est_sale.sale_id IS NULL
+            `);
+
+            const totalSales = await strapi.db.connection.raw(`
+                SELECT
+                    SUM(res.total) AS totalSum
+                FROM sales as sale
+                JOIN sales_customer_links as sale_customer ON sale.id = sale_customer.sale_id
+                JOIN sales_components as sale_components ON sale.id = sale_components.entity_id
+                JOIN components_estimate_resumes AS res ON sale_components.component_id = res.id
+                WHERE sale_customer.customer_id = ${customer}
+                    AND sale_components.component_type = 'estimate.resume'
+            `);
+
+            const estimates = totalEstimates[0][0]?.totalSum ?? 0;
+            const sales = totalSales[0][0]?.totalSum ?? 0;
+
+            await strapi.entityService.update( contactType === "lead" ? LEAD : CUSTOMER, contactType === "lead" ? lead : customer, {
+                data : {
+                    value : estimates + sales,
+                }
+            });
+        }
+
+        if (contactType === "lead") {
+            const totalValue = await strapi.db.connection.raw(`
+                SELECT
+                    SUM(res.total) AS totalSum
+                FROM estimates as est
+                JOIN estimates_lead_links as est_lead ON est.id = est_lead.estimate_id
+                JOIN estimates_components as est_components ON est.id = est_components.entity_id
+                JOIN components_estimate_versions AS ver ON est_components.component_id = ver.id
+                JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
+                JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
+                WHERE est_lead.lead_id = ${ lead }
+                    AND est_components.component_type = 'estimate.version'
+                    AND ver.is_active = 1
+                    AND ver_components.component_type = 'estimate.resume'
+            `);
+
+            await strapi.entityService.update( contactType === "lead" ? LEAD : CUSTOMER, contactType === "lead" ? lead : customer, {
+                data : {
+                    value : totalValue[0][0].totalSum ?? 0,
+                }
+            });
+        }
+    },
+
     async generateNextVersionFol(versions) {
         const maxFol = versions.reduce((max, obj) => {
             return obj.fol > max ? obj.fol : max;
