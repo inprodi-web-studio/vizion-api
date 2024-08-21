@@ -121,6 +121,19 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
 
         const estimate = await findOneByUuid( uuid, ESTIMATE, estimateFields );
 
+        // TODO: REMOVE
+        await strapi.service(ESTIMATE).setContactValue({
+            contactType : estimate.lead ? "lead" : "customer",
+            lead : estimate.lead?.id,
+            customer : estimate.customer?.id,
+        });
+
+        if ( estimate.lead ) {
+            await strapi.service(ESTIMATE).setLeadPotential({
+                lead : estimate.lead.id,
+            });
+        }
+
         return estimate;
     },
 
