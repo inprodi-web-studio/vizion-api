@@ -394,10 +394,11 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         }
     },
 
-    async prepareLeadInfo(uuid, data = {}) {
-        await validateEntityPermission( uuid, LEAD, {
+    async prepareLeadData(uuid, data = {}) {
+        return await validateEntityPermission( uuid, LEAD, {
             fields : [ ...leadFields.fields ],
             populate : {
+                estimates : true,
                 ...leadFields.populate,
                 ...( data?.tasks && {
                     tasks : true,
