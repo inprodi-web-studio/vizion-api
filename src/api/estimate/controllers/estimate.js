@@ -342,7 +342,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
                 terms : selectedVersion.terms,
                 company : company.id,
                 creditPolicy : selectedVersion.paymentScheme === "credit" ? "on-sale" : null,
-                limitPaymentDay : dayjs().add( estimate.customer.daysToPay, "day" ).format("YYYY-MM-DD"),
+                limitPaymentDay : selectedVersion.paymentScheme === "credit" ? estimate.lead ? null : dayjs().add( estimate.customer.credit?.daysToPay, "day" ).format("YYYY-MM-DD") : null,
                 isAuthorized : preference.config.needsAuthorization ? false : true,
                 deliveryTime : selectedVersion.deliveryTime,
                 estimate : estimate.id,
