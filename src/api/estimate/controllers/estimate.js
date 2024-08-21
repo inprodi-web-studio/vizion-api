@@ -318,7 +318,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
         let newCustomer;
 
         if ( estimate.lead ) {
-            const lead = await strapi.service( LEAD ).prepareLeadData( uuid );
+            const lead = await strapi.service( LEAD ).prepareLeadData( estimate.lead?.uuid );
 
             newCustomer = await strapi.service( LEAD ).convertLeadToCustomer( lead, company );
 
