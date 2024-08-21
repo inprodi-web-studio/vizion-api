@@ -447,34 +447,54 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
     },
 
     async deleteParallelData(id) {
-        await strapi.db.query(ESTIMATE).deleteMany({
+        const estimates = await strapi.db.query(ESTIMATE).findMany({
             where : {
                 lead : id,
             },
         });
 
-        await strapi.db.query( TASK ).deleteMany({
+        for ( const estimate of estimates ) {
+            await strapi.entityService.delete(ESTIMATE, estimate.id);
+        }
+
+        const tasks = await strapi.db.query( TASK ).findMany({
             where : {
                 lead : id,
             },
         });
 
-        await strapi.db.query( NOTE ).deleteMany({
+        for ( const task of tasks ) {
+            await strapi.entityService.delete(TASK, task.id);
+        }
+
+        const notes = await strapi.db.query( NOTE ).findMany({
             where : {
                 lead : id,
             },
         });
 
-        await strapi.db.query( CONTACT_INTERACTION ).deleteMany({
+        for ( const note of notes ) {
+            await strapi.entityService.delete(NOTE, note.id);
+        }
+
+        const interactions = await strapi.db.query( CONTACT_INTERACTION ).findMany({
             where : {
                 lead : id,
             },
         });
 
-        await strapi.db.query( INSIDER ).deleteMany({
+        for ( const interaction of interactions ) {
+            await strapi.entityService.delete(CONTACT_INTERACTION, interaction.id);
+        }
+
+        const insiders = await strapi.db.query( INSIDER ).findMany({
             where : {
                 lead : id,
             },
         });
+
+        for ( const insider of insiders ) {
+            await strapi.entityService.delete(INSIDER, insider.id);
+        }
     },
 }));
