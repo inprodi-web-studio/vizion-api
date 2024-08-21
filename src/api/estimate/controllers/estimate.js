@@ -164,6 +164,10 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
 
         await strapi.service(ESTIMATE).setContactValue(data);
 
+        if ( data.lead ) {
+            await strapi.service(ESTIMATE).setLeadPotential(data);
+        }
+
         return newEstimate;
     },
 
@@ -203,6 +207,10 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
         });
 
         await strapi.service(ESTIMATE).setContactValue(data);
+
+        if ( data.lead ) {
+            await strapi.service(ESTIMATE).setLeadPotential(data);
+        }
 
         return updatedEstimate;
     },
@@ -248,6 +256,10 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
 
         await strapi.service(ESTIMATE).setContactValue(data);
 
+        if ( data.lead ) {
+            await strapi.service(ESTIMATE).setLeadPotential(data);
+        }
+
         return {
             newFol   : versionFol,
             estimate : updatedEstimate
@@ -277,6 +289,12 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
             lead : estimate.lead?.id,
             customer : estimate.customer?.id,
         });
+
+        if ( estimate.lead ) {
+            await strapi.service(ESTIMATE).setLeadPotential({
+                lead : estimate.lead.id,
+            });
+        }
 
         return updatedEstimate;
     },
@@ -367,9 +385,15 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
 
         await validateKeyUpdate( data );
 
-        const {id} = await findOneByUuid( uuid, ESTIMATE, estimateFields );
+        const {id, lead} = await findOneByUuid( uuid, ESTIMATE, estimateFields );
 
         const entityId = await strapi.service(ESTIMATE).keyFind( data );
+
+        if (data.key === "stage" && lead) {
+            await strapi.service(ESTIMATE).setLeadPotential({
+                lead : lead.id,
+            });
+        }
 
         const updatedEstimate = await strapi.entityService.update( ESTIMATE, id, {
             data : {
@@ -478,6 +502,12 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
             lead : lead?.id,
             customer : customer?.id,
         });
+
+        if (lead) {
+            await strapi.service(ESTIMATE).setLeadPotential({
+                lead : lead.id,
+            });
+        }
 
         return deletedEstimate;
     },

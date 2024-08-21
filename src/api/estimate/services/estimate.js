@@ -233,6 +233,31 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         }
     },
 
+    async setLeadPotential({lead}) {
+        const potential = await strapi.db.connection.raw(`
+            SELECT
+                SUM( stage.potential * res.total ) / SUM( res.total ) AS potential
+            FROM estimates as est
+            JOIN estimates_lead_links as est_lead ON est.id = est_lead.estimate_id
+            JOIN estimates_stage_links as est_stage ON est.id = est_stage.estimate_id
+            JOIN estimate_stages as stage ON est_stage.estimate_stage_id = stage.id
+            JOIN estimates_components as est_components ON est.id = est_components.entity_id
+            JOIN components_estimate_versions AS ver ON est_components.component_id = ver.id
+            JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
+            JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
+            WHERE est_lead.lead_id = ${ lead }
+                AND est_components.component_type = 'estimate.version'
+                AND ver.is_active = 1
+                AND ver_components.component_type = 'estimate.resume'
+        `);
+
+        await strapi.entityService.update( LEAD, lead, {
+            data : {
+                potential : potential[0][0].potential ?? 0,
+            }
+        });
+    },
+
     async generateNextVersionFol(versions) {
         const maxFol = versions.reduce((max, obj) => {
             return obj.fol > max ? obj.fol : max;
