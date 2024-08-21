@@ -13,6 +13,9 @@ const { createCoreController } = require('@strapi/strapi').factories;
 const leadFields = {
     fields   : ["uuid", "tradeName", "finalName", "email", "website", "rating", "isActive", "value", "potential", "createdAt"],
     populate : {
+        estimates : {
+            count : true,
+        },
         completeName : true,
         phone        : true,
         cellphone    : true,
@@ -523,6 +526,8 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         const { uuid } = ctx.params;
 
         const { id } = await validateEntityPermission( uuid, LEAD );
+
+        await strapi.service(LEAD).deleteParallelData(id);
 
         const deletedLead = await strapi.entityService.delete( LEAD, id );
 

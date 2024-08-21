@@ -7,6 +7,11 @@ const {
     CONTACT_SOURCE,
     CONTACT_INTERACTION,
     CUSTOMER,
+    ESTIMATE,
+    DOCUMENT,
+    TASK,
+    NOTE,
+    INSIDER,
 } = require("../../../constants/models");
 
 const { BadRequestError } = require("../../../helpers/errors");
@@ -421,6 +426,8 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         const today        = dayjs();
         const difference   = today.diff( leadCreation, "day" );
 
+        await strapi.service(LEAD).deleteParallelData(lead.id);
+
         delete lead.createdAt;
         delete lead.id;
 
@@ -436,6 +443,38 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                 company    : company.id,
             },
             fields : ["uuid"],
+        });
+    },
+
+    async deleteParallelData(id) {
+        await strapi.db.query(ESTIMATE).deleteMany({
+            where : {
+                lead : id,
+            },
+        });
+
+        await strapi.db.query( TASK ).deleteMany({
+            where : {
+                lead : id,
+            },
+        });
+
+        await strapi.db.query( NOTE ).deleteMany({
+            where : {
+                lead : id,
+            },
+        });
+
+        await strapi.db.query( CONTACT_INTERACTION ).deleteMany({
+            where : {
+                lead : id,
+            },
+        });
+
+        await strapi.db.query( INSIDER ).deleteMany({
+            where : {
+                lead : id,
+            },
         });
     },
 }));
