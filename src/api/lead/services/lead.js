@@ -8,7 +8,6 @@ const {
     CONTACT_INTERACTION,
     CUSTOMER,
     ESTIMATE,
-    DOCUMENT,
     TASK,
     NOTE,
     INSIDER,

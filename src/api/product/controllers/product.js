@@ -1,4 +1,4 @@
-const { PRODUCT } = require("../../../constants/models");
+const { PRODUCT, ESTIMATE, SALE } = require("../../../constants/models");
 const checkForDuplicates = require("../../../helpers/checkForDuplicates");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
@@ -224,6 +224,35 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
         });
 
         return updatedProduct;
+    },
+
+    async findEstimatesAndSales(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id } = await findOneByUuid( uuid, PRODUCT, productFields );
+
+        const estimates = await strapi.query( ESTIMATE ).count({
+            where : {
+                versions : {
+                    items : {
+                        product : id,
+                    },
+                },
+            },
+        });
+
+        const sales = await strapi.query( SALE ).count({
+            where : {
+                items : {
+                    product : id,
+                },
+            },
+        });
+
+        return {
+            estimates,
+            sales,
+        };
     },
 
     async delete(ctx) {

@@ -17,6 +17,14 @@ module.exports = {
         },
       },
       {
+        method  : "GET",
+        path    : "/products/:uuid/relations",
+        handler : "product.findEstimatesAndSales",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/products",
         handler : "product.create",
