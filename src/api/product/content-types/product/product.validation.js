@@ -39,6 +39,14 @@ const createSchema = yup.object().shape({
         hasBatches    : yup.boolean().required(),
         isPerishable  : yup.boolean().required(),
     }).strict().nullable(),
+    attributes : yup.mixed().when( "type", {
+        is   : "variable",
+        then : yup.array().of( yup.object().shape({
+            attribute : yup.string().uuid().required(),
+            values    : yup.array().of( yup.string().uuid() ).required(),
+        }).strict() ).required(),
+        otherwise : yup.mixed().oneOf([null]).nullable(),
+    }),
 }).strict();
 
 const setPricingSchema = yup.object().shape({

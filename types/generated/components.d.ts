@@ -212,6 +212,25 @@ export interface ProductPriceConfig extends Schema.Component {
   };
 }
 
+export interface ProductProductAttributes extends Schema.Component {
+  collectionName: 'components_product_product_attributes';
+  info: {
+    displayName: 'Product Attributes';
+  };
+  attributes: {
+    attribute: Attribute.Relation<
+      'product.product-attributes',
+      'oneToOne',
+      'api::product-attribute.product-attribute'
+    >;
+    values: Attribute.Relation<
+      'product.product-attributes',
+      'oneToMany',
+      'api::attribute-value.attribute-value'
+    >;
+  };
+}
+
 export interface ProductPurchaseInfo extends Schema.Component {
   collectionName: 'components_product_purchase_infos';
   info: {
@@ -286,6 +305,7 @@ declare module '@strapi/types' {
       'lead.lead-meta': LeadLeadMeta;
       'product.dimensions': ProductDimensions;
       'product.price-config': ProductPriceConfig;
+      'product.product-attributes': ProductProductAttributes;
       'product.purchase-info': ProductPurchaseInfo;
       'product.sale-information': ProductSaleInformation;
       'product.stock-info': ProductStockInfo;

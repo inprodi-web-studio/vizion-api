@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_product_product_attributes",
+  "info": {
+    "displayName": "Product Attributes"
+  },
+  "options": {},
+  "attributes": {
+    "attribute": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product-attribute.product-attribute"
+    },
+    "values": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::attribute-value.attribute-value"
+    }
+  }
+}

@@ -16,6 +16,12 @@ const productFields = {
         category : {
             fields : ["uuid", "name", "icon", "color"],
         },
+        attributes : {
+            populate : {
+                attribute : true,
+                values    : true,
+            },
+        },
         dimensions   : true,
         saleInfo     : {
             fields : "*",

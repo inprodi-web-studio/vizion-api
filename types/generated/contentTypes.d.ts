@@ -1723,6 +1723,7 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'oneToMany',
       'api::tag.tag'
     >;
+    attributes: Attribute.Component<'product.product-attributes', true>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
