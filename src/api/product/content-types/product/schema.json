@@ -92,6 +92,12 @@
       "type": "component",
       "repeatable": true,
       "component": "product.product-attributes"
+    },
+    "variations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-variation.product-variation",
+      "mappedBy": "product"
     }
   }
 }

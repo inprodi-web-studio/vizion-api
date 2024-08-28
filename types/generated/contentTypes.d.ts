@@ -816,6 +816,11 @@ export interface ApiAttributeValueAttributeValue extends Schema.CollectionType {
       'manyToOne',
       'api::product-attribute.product-attribute'
     >;
+    variations: Attribute.Relation<
+      'api::attribute-value.attribute-value',
+      'manyToMany',
+      'api::product-variation.product-variation'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1724,6 +1729,11 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'api::tag.tag'
     >;
     attributes: Attribute.Component<'product.product-attributes', true>;
+    variations: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::product-variation.product-variation'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1820,6 +1830,51 @@ export interface ApiProductCategoryProductCategory
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::product-category.product-category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiProductVariationProductVariation
+  extends Schema.CollectionType {
+  collectionName: 'product_variations';
+  info: {
+    singularName: 'product-variation';
+    pluralName: 'product-variations';
+    displayName: 'Product Variation';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    sku: Attribute.String;
+    description: Attribute.Text;
+    dimensions: Attribute.Component<'product.dimensions'>;
+    values: Attribute.Relation<
+      'api::product-variation.product-variation',
+      'manyToMany',
+      'api::attribute-value.attribute-value'
+    >;
+    name: Attribute.String;
+    product: Attribute.Relation<
+      'api::product-variation.product-variation',
+      'manyToOne',
+      'api::product.product'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product-variation.product-variation',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product-variation.product-variation',
       'oneToOne',
       'admin::user'
     > &
@@ -2172,6 +2227,7 @@ declare module '@strapi/types' {
       'api::product.product': ApiProductProduct;
       'api::product-attribute.product-attribute': ApiProductAttributeProductAttribute;
       'api::product-category.product-category': ApiProductCategoryProductCategory;
+      'api::product-variation.product-variation': ApiProductVariationProductVariation;
       'api::sale.sale': ApiSaleSale;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;
       'api::suscription-plan.suscription-plan': ApiSuscriptionPlanSuscriptionPlan;

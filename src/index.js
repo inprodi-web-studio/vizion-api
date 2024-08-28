@@ -21,6 +21,7 @@ const {
   CONTACT_SOURCE,
   ATTRIBUTE_VALUE,
   PRODUCT_CATEGORY,
+  PRODUCT_VARIATION,
   PRODUCT_ATTRIBUTE,
   CONTACT_INTERACTION,
 } = require("./constants/models");
@@ -52,6 +53,7 @@ module.exports = {
         ATTRIBUTE_VALUE,
         PRODUCT_CATEGORY,
         PRODUCT_ATTRIBUTE,
+        PRODUCT_VARIATION,
         CONTACT_INTERACTION,
       ],
       async beforeCreate( event ) {

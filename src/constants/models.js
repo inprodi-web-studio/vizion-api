@@ -21,5 +21,6 @@ module.exports = {
     ATTRIBUTE_VALUE     : "api::attribute-value.attribute-value",
     PRODUCT_CATEGORY    : "api::product-category.product-category",
     PRODUCT_ATTRIBUTE   : "api::product-attribute.product-attribute",
+    PRODUCT_VARIATION   : "api::product-variation.product-variation",
     CONTACT_INTERACTION : "api::contact-interaction.contact-interaction",
 }
