@@ -456,7 +456,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
 
             <div class="table">
                 <div class="header">
-                    <p style="grid-column-end: span 4">Concepto</p>
+                    <p style="grid-column-end: span 6">Concepto</p>
                     <p style="grid-column-end: span 2; width: 100%; text-align: center;">Cantidad</p>
                     <p style="grid-column-end: span 2">Precio Unitario</p>
                     <p style="grid-column-end: span 2">Total</p>
@@ -474,7 +474,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                     const ivaAmount = (item.price - itemDiscount) * ivaDictionary[item.iva];
 
                     return `<div class="body">
-                        <div style="grid-column-end: span 4">
+                        <div style="grid-column-end: span 6">
                             <div class="product-container">
                                 ${item.product.images?.length > 0 ? `
                                     <img class="product-image" src="${item.product.images[0].url}">
