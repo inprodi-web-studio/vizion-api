@@ -27,7 +27,7 @@ module.exports = createCoreService(PRODUCT_VARIATION, ({ strapi }) => ({
             {
                 name,
             },
-        ]);
+        ], {}, false);
 
         data.name = name;
     },
