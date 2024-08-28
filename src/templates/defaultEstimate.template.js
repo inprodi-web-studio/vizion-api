@@ -458,8 +458,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                 <div class="header">
                     <p style="grid-column-end: span 4">Concepto</p>
                     <p style="grid-column-end: span 2; width: 100%; text-align: center;">Cantidad</p>
-                    <p style="grid-column-end: span 2">Total Bruto</p>
-                    <p style="grid-column-end: span 2">Impuestos</p>
+                    <p style="grid-column-end: span 2">Precio Unitario</p>
                     <p style="grid-column-end: span 2">Total</p>
                 </div>
 
@@ -500,13 +499,10 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
 
 
                         <div style="grid-column-end: span 2">
-                            <div class="info-text">${ item.discount?.amount ? formatCurrency( (item.price - item.discount.amount) * item.quantity ) : formatCurrency( item.price ) }</div>
+                            <div class="info-text">${ item.discount?.amount ? formatCurrency( (item.price - item.discount.amount) ) : formatCurrency( item.price ) }</div>
                             ${ item.discount?.amount ? `<div class="discount" style="margin-top: 2px;">${formatCurrency( item.price )}</div>` : ""}
                         </div>
 
-
-
-                        <div class="info-text" style="grid-column-end: span 2">${ formatCurrency( ivaAmount * item.quantity ) }</div>
                         <div class="info-text" style="grid-column-end: span 2">${ formatCurrency( ((item.price - itemDiscount) + ivaAmount) * item.quantity ) }</div>
                     </div>`;
                 }).join('')}
