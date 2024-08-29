@@ -40,6 +40,13 @@
       "relation": "manyToOne",
       "target": "api::product.product",
       "inversedBy": "variations"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

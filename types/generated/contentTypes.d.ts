@@ -1865,6 +1865,7 @@ export interface ApiProductVariationProductVariation
       'manyToOne',
       'api::product.product'
     >;
+    image: Attribute.Media;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

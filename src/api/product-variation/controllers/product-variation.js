@@ -10,7 +10,12 @@ const variationsFields = {
     fields : ["uuid", "name", "sku", "description"],
     populate : {
         dimensions : true,
-        values : true,
+        values : {
+            fields : ["uuid", "name"],
+            populate : {
+                attribute : true,
+            },
+        },
     },
 };
 
