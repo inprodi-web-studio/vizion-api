@@ -10,6 +10,9 @@ const variationsFields = {
     fields : ["uuid", "name", "sku", "description"],
     populate : {
         dimensions : true,
+        image : {
+            fields : ["url"],
+        },
         values : {
             fields : ["uuid", "name"],
             populate : {
