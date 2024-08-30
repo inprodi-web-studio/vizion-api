@@ -2,7 +2,7 @@ const { PRODUCT_VARIATION, PRODUCT, ESTIMATE, SALE } = require('../../../constan
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const { validateCreate } = require('../content-types/product-variation/product-variation.validation');
+const { validateCreate, validateUpdate } = require('../content-types/product-variation/product-variation.validation');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
@@ -79,7 +79,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
         const { productUuid, uuid } = ctx.params;
         const data = ctx.request.body;
 
-        await validateCreate( data );
+        await validateUpdate( data );
 
         const product = await findOneByUuid( productUuid, PRODUCT, {
             populate : {
