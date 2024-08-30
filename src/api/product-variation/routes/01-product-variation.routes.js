@@ -9,6 +9,14 @@ module.exports = {
         },
       },
       {
+        method  : "GET",
+        path    : "/products/:productUuid/variations/:uuid/relations",
+        handler : "product-variation.findRelations",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/products/:productUuid/variations",
         handler : "product-variation.create",
