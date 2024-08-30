@@ -12,6 +12,7 @@ module.exports = ({ env }) => {
         database: env("DATABASE_NAME", "strapi"),
         user: env("DATABASE_USERNAME", "strapi"),
         password: env("DATABASE_PASSWORD", "strapi"),
+        connectTimeout: 60000,
         ssl: env.bool("DATABASE_SSL", false) && {
           key: env("DATABASE_SSL_KEY", undefined),
           cert: env("DATABASE_SSL_CERT", undefined),
