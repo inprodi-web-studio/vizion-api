@@ -1,4 +1,4 @@
-const { PRODUCT_VARIATION, PRODUCT, ESTIMATE } = require('../../../constants/models');
+const { PRODUCT_VARIATION, PRODUCT, ESTIMATE, SALE } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
