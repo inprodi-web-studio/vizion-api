@@ -1,4 +1,4 @@
-const { PRODUCT_VARIATION, PRODUCT } = require('../../../constants/models');
+const { PRODUCT_VARIATION, PRODUCT, ESTIMATE } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
@@ -106,6 +106,39 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
         });
 
         return updatedVariation;
+    },
+
+    async findRelations(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id } = await findOneByUuid( uuid, PRODUCT_VARIATION, variationsFields );
+
+        const estimates = await strapi.query( ESTIMATE ).count({
+            where : {
+                versions : {
+                    items : {
+                        product : {
+                            variations : id,
+                        },
+                    },
+                },
+            },
+        });
+
+        const sales = await strapi.query( SALE ).count({
+            where : {
+                items : {
+                    product : {
+                        variations : id,
+                    },
+                },
+            },
+        });
+
+        return {
+            estimates,
+            sales,
+        };
     },
 
     async delete(ctx) {
