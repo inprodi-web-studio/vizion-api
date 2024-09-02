@@ -95,9 +95,6 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
 
         await checkForDuplicates( PRODUCT, [
             {
-                name : data.name,
-            },
-            {
                 sku : data.sku,
             },
         ]);
