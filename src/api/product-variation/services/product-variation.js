@@ -5,22 +5,29 @@ const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { createCoreService } = require('@strapi/strapi').factories;
 
 module.exports = createCoreService(PRODUCT_VARIATION, ({ strapi }) => ({
-    async validateParallelData( data ) {
+    async validateParallelData( data, variation ) {
         const ctx = strapi.requestContext.get();
         const { company } = ctx.state;
+        const method      = ctx.request.method;
 
         let name = "";
 
-        for ( let i = 0; i < data.values.length; i++ ) {
-            const { id : valueId, name : valueName } = await findOneByUuid( data.values[i], ATTRIBUTE_VALUE );
-
-            data.values[i] = valueId;
-
-            if ( name ) {
-                name = `${name} / ${valueName}`;
-            } else {
-                name = valueName;
+        if ( method === "POST" ) {
+            for ( let i = 0; i < data.values.length; i++ ) {
+                const { id : valueId, name : valueName } = await findOneByUuid( data.values[i], ATTRIBUTE_VALUE );
+    
+                data.values[i] = valueId;
+    
+                if ( name ) {
+                    name = `${name} / ${valueName}`;
+                } else {
+                    name = valueName;
+                }
             }
+
+            data.name = name;
+        } else {
+            name = variation.name;
         }
 
         await checkForDuplicates( PRODUCT_VARIATION, [
@@ -37,7 +44,5 @@ module.exports = createCoreService(PRODUCT_VARIATION, ({ strapi }) => ({
                 },
             },
         ], {}, false);
-
-        data.name = name;
     },
 }));

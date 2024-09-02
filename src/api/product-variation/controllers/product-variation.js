@@ -99,7 +99,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
             },
         ]);
 
-        await strapi.service( PRODUCT_VARIATION ).validateParallelData( data );
+        await strapi.service( PRODUCT_VARIATION ).validateParallelData( data, variation );
 
         const updatedVariation = await strapi.entityService.update( PRODUCT_VARIATION, variation.id, {
             data : {
