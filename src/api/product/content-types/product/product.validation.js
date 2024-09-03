@@ -18,14 +18,14 @@ const createSchema = yup.object().shape({
     satCode     : yup.string().nullable(),
     taxType     : yup.string().nullable(),
     saleInfo    : yup.object().shape({
-        price        : yup.number().required(),
+        price        : yup.number().nullable(),
         iva          : yup.string().nullable(),
         deliveryTime : yup.number().nullable(),
         unity        : yup.string().nullable(),
         note         : yup.string().nullable(),
     }).strict().nullable(),
     purchaseInfo : yup.object().shape({
-        price : yup.number().required(),
+        price : yup.number().nullable(),
         iva   : yup.string().nullable(),
         unity : yup.string().nullable(),
         note  : yup.string().nullable(),

@@ -42,11 +42,17 @@
       "inversedBy": "variations"
     },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
+    },
+    "saleInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "product.sale-information"
     }
   }
 }
