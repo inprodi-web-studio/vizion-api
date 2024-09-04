@@ -62,9 +62,7 @@ const productFields = {
         },
         tags : true,
         variations : {
-            populate : {
-                count : true,
-            },
+            count : true,
         },
     },
 };
