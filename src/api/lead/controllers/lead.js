@@ -61,9 +61,6 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
                 "completeName.lastName",
                 "completeName.middleName",
             ],
-            ...( user.role.name !== "owner" && {
-                responsible : user.id,
-            }),
         };
 
         const leads = await findMany( LEAD, leadFields, filters );
@@ -90,10 +87,6 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         const data = ctx.request.body;
 
         await validateCreate( data );
-
-        if ( user.role.name !== "owner" ) {
-            data.responsible = user.id;
-        }
 
         const criteria = [];
 

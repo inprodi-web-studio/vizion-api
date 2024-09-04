@@ -69,9 +69,6 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
                 "completeName.lastName",
                 "completeName.middleName",
             ],
-            ...( user.role.name !== "owner" && {
-                responsible : user.id,
-            }),
         };
 
         const customers = await findMany( CUSTOMER, customerFields, filters );
@@ -102,10 +99,6 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         const data = ctx.request.body;
 
         await validateCreate( data );
-
-        if ( user.role.name !== "owner" ) {
-            data.responsible = user.id;
-        }
 
         const criteria = [];
 
