@@ -1,4 +1,4 @@
-const { PRODUCT_VARIATION, ATTRIBUTE_VALUE } = require('../../../constants/models');
+const { PRODUCT_VARIATION, ATTRIBUTE_VALUE, USER } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
@@ -28,6 +28,12 @@ module.exports = createCoreService(PRODUCT_VARIATION, ({ strapi }) => ({
             data.name = name;
         } else {
             name = variation.name;
+        }
+
+        if ( data.stockInfo?.alertTo ) {
+            const { id : alertToId } = await findOneByUuid( data.stockInfo.alertTo, USER );
+
+            data.stockInfo.alertTo = alertToId;
         }
 
         await checkForDuplicates( PRODUCT_VARIATION, [

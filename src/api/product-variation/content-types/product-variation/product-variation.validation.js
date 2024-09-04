@@ -10,6 +10,22 @@ const createSchema = yup.object().shape({
         width  : yup.number().nullable(),
         height : yup.number().nullable(),
     }).strict().nullable(),
+    saleInfo    : yup.object().shape({
+        price        : yup.number().nullable(),
+        iva          : yup.string().nullable(),
+        deliveryTime : yup.number().nullable(),
+    }).strict().nullable(),
+    purchaseInfo : yup.object().shape({
+        price : yup.number().nullable(),
+        iva   : yup.string().nullable(),
+    }).strict().nullable(),
+    stockInfo : yup.object().shape({
+        lowAlert      : yup.number().nullable(),
+        alertTo       : yup.string().uuid().nullable(),
+        minQuantity   : yup.number().nullable(),
+        maxQuantity   : yup.number().nullable(),
+        noStockPolicy : yup.string().oneOf(["none", "estimates", "both"]).nullable(),
+    }).strict().nullable(),
     values : yup.array().of( yup.string().uuid() ).required(),
 });
 
@@ -22,6 +38,22 @@ const updateSchema = yup.object().shape({
         long   : yup.number().nullable(),
         width  : yup.number().nullable(),
         height : yup.number().nullable(),
+    }).strict().nullable(),
+    saleInfo    : yup.object().shape({
+        price        : yup.number().nullable(),
+        iva          : yup.string().nullable(),
+        deliveryTime : yup.number().nullable(),
+    }).strict().nullable(),
+    purchaseInfo : yup.object().shape({
+        price : yup.number().nullable(),
+        iva   : yup.string().nullable(),
+    }).strict().nullable(),
+    stockInfo : yup.object().shape({
+        lowAlert      : yup.number().nullable(),
+        alertTo       : yup.string().uuid().nullable(),
+        minQuantity   : yup.number().nullable(),
+        maxQuantity   : yup.number().nullable(),
+        noStockPolicy : yup.string().oneOf(["none", "estimates", "both"]).nullable(),
     }).strict().nullable(),
 });
 

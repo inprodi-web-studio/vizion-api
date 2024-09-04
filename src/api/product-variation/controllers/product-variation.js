@@ -13,6 +13,26 @@ const variationsFields = {
         image : {
             fields : ["url"],
         },
+        saleInfo : {
+            fields : "*",
+            populate : {
+                priceConfig : true,
+            },
+        },
+        purchaseInfo : true,
+        stockInfo    : {
+            fields : "*",
+            populate : {
+                alertTo : {
+                    fields : ["uuid", "name", "middleName", "lastName"],
+                    populate : {
+                        image : {
+                            fields : ["url"],
+                        },
+                    },
+                },
+            },
+        },
         values : {
             fields : ["uuid", "name"],
             populate : {

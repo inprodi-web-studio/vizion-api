@@ -53,6 +53,16 @@
       "type": "component",
       "repeatable": false,
       "component": "product.sale-information"
+    },
+    "purchaseInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "product.purchase-info"
+    },
+    "stockInfo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "product.stock-info"
     }
   }
 }

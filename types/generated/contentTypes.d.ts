@@ -1867,6 +1867,8 @@ export interface ApiProductVariationProductVariation
     >;
     image: Attribute.Media;
     saleInfo: Attribute.Component<'product.sale-information'>;
+    purchaseInfo: Attribute.Component<'product.purchase-info'>;
+    stockInfo: Attribute.Component<'product.stock-info'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
