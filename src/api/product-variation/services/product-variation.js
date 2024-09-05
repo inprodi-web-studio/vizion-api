@@ -1,5 +1,6 @@
 const { PRODUCT_VARIATION, ATTRIBUTE_VALUE, USER } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
+const { ConflictError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
 const { createCoreService } = require('@strapi/strapi').factories;
@@ -36,19 +37,36 @@ module.exports = createCoreService(PRODUCT_VARIATION, ({ strapi }) => ({
             data.stockInfo.alertTo = alertToId;
         }
 
-        await checkForDuplicates( PRODUCT_VARIATION, [
-            {
+        const skuConflicting = await strapi.query( PRODUCT_VARIATION ).count({
+            where : {
                 sku : data.sku,
                 product : {
                     company : company.id,
                 },
             },
-            {
+        });
+
+        if ( skuConflicting > 0 ) {
+            throw new ConflictError("Variation with sku already exists", {
+                key : "product-variation.duplicated_sku",
+                path : ctx.request.path,
+            });
+        }
+
+        const nameConflicting = await strapi.query( PRODUCT_VARIATION ).count({
+            where : {
                 name,
                 product : {
                     company : company.id,
                 },
             },
-        ], {}, false);
+        });
+
+        if ( nameConflicting > 0 ) {
+            throw new ConflictError("Variation with name already exists", {
+                key : "product-variation.duplicated_name",
+                path : ctx.request.path,
+            });
+        }
     },
 }));
