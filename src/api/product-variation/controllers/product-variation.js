@@ -96,7 +96,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                     },
                 },
                 stockInfo : {
-                    ...product.stockInfo,
+                    ...data.stockInfo,
                     hasBatches : product.stockInfo?.hasBatches || false,
                     isPerishable : product.stockInfo?.isPerishable || false,
                 },
