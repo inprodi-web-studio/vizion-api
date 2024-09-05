@@ -27,7 +27,7 @@ const createSchema = yup.object().shape({
         noStockPolicy : yup.string().oneOf(["none", "estimates", "both"]).nullable(),
     }).strict().nullable(),
     values : yup.array().of( yup.string().uuid() ).required(),
-});
+}).strict();
 
 const updateSchema = yup.object().shape({
     image : yup.number().nullable(),
