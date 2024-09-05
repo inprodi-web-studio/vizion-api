@@ -43,6 +43,11 @@ module.exports = createCoreService(PRODUCT_VARIATION, ({ strapi }) => ({
                 product : {
                     company : company.id,
                 },
+                ...( ctx.request.method === "PUT" && {
+                    uuid : {
+                        $not : ctx.params.uuid
+                    },
+                }),
             },
         });
 
@@ -59,6 +64,11 @@ module.exports = createCoreService(PRODUCT_VARIATION, ({ strapi }) => ({
                 product : {
                     company : company.id,
                 },
+                ...( ctx.request.method === "PUT" && {
+                    uuid : {
+                        $not : ctx.params.uuid
+                    },
+                }),
             },
         });
 
