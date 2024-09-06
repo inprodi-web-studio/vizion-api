@@ -2,7 +2,7 @@ const { PRODUCT_VARIATION, PRODUCT, ESTIMATE, SALE } = require('../../../constan
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const { validateCreate, validateUpdate } = require('../content-types/product-variation/product-variation.validation');
+const { validateCreate, validateUpdate, validateSetPricing } = require('../content-types/product-variation/product-variation.validation');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
@@ -91,9 +91,6 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                 ...data,
                 saleInfo : {
                     ...data.saleInfo,
-                    priceConfig : {
-                        type : "fixed",
-                    },
                 },
                 stockInfo : {
                     ...data.stockInfo,
@@ -137,6 +134,28 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
             data : {
                 ...data,
                 product : product.id,
+            },
+        });
+
+        return updatedVariation;
+    },
+
+    async setPricing(ctx) {
+        const data = ctx.request.body;
+        const { productUuid, uuid } = ctx.params;
+
+        await validateSetPricing( data );
+
+        await findOneByUuid( productUuid, PRODUCT );
+        
+        const { id, saleInfo } = await findOneByUuid( uuid, PRODUCT_VARIATION );
+
+        const updatedVariation = await strapi.entityService.update( PRODUCT_VARIATION, id, {
+            data : {
+                saleInfo : {
+                    ...saleInfo,
+                    priceConfig : data,
+                },
             },
         });
 

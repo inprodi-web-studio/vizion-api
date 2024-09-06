@@ -57,7 +57,24 @@ const updateSchema = yup.object().shape({
     }).strict().nullable(),
 });
 
+const setPricingSchema = yup.object().shape({
+    type : yup.string().oneOf([ "fixed", "lists", "staggered" ]).required(),
+    config : yup.mixed().when( "type", {
+        is   : "fixed",
+        then : yup.mixed().oneOf([null]).nullable(),
+        otherwise : yup.mixed().when( "type", {
+            is   : "lists",
+            then : yup.object().required(),
+            otherwise : yup.mixed().when( "type", {
+                is : "staggered",
+                then : yup.array().of( yup.object() ).required(),
+            }),
+        }),
+    }),
+}).strict();
+
 module.exports = {
     validateCreate : validateYupSchema( createSchema ),
     validateUpdate : validateYupSchema( updateSchema ),
+    validateSetPricing : validateYupSchema( setPricingSchema ),
 };
