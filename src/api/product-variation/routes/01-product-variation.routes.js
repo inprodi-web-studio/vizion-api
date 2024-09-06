@@ -26,7 +26,7 @@ module.exports = {
       },
       {
         method  : "PUT",
-        path    : "/products/:productUuid/variations/:uuid",
+        path    : "/products/:productUuid/variations/:uuid/pricing",
         handler : "product-variation.update",
         config : {
           policies : ["global::userContext"],
