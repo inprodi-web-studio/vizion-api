@@ -91,6 +91,11 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                 ...data,
                 saleInfo : {
                     ...data.saleInfo,
+                    ...( data.saleInfo && {
+                        priceConfig : {
+                            type : "fixed",
+                        },
+                    }),
                 },
                 stockInfo : {
                     ...data.stockInfo,
@@ -147,7 +152,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
         await validateSetPricing( data );
 
         await findOneByUuid( productUuid, PRODUCT );
-        
+
         const { id, saleInfo } = await findOneByUuid( uuid, PRODUCT_VARIATION );
 
         const updatedVariation = await strapi.entityService.update( PRODUCT_VARIATION, id, {
