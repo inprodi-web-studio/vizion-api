@@ -89,14 +89,14 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
         const newVariation = await strapi.entityService.create( PRODUCT_VARIATION, {
             data : {
                 ...data,
-                saleInfo : {
-                    ...data.saleInfo,
-                    ...( data.saleInfo && {
+                ...( data.saleInfo && {
+                    saleInfo : {
+                        ...data.saleInfo,
                         priceConfig : {
                             type : "fixed",
                         },
-                    }),
-                },
+                    },
+                }),
                 stockInfo : {
                     ...data.stockInfo,
                     hasBatches : product.stockInfo?.hasBatches || false,
