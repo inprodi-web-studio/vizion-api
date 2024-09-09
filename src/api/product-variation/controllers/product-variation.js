@@ -176,7 +176,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
             },
         });
 
-        const { id, saleInfo } = await findOneByUuid( uuid, PRODUCT_VARIATION );
+        const { id, saleInfo } = await findOneByUuid( uuid, PRODUCT_VARIATION, variationsFields );
 
         const updatedVariation = await strapi.entityService.update( PRODUCT_VARIATION, id, {
             data : {
