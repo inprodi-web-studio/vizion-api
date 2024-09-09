@@ -153,7 +153,11 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
 
         await validateSetPricing( data );
 
-        await findOneByUuid( productUuid, PRODUCT );
+        const product = await findOneByUuid( productUuid, PRODUCT, {
+            populate : {
+                saleInfo : true,
+            },
+        });
 
         const { id, saleInfo } = await findOneByUuid( uuid, PRODUCT_VARIATION );
 
@@ -161,6 +165,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
             data : {
                 saleInfo : {
                     ...saleInfo,
+                    price : product.saleInfo.price,
                     priceConfig : data,
                 },
             },
