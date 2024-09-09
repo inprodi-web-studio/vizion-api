@@ -142,7 +142,14 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                 ...data,
                 saleInfo : {
                     ...data.saleInfo,
-                    priceConfig : variation.saleInfo?.priceConfig,
+                    ...( (!variation.saleInfo?.priceConfig?.type && data.saleInfo?.price ) ? ({
+                        priceConfig : {
+                            type : "fixed",
+                            config : null,
+                        }
+                    }) : ({
+                        priceConfig : variation.saleInfo?.priceConfig
+                    })),
                 },
                 purchaseInfo : {
                     ...data.purchaseInfo,
