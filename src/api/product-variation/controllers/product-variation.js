@@ -187,6 +187,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                     priceConfig : data,
                 },
             },
+            ...variationsFields,
         });
 
         return updatedVariation;
@@ -228,10 +229,24 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
     async delete(ctx) {
         const { productUuid, uuid } = ctx.params;
 
-        await findOneByUuid( productUuid, PRODUCT );
+        const product = await findOneByUuid( productUuid, PRODUCT );
         const variation = await findOneByUuid( uuid, PRODUCT_VARIATION );
 
         const deletedVariation = await strapi.entityService.delete( PRODUCT_VARIATION, variation.id, variationsFields );
+
+        const variationsCount = await strapi.query( PRODUCT_VARIATION ).count({
+            where : {
+                product : product.id,
+            },
+        });
+
+        if ( variationsCount === 0 ) {
+            await strapi.entityService.update( PRODUCT, product.id, {
+                data : {
+                    isDraft : true,
+                },
+            });
+        }
 
         return deletedVariation;
     },
