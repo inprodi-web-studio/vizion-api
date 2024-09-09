@@ -140,6 +140,15 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
         const updatedVariation = await strapi.entityService.update( PRODUCT_VARIATION, variation.id, {
             data : {
                 ...data,
+                saleInfo : {
+                    ...data.saleInfo,
+                },
+                purchaseInfo : {
+                    ...data.purchaseInfo,
+                },
+                stockInfo : {
+                    ...data.stockInfo,
+                },
                 product : product.id,
             },
         });
@@ -165,7 +174,8 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
             data : {
                 saleInfo : {
                     ...saleInfo,
-                    price : product.saleInfo.price,
+                    price : saleInfo?.price ? saleInfo.price : product.saleInfo.price,
+                    iva : saleInfo?.iva ? saleInfo.iva : product.saleInfo.iva,
                     priceConfig : data,
                 },
             },
