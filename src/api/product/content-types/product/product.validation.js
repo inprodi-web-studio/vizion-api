@@ -6,6 +6,7 @@ const createSchema = yup.object().shape({
     type        : yup.string().oneOf([ "simple", "variable" ]).required(),
     name        : yup.string().required(),
     description : yup.string().nullable(),
+    unity       : yup.string().uuid().required(),
     sku         : yup.string().nullable(),
     category    : yup.string().uuid().nullable(),
     dimensions  : yup.object().shape({
@@ -21,13 +22,11 @@ const createSchema = yup.object().shape({
         price        : yup.number().nullable(),
         iva          : yup.string().nullable(),
         deliveryTime : yup.number().nullable(),
-        unity        : yup.string().nullable(),
         note         : yup.string().nullable(),
     }).strict().nullable(),
     purchaseInfo : yup.object().shape({
         price : yup.number().nullable(),
         iva   : yup.string().nullable(),
-        unity : yup.string().nullable(),
         note  : yup.string().nullable(),
     }).strict().nullable(),
     stockInfo : yup.object().shape({

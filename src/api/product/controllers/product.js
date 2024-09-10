@@ -22,6 +22,9 @@ const productFields = {
                 values    : true,
             },
         },
+        unity : {
+            fields : ["uuid", "name", "satCode", "abbreviation"],
+        },
         dimensions   : true,
         saleInfo     : {
             fields : "*",

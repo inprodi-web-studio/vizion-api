@@ -241,7 +241,6 @@ export interface ProductPurchaseInfo extends Schema.Component {
     price: Attribute.Decimal;
     iva: Attribute.String;
     note: Attribute.Text;
-    unity: Attribute.String;
   };
 }
 
@@ -256,7 +255,6 @@ export interface ProductSaleInformation extends Schema.Component {
     iva: Attribute.String;
     deliveryTime: Attribute.Integer;
     note: Attribute.Text;
-    unity: Attribute.String;
     priceConfig: Attribute.Component<'product.price-config'>;
     upsells: Attribute.Relation<
       'product.sale-information',

@@ -1,4 +1,4 @@
-const { PRODUCT, PRODUCT_CATEGORY, USER, TAG, PRODUCT_ATTRIBUTE, ATTRIBUTE_VALUE } = require("../../../constants/models");
+const { PRODUCT, PRODUCT_CATEGORY, USER, TAG, PRODUCT_ATTRIBUTE, ATTRIBUTE_VALUE, UNITY } = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
@@ -6,6 +6,10 @@ const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService( PRODUCT, ({ strapi }) => ({
     async validateParallelData (data) {
+        const { id : unityId } = await findOneByUuid( data.unity, UNITY );
+
+        data.unity = unityId;
+
         if ( data.category ) {
             const { id : categoryId } = await findOneByUuid( data.category, PRODUCT_CATEGORY );
 

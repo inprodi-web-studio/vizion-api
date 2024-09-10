@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "unities",
+  "info": {
+    "singularName": "unity",
+    "pluralName": "unities",
+    "displayName": "Unity",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "satCode": {
+      "type": "string"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "abbreviation": {
+      "type": "string"
+    },
+    "products": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product.product",
+      "mappedBy": "unity"
+    }
+  }
+}

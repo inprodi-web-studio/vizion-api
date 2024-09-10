@@ -14,9 +14,6 @@
     },
     "note": {
       "type": "text"
-    },
-    "unity": {
-      "type": "string"
     }
   }
 }

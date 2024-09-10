@@ -18,9 +18,6 @@
     "note": {
       "type": "text"
     },
-    "unity": {
-      "type": "string"
-    },
     "priceConfig": {
       "displayName": "Price Config",
       "type": "component",

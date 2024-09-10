@@ -24,6 +24,8 @@ const {
   PRODUCT_VARIATION,
   PRODUCT_ATTRIBUTE,
   CONTACT_INTERACTION,
+  UNITY,
+  PACKAGE,
 } = require("./constants/models");
 
 module.exports = {
@@ -38,6 +40,8 @@ module.exports = {
         TASK,
         NOTE,
         SALE,
+        UNITY,
+        PACKAGE,
         PRODUCT,
         INSIDER,
         COMPANY,

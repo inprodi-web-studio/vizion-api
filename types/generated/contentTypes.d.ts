@@ -1561,6 +1561,46 @@ export interface ApiNoteNote extends Schema.CollectionType {
   };
 }
 
+export interface ApiPackagePackage extends Schema.CollectionType {
+  collectionName: 'packages';
+  info: {
+    singularName: 'package';
+    pluralName: 'packages';
+    displayName: 'Package';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    unity: Attribute.Relation<
+      'api::package.package',
+      'oneToOne',
+      'api::unity.unity'
+    >;
+    conversionRate: Attribute.Decimal;
+    product: Attribute.Relation<
+      'api::package.package',
+      'manyToOne',
+      'api::product.product'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::package.package',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::package.package',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiPaymentPayment extends Schema.CollectionType {
   collectionName: 'payments';
   info: {
@@ -1733,6 +1773,16 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'api::product.product',
       'oneToMany',
       'api::product-variation.product-variation'
+    >;
+    packages: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::package.package'
+    >;
+    unity: Attribute.Relation<
+      'api::product.product',
+      'manyToOne',
+      'api::unity.unity'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -2156,6 +2206,49 @@ export interface ApiTaskTask extends Schema.CollectionType {
   };
 }
 
+export interface ApiUnityUnity extends Schema.CollectionType {
+  collectionName: 'unities';
+  info: {
+    singularName: 'unity';
+    pluralName: 'unities';
+    displayName: 'Unity';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    satCode: Attribute.String;
+    company: Attribute.Relation<
+      'api::unity.unity',
+      'oneToOne',
+      'api::company.company'
+    >;
+    abbreviation: Attribute.String;
+    products: Attribute.Relation<
+      'api::unity.unity',
+      'oneToMany',
+      'api::product.product'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::unity.unity',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::unity.unity',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiUserSessionUserSession extends Schema.CollectionType {
   collectionName: 'user_sessions';
   info: {
@@ -2225,6 +2318,7 @@ declare module '@strapi/types' {
       'api::invitation.invitation': ApiInvitationInvitation;
       'api::lead.lead': ApiLeadLead;
       'api::note.note': ApiNoteNote;
+      'api::package.package': ApiPackagePackage;
       'api::payment.payment': ApiPaymentPayment;
       'api::preference.preference': ApiPreferencePreference;
       'api::price-list.price-list': ApiPriceListPriceList;
@@ -2238,6 +2332,7 @@ declare module '@strapi/types' {
       'api::suscription-status.suscription-status': ApiSuscriptionStatusSuscriptionStatus;
       'api::tag.tag': ApiTagTag;
       'api::task.task': ApiTaskTask;
+      'api::unity.unity': ApiUnityUnity;
       'api::user-session.user-session': ApiUserSessionUserSession;
     }
   }

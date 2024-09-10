@@ -98,6 +98,18 @@
       "relation": "oneToMany",
       "target": "api::product-variation.product-variation",
       "mappedBy": "product"
+    },
+    "packages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::package.package",
+      "mappedBy": "product"
+    },
+    "unity": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::unity.unity",
+      "inversedBy": "products"
     }
   }
 }
