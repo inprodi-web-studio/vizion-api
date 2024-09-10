@@ -35,7 +35,10 @@ const generateSeeds = async (strapi) => {
         where : {
             company : {
                 uuid : "a8513a90-326f-4584-bc40-4ad4ba0d10e4",
-            }
+            },
+            unity : {
+                $null : true,
+            },
         },
     });
 
