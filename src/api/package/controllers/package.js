@@ -19,7 +19,7 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
     async find(ctx) {
         const { productUuid } = ctx.params;
 
-        const product = await findOneByUuid( productUuid, PACKAGE );
+        const product = await findOneByUuid( productUuid, PRODUCT );
 
         const filters = {
             product : product.id,
