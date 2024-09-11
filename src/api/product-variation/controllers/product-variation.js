@@ -72,7 +72,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                 variations : {
                     populate : {
                         value : true,
-                    },    
+                    },
                 },
                 stockInfo : true,
             },
