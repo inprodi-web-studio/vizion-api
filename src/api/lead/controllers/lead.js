@@ -115,6 +115,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         }
 
         await checkForDuplicates( LEAD, criteria, leadFields );
+        await checkForDuplicates( CUSTOMER, criteria, leadFields );
 
         await strapi.service( LEAD ).validateParallelData( data );
 
@@ -167,6 +168,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         }
 
         await checkForDuplicates( LEAD, criteria, leadFields );
+        await checkForDuplicates( CUSTOMER, criteria, leadFields );
 
         await strapi.service( LEAD ).validateParallelData( data );
 
