@@ -58,6 +58,7 @@ const createSchema = yup.object().shape({
     group       : yup.string().uuid().nullable(),
     source      : yup.string().uuid().nullable(),
     tags        : yup.array().of( yup.string().uuid() ).nullable(),
+    priceList   : yup.string().uuid().nullable(),
 }, [["completeName", "tradeName"]]).strict();
 
 const createDeliveryAddressSchema = yup.object().shape({
