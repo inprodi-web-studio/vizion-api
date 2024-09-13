@@ -1,4 +1,4 @@
-const { CUSTOMER, USER, CONTACT_GROUP, CONTACT_SOURCE, TAG } = require('../../../constants/models');
+const { CUSTOMER, USER, CONTACT_GROUP, CONTACT_SOURCE, TAG, PRICE_LIST } = require('../../../constants/models');
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
@@ -142,6 +142,10 @@ module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
 
     async validateParallelData(data) {
         const ctx = strapi.requestContext.get();
+
+        const { id : priceListId } = await findOneByUuid( data.priceList, PRICE_LIST );
+
+        data.priceList = priceListId;
 
         if ( data.responsible ) {
             const { id : responsibleId } = await findOneByUuid( data.responsible, USER );
