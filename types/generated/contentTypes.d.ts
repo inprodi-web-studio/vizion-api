@@ -1188,6 +1188,7 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
       'api::payment.payment'
     >;
     credit: Attribute.Component<'customer.credit'>;
+    website: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

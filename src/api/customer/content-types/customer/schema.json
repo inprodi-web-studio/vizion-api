@@ -161,6 +161,9 @@
       "type": "component",
       "repeatable": false,
       "component": "customer.credit"
+    },
+    "website": {
+      "type": "string"
     }
   }
 }
