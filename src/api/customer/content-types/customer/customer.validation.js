@@ -40,7 +40,7 @@ const createSchema = yup.object().shape({
     }).strict().nullable(),
     fiscalInfo : yup.object().shape({
         legalName : yup.string().nullable(),
-        rfc       : yup.string().nullable().min(12).max(13),
+        rfc       : yup.string().nullable(),
         regime    : yup.string().nullable(),
         address   : yup.object().shape({
             street    : yup.string().nullable(),
