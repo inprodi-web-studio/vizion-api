@@ -45,7 +45,7 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
                     uuid : data.unity,
                 },
             },
-        ], false );
+        ], {}, false );
 
         await strapi.service( PACKAGE ).validateParallelData( data );
 
@@ -75,7 +75,7 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
                     uuid : data.unity,
                 },
             },
-        ], false );
+        ], {}, false );
 
         await strapi.service( PACKAGE ).validateParallelData( data );
 
