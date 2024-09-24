@@ -86,6 +86,9 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
 
         const samePackage = await strapi.query( PACKAGE ).count({
             where : {
+                uuid : {
+                    $not : package.uuid,
+                },
                 product : product.id,
                 unity : {
                     uuid : data.unity,
