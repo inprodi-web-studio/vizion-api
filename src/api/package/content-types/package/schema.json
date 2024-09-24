@@ -4,7 +4,8 @@
   "info": {
     "singularName": "package",
     "pluralName": "packages",
-    "displayName": "Package"
+    "displayName": "Package",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -20,13 +21,21 @@
       "target": "api::unity.unity"
     },
     "conversionRate": {
-      "type": "decimal"
+      "type": "float"
     },
     "product": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::product.product",
       "inversedBy": "packages"
+    },
+    "referenceUnity": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::package.package"
+    },
+    "realConversion": {
+      "type": "float"
     }
   }
 }

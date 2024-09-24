@@ -1568,6 +1568,7 @@ export interface ApiPackagePackage extends Schema.CollectionType {
     singularName: 'package';
     pluralName: 'packages';
     displayName: 'Package';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1579,12 +1580,18 @@ export interface ApiPackagePackage extends Schema.CollectionType {
       'oneToOne',
       'api::unity.unity'
     >;
-    conversionRate: Attribute.Decimal;
+    conversionRate: Attribute.Float;
     product: Attribute.Relation<
       'api::package.package',
       'manyToOne',
       'api::product.product'
     >;
+    referenceUnity: Attribute.Relation<
+      'api::package.package',
+      'oneToOne',
+      'api::package.package'
+    >;
+    realConversion: Attribute.Float;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
