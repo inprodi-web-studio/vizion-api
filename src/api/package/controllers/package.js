@@ -1,5 +1,6 @@
 const { PACKAGE, PRODUCT } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
+const { ConflictError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { validateCreate } = require('../content-types/package/package.validation');
@@ -46,14 +47,21 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
 
         const product = await findOneByUuid( productUuid, PRODUCT );
 
-        await checkForDuplicates( PACKAGE, [
-            {
+        const samePackage = await strapi.query( PACKAGE ).count({
+            where : {
                 product : product.id,
                 unity : {
                     uuid : data.unity,
                 },
             },
-        ], {}, false );
+        });
+
+        if ( samePackage > 0 ) {
+            throw new ConflictError( "Package with this unity already exists", {
+                key  : "package.duplicatedUnity",
+                path : ctx.request.path,
+            });
+        }
 
         await strapi.service( PACKAGE ).validateParallelData( data );
 
@@ -76,14 +84,21 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
         const product = await findOneByUuid( productUuid, PRODUCT );
         const package = await findOneByUuid( uuid, PACKAGE );
 
-        await checkForDuplicates( PACKAGE, [
-            {
+        const samePackage = await strapi.query( PACKAGE ).count({
+            where : {
                 product : product.id,
                 unity : {
                     uuid : data.unity,
                 },
             },
-        ], {}, false );
+        });
+
+        if ( samePackage > 0 ) {
+            throw new ConflictError( "Package with this unity already exists", {
+                key  : "package.duplicatedUnity",
+                path : ctx.request.path,
+            });
+        }
 
         await strapi.service( PACKAGE ).validateParallelData( data );
 
