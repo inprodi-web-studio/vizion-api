@@ -7,10 +7,18 @@ const { validateCreate } = require('../content-types/package/package.validation'
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const packageFields = {
-    fields : ["uuid", "conversionRate"],
+    fields : ["uuid", "conversionRate", "realConversion"],
     populate : {
         unity : {
             fields : ["uuid", "name", "abbreviation"],
+        },
+        referenceUnity : {
+            fields : ["uuid"],
+            populate : {
+                unity : {
+                    fields : ["uuid", "name", "abbreviation"],
+                },
+            },
         },
     },
 };
