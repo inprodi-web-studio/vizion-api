@@ -503,7 +503,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                             ${ item.discount?.amount ? `<div class="discount" style="margin-top: 2px;">${formatCurrency( item.price )}</div>` : ""}
                         </div>
 
-                        <div class="info-text" style="grid-column-end: span 2">${ formatCurrency( ((item.price - itemDiscount) + ivaAmount) * item.quantity ) }</div>
+                        <div class="info-text" style="grid-column-end: span 2">${ formatCurrency( ((item.price - itemDiscount)) * item.quantity ) }</div>
                     </div>`;
                 }).join('')}
 
