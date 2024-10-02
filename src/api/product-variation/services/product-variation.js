@@ -61,9 +61,7 @@ module.exports = createCoreService(PRODUCT_VARIATION, ({ strapi }) => ({
         const nameConflicting = await strapi.query( PRODUCT_VARIATION ).count({
             where : {
                 name,
-                product : {
-                    company : company.id,
-                },
+                product : data.product.id,
                 ...( ctx.request.method === "PUT" && {
                     uuid : {
                         $not : ctx.params.uuid
