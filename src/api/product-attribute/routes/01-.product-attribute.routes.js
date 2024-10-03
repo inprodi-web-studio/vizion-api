@@ -17,6 +17,14 @@ module.exports = {
         },
       },
       {
+        method: "POST",
+        path: "/products/:productUuid/attributes",
+        handler: "product-attribute.connectAttribute",
+        config: {
+          policies: ["global::userContext"],
+        },
+      },
+      {
         method: "PUT",
         path: "/product-attributes/:uuid",
         handler: "product-attribute.update",

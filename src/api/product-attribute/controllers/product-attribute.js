@@ -1,8 +1,9 @@
-const { PRODUCT_ATTRIBUTE } = require('../../../constants/models');
+const { PRODUCT_ATTRIBUTE, PRODUCT } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
+const { ConflictError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const { validateCreate } = require('../content-types/product-attribute/product-attribute.validation');
+const { validateCreate, validateConnect } = require('../content-types/product-attribute/product-attribute.validation');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
@@ -47,6 +48,47 @@ module.exports = createCoreController( PRODUCT_ATTRIBUTE, ({ strapi }) => ({
         });
 
         return newAttribute;
+    },
+
+    async connectAttribute(ctx) {
+        const data = ctx.request.body;
+        const { productUuid } = ctx.params;
+
+        await validateConnect( data );
+
+        const product = await findOneByUuid( productUuid, PRODUCT, {
+            populate : {
+                attributes : {
+                    populate : {
+                        attribute : true,
+                        values    : true,
+                    },
+                },
+            },
+        });
+
+        await strapi.service( PRODUCT_ATTRIBUTE ).validateParallelData( data );
+
+        const hasAttribute = product.attributes.find( attr => attr.uuid === data.attribute );
+
+        if ( hasAttribute ) {
+            throw new ConflictError("The product already has this attribute", {
+                key : "product.duplicatedAttribute",
+                path : ctx.request.path,
+            });
+        }
+
+        const updatedProduct = await strapi.entityService.update( PRODUCT, product.id, {
+            data : {
+                attributes : [
+                    ...product.attributes,
+                    data,
+                ],
+            },
+            ...productAttributeFields
+        });
+
+        return updatedProduct;
     },
 
     async update(ctx) {
