@@ -31,12 +31,34 @@ module.exports = createCoreService(PACKAGE, ({ strapi }) => ({
         for ( let i = 0; i < packagesWithReference.length; i++ ) {
             const item = packagesWithReference[i];
 
-            console.log(item.conversionRate * data.conversionRate);
-
             promises.push(
                 strapi.entityService.update( PACKAGE, item.id, {
                     data : {
                         realConversion : item.conversionRate * data.conversionRate,
+                    },
+                })
+            );
+        }
+
+        await Promise.all( promises );
+    },
+
+    async updateOrphanPackages(package) {
+        const packagesWithReference = await strapi.query( PACKAGE ).findMany({
+            where : {
+                referenceUnity : package.id,
+            },
+        });
+
+        let promises = [];
+
+        for ( let i = 0; i < packagesWithReference.length; i++ ) {
+            const item = packagesWithReference[i];
+
+            promises.push(
+                strapi.entityService.update( PACKAGE, item.id, {
+                    data : {
+                        conversionRate : item.realConversion,
                     },
                 })
             );

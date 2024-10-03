@@ -9,6 +9,14 @@ module.exports = {
         },
       },
       {
+        method: "GET",
+        path: "/products/:productUuid/attributes",
+        handler: "product-attribute.getProductAttributes",
+        config: {
+          policies: ["global::userContext"],
+        },
+      },
+      {
         method: "POST",
         path: "/product-attributes",
         handler: "product-attribute.create",

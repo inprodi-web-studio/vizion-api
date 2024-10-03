@@ -27,6 +27,23 @@ module.exports = createCoreController( PRODUCT_ATTRIBUTE, ({ strapi }) => ({
         return attributes;
     },
 
+    async getProductAttributes(ctx) {
+        const { productUuid } = ctx.params;
+
+        const product = await findOneByUuid( productUuid, PRODUCT, {
+            populate : {
+                attributes : {
+                    populate : {
+                        attribute : true,
+                        values    : true,
+                    },
+                },
+            },
+        });
+
+        return product.attributes;
+    },
+
     async create(ctx) {
         const { company } = ctx.state;
         const data = ctx.request.body;

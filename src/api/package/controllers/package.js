@@ -123,6 +123,8 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
 
         // TODO: No permitir eliminar si existen relaciones con el paquete
 
+        await strapi.service( PACKAGE ).updateOrphanPackages( package );
+
         const deletedPackage = await strapi.entityService.delete( PACKAGE, package.id, packageFields );
 
         return deletedPackage;
