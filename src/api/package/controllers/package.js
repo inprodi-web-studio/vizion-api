@@ -1,5 +1,4 @@
 const { PACKAGE, PRODUCT } = require('../../../constants/models');
-const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const { ConflictError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
@@ -104,6 +103,8 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
         }
 
         await strapi.service( PACKAGE ).validateParallelData( data );
+
+        await strapi.serivce( PACKAGE ).updateReferencedPackages( data );
 
         const updatedPackage = await strapi.entityService.update( PACKAGE, package.id, {
             data : {
