@@ -104,7 +104,7 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
 
         await strapi.service( PACKAGE ).validateParallelData( data );
 
-        await strapi.service( PACKAGE ).updateReferencedPackages( data );
+        await strapi.service( PACKAGE ).updateReferencedPackages( data, package );
 
         const updatedPackage = await strapi.entityService.update( PACKAGE, package.id, {
             data : {

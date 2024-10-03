@@ -19,22 +19,24 @@ module.exports = createCoreService(PACKAGE, ({ strapi }) => ({
         }
     },
 
-    async updateReferencedPackages( data ) {
+    async updateReferencedPackages( data, package ) {
         const packagesWithReference = await strapi.query( PACKAGE ).findMany({
             where : {
-                referenceUnity : data.unity,
+                referenceUnity : package.id,
             },
         });
 
         let promises = [];
 
         for ( let i = 0; i < packagesWithReference.length; i++ ) {
-            const package = packagesWithReference[i];
+            const item = packagesWithReference[i];
+
+            console.log(item.conversionRate * data.conversionRate);
 
             promises.push(
-                strapi.entityService.update( PACKAGE, package.id, {
+                strapi.entityService.update( PACKAGE, item.id, {
                     data : {
-                        realConversion : package.realConversion * data.conversionRate,
+                        realConversion : item.conversionRate * data.conversionRate,
                     },
                 })
             );
