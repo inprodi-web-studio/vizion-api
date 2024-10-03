@@ -13,7 +13,7 @@ const packageFields = {
             fields : ["uuid", "name", "abbreviation"],
         },
         referenceUnity : {
-            fields : ["uuid"],
+            fields : ["uuid", "conversionRate", "realConversion"],
             populate : {
                 unity : {
                     fields : ["uuid", "name", "abbreviation"],
