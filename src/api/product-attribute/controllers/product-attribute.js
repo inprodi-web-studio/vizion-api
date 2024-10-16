@@ -135,7 +135,7 @@ module.exports = createCoreController( PRODUCT_ATTRIBUTE, ({ strapi }) => ({
 
         const updatedProduct = await strapi.entityService.update( PRODUCT, product.id, {
             data : {
-                attributes : product.attributes.filter( attr => attr.uuid !== attribute.uuid ),
+                attributes : product.attributes.filter( attr => attr.attribute.uuid !== attribute.uuid ),
             },
             ...productAttributeFields
         });
