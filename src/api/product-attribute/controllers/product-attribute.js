@@ -86,7 +86,7 @@ module.exports = createCoreController( PRODUCT_ATTRIBUTE, ({ strapi }) => ({
 
         await strapi.service( PRODUCT_ATTRIBUTE ).validateParallelData( data );
 
-        const hasAttribute = product.attributes.find( attr => attr.uuid === data.attribute );
+        const hasAttribute = product.attributes.find( attr => attr.attribute.uuid === data.attribute );
 
         if ( hasAttribute ) {
             throw new ConflictError("The product already has this attribute", {
@@ -124,7 +124,7 @@ module.exports = createCoreController( PRODUCT_ATTRIBUTE, ({ strapi }) => ({
 
         const attribute = await findOneByUuid( uuid, PRODUCT_ATTRIBUTE );
 
-        const hasAttribute = product.attributes.find( attr => attr.uuid === attribute.uuid );
+        const hasAttribute = product.attributes.find( attr => attr.attribute.uuid === attribute.uuid );
 
         if ( !hasAttribute ) {
             throw new ConflictError("The product doesn't have this attribute", {
