@@ -108,6 +108,41 @@ module.exports = createCoreController( PRODUCT_ATTRIBUTE, ({ strapi }) => ({
         return updatedProduct;
     },
 
+    async disconnectAttribute(ctx) {
+        const { productUuid, uuid } = ctx.params;
+
+        const product = await findOneByUuid( productUuid, PRODUCT, {
+            populate : {
+                attributes : {
+                    populate : {
+                        attribute : true,
+                        values    : true,
+                    },
+                },
+            },
+        });
+
+        const attribute = await findOneByUuid( uuid, PRODUCT_ATTRIBUTE );
+
+        const hasAttribute = product.attributes.find( attr => attr.uuid === attribute.uuid );
+
+        if ( !hasAttribute ) {
+            throw new ConflictError("The product doesn't have this attribute", {
+                key : "product.duplicatedAttribute",
+                path : ctx.request.path,
+            });
+        }
+
+        const updatedProduct = await strapi.entityService.update( PRODUCT, product.id, {
+            data : {
+                attributes : product.attributes.filter( attr => attr.uuid !== attribute.uuid ),
+            },
+            ...productAttributeFields
+        });
+
+        return updatedProduct;
+    },
+
     async update(ctx) {
         const { uuid } = ctx.params;
         const data = ctx.request.body;

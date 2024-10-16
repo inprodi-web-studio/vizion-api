@@ -42,6 +42,14 @@ module.exports = {
       },
       {
         method: "DELETE",
+        path: "/products/:productUuid/attributes/:uuid",
+        handler: "product-attribute.disconnectAttribute",
+        config: {
+          policies: ["global::userContext"],
+        },
+      },
+      {
+        method: "DELETE",
         path: "/product-attributes/:uuid",
         handler: "product-attribute.delete",
         config: {

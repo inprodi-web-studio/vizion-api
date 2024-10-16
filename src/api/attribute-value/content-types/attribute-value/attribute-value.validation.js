@@ -5,6 +5,11 @@ const createSchema = yup.object().shape({
     attribute : yup.string().uuid(),
 });
 
+const connectSchema = yup.object().shape({
+    value : yup.string().uuid().required(),
+});
+
 module.exports = {
     validateCreate : validateYupSchema( createSchema ),
+    validateConnect : validateYupSchema( connectSchema )
 };
