@@ -164,6 +164,8 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         const { id } = await findOneByUuid( uuid, SALE );
 
+        await strapi.service( SALE ).updateEstimateMetaInfo( id );
+
         const deletedSale = await strapi.entityService.delete( SALE, id );
 
         return deletedSale;

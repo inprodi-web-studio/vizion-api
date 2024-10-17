@@ -1,4 +1,4 @@
-const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT } = require("../../../constants/models");
+const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE } = require("../../../constants/models");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
@@ -122,5 +122,23 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         }
 
         return lastFol[0].fol + 1;
+    },
+
+    async updateEstimateMetaInfo( saleId ) {
+        const estimate = await strapi.query( ESTIMATE ).findOne({
+            where : {
+                sale : saleId,
+            },
+        });
+
+        if (!estimate) {
+            return;
+        }
+
+        await strapi.entityService.update( ESTIMATE, estimate.id, {
+            data : {
+                saleMeta : null,
+            },
+        });
     },
 }));
