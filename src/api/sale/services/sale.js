@@ -186,7 +186,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 value : estimates + sales,
                 customerMeta : {
                     ...customerMeta,
-                    lastSale : date ? date : lastSale?.date,
+                    lastSale : date ? date : lastSale?.date ? lastSale.date : null,
                     totalSales : sales,
                 },
             } 
