@@ -425,12 +425,15 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         const today        = dayjs();
         const difference   = today.diff( leadCreation, "day" );
 
+        let id = lead.id;
+
         await strapi.service(LEAD).deleteParallelData(lead.id);
 
         delete lead.createdAt;
+        delete lead.uuid;
         delete lead.id;
 
-        return await strapi.entityService.create( CUSTOMER, {
+        const customer = await strapi.entityService.create( CUSTOMER, {
             data : {
                 ...lead,
                 leadMeta : {
@@ -443,6 +446,10 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             },
             fields : ["uuid"],
         });
+
+        lead.id = id;
+
+        return customer;
     },
 
     async deleteParallelData(id) {
