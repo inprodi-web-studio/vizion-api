@@ -184,7 +184,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         const deletedSale = await strapi.entityService.delete( SALE, id );
 
-        await strapi.service(SALE).updateCustomerMeta({ customer : customer.id, date });
+        await strapi.service(SALE).updateCustomerMeta({ customer : customer.id, date : null });
 
         return deletedSale;
     },

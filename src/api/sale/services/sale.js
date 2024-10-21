@@ -170,12 +170,23 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const salesTaxesTotal = totalSales[0][0]?.taxesSum ?? 0;
         const sales = salesTotal - salesTaxesTotal;
 
+        let lastSale;
+
+        if (!date) {
+            lastSale = await strapi.query( SALE ).findOne({
+                where : {
+                    customer : id,
+                },
+                sort : "date:desc",
+            });
+        }
+
         await strapi.entityService.update( CUSTOMER, id, {
             data : {
                 value : estimates + sales,
                 customerMeta : {
                     ...customerMeta,
-                    lastSale : date,
+                    lastSale : date ? date : lastSale?.date,
                     totalSales : sales,
                 },
             } 
