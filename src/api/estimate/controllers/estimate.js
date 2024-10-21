@@ -389,18 +389,18 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
 
         const entityId = await strapi.service(ESTIMATE).keyFind( data );
 
-        if (data.key === "stage" && lead) {
-            await strapi.service(ESTIMATE).setLeadPotential({
-                lead : lead.id,
-            });
-        }
-
         const updatedEstimate = await strapi.entityService.update( ESTIMATE, id, {
             data : {
                 [data.key] : entityId,
             },
             ...estimateFields,
         });
+
+        if (data.key === "stage" && lead) {
+            await strapi.service(ESTIMATE).setLeadPotential({
+                lead : lead.id,
+            });
+        }
 
         return updatedEstimate;
     },
