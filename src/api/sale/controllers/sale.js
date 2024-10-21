@@ -144,13 +144,20 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             },
         });
 
+        await strapi.service(SALE).updateCustomerMeta(data);
+
         return updatedSale;
     },
 
     async authorize(ctx) {
         const { uuid } = ctx.params;
 
-        const { id } = await findOneByUuid( uuid, SALE );
+        const { id, customer, date } = await findOneByUuid( uuid, SALE, {
+            fields : ["date"],
+            populate : {
+                customer : true,
+            },
+        });
 
         const updatedSale = await strapi.entityService.update( SALE, id, {
             data : {
@@ -158,17 +165,26 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             },
         });
 
+        await strapi.service(SALE).updateCustomerMeta({ customer : customer.id, date });
+
         return updatedSale;
     },
 
     async delete(ctx) {
         const { uuid } = ctx.params;
 
-        const { id } = await findOneByUuid( uuid, SALE );
+        const { id, customer, date } = await findOneByUuid( uuid, SALE, {
+            fields : ["date"],
+            populate : {
+                customer : true,
+            },
+        });
 
         await strapi.service( SALE ).updateEstimateMetaInfo( id );
 
         const deletedSale = await strapi.entityService.delete( SALE, id );
+
+        await strapi.service(SALE).updateCustomerMeta({ customer : customer.id, date });
 
         return deletedSale;
     },
