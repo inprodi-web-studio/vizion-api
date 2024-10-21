@@ -142,7 +142,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
             JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
             JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
             LEFT JOIN estimates_sale_links as est_sale ON est.id = est_sale.estimate_id
-            WHERE est_customer.customer_id = ${customer}
+            WHERE est_customer.customer_id = ${id}
                 AND est_components.component_type = 'estimate.version'
                 AND ver.is_active = 1
                 AND ver_components.component_type = 'estimate.resume'
