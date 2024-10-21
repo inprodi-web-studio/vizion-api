@@ -1,4 +1,4 @@
-const { CUSTOMER, USER, CONTACT_GROUP, CONTACT_SOURCE, TAG, PRICE_LIST } = require('../../../constants/models');
+const { CUSTOMER, USER, CONTACT_GROUP, CONTACT_SOURCE, TAG, PRICE_LIST, ESTIMATE, TASK, NOTE, CONTACT_INTERACTION, INSIDER, SALE } = require('../../../constants/models');
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
@@ -179,6 +179,68 @@ module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
 
                 data.tags[i] = tagId;
             }
+        }
+    },
+
+    async deleteParallelData(id) {
+        const estimates = await strapi.db.query(ESTIMATE).findMany({
+            where : {
+                customer : id,
+            },
+        });
+
+        const sales = await strapi.db.query(SALE).findMany({
+            where : {
+                customer : id,
+            },
+        });
+
+        for ( const sale of sales ) {
+            await strapi.entityService.delete(SALE, sale.id);
+        }
+
+        for ( const estimate of estimates ) {
+            await strapi.entityService.delete(ESTIMATE, estimate.id);
+        }
+
+        const tasks = await strapi.db.query( TASK ).findMany({
+            where : {
+                customer : id,
+            },
+        });
+
+        for ( const task of tasks ) {
+            await strapi.entityService.delete(TASK, task.id);
+        }
+
+        const notes = await strapi.db.query( NOTE ).findMany({
+            where : {
+                customer : id,
+            },
+        });
+
+        for ( const note of notes ) {
+            await strapi.entityService.delete(NOTE, note.id);
+        }
+
+        const interactions = await strapi.db.query( CONTACT_INTERACTION ).findMany({
+            where : {
+                customer : id,
+            },
+        });
+
+        for ( const interaction of interactions ) {
+            await strapi.entityService.delete(CONTACT_INTERACTION, interaction.id);
+        }
+
+        const insiders = await strapi.db.query( INSIDER ).findMany({
+            where : {
+                customer : id,
+            },
+        });
+
+        for ( const insider of insiders ) {
+            await strapi.entityService.delete(INSIDER, insider.id);
         }
     },
 }));

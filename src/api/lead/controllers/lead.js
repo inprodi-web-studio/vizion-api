@@ -520,7 +520,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
     async delete(ctx) {
         const { uuid } = ctx.params;
 
-        const { id } = await validateEntityPermission( uuid, LEAD );
+        const { id } = await findOneByUuid( uuid, LEAD );
 
         await strapi.service(LEAD).deleteParallelData(id);
 
