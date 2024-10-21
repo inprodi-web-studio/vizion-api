@@ -125,10 +125,10 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
     },
 
     async updateCustomerMeta({ customer, date }) {
-        const { id, customerMeta } = await strapi.entityService.findOne( CUSTOMER, customer.id, {
+        const { id, customerMeta } = await strapi.entityService.findOne( CUSTOMER, customer, {
             populate : {
                 customerMeta : true,
-            },    
+            },
         });
 
         const totalEstimates = await strapi.db.connection.raw(`
