@@ -198,6 +198,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 JOIN sales_components as sale_components ON sale.id = sale_components.entity_id
                 JOIN components_estimate_resumes AS res ON sale_components.component_id = res.id
                 WHERE sale_customer.customer_id = ${customer}
+                    AND sale.is_authorized = true
                     AND sale_components.component_type = 'estimate.resume'
             `);
 

@@ -115,7 +115,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         const fol = await strapi.service( SALE ).generateNextFol( company );
 
-        const newEstimate = await strapi.entityService.create( SALE, {
+        const newSale = await strapi.entityService.create( SALE, {
             data : {
                 fol,
                 company : company.id,
@@ -123,7 +123,9 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             },
         });
 
-        return newEstimate;
+        await strapi.service(SALE).updateCustomerMeta(data);
+
+        return newSale;
     },
 
     async update(ctx) {

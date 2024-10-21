@@ -124,6 +124,64 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         return lastFol[0].fol + 1;
     },
 
+    async updateCustomerMeta({ customer, date }) {
+        const { id, customerMeta } = await strapi.entityService.findOne( CUSTOMER, customer.id, {
+            populate : {
+                customerMeta : true,
+            },    
+        });
+
+        const totalEstimates = await strapi.db.connection.raw(`
+            SELECT
+                SUM(res.total) AS totalSum,
+                SUM(res.taxes) AS taxesSum
+            FROM estimates as est
+            JOIN estimates_customer_links as est_customer ON est.id = est_customer.estimate_id
+            JOIN estimates_components as est_components ON est.id = est_components.entity_id
+            JOIN components_estimate_versions AS ver ON est_components.component_id = ver.id
+            JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
+            JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
+            LEFT JOIN estimates_sale_links as est_sale ON est.id = est_sale.estimate_id
+            WHERE est_customer.customer_id = ${customer}
+                AND est_components.component_type = 'estimate.version'
+                AND ver.is_active = 1
+                AND ver_components.component_type = 'estimate.resume'
+                AND est_sale.sale_id IS NULL
+        `);
+
+        const totalSales = await strapi.db.connection.raw(`
+            SELECT
+                SUM(res.total) AS totalSum,
+                SUM(res.taxes) AS taxesSum
+            FROM sales as sale
+            JOIN sales_customer_links as sale_customer ON sale.id = sale_customer.sale_id
+            JOIN sales_components as sale_components ON sale.id = sale_components.entity_id
+            JOIN components_estimate_resumes AS res ON sale_components.component_id = res.id
+            WHERE sale_customer.customer_id = ${id}
+                AND sale.is_authorized = true
+                AND sale_components.component_type = 'estimate.resume'
+        `);
+
+        const estimatesTotal = totalEstimates[0][0]?.totalSum ?? 0;
+        const taxesTotal = totalEstimates[0][0]?.taxesSum ?? 0;
+        const estimates = estimatesTotal - taxesTotal;
+
+        const salesTotal = totalSales[0][0]?.totalSum ?? 0;
+        const salesTaxesTotal = totalSales[0][0]?.taxesSum ?? 0;
+        const sales = salesTotal - salesTaxesTotal;
+
+        await strapi.entityService.update( CUSTOMER, id, {
+            data : {
+                value : estimates + sales,
+                customerMeta : {
+                    ...customerMeta,
+                    lastSale : date,
+                    totalSales : sales,
+                },
+            } 
+        });
+    },
+
     async updateEstimateMetaInfo( saleId ) {
         const estimate = await strapi.query( ESTIMATE ).findOne({
             where : {
