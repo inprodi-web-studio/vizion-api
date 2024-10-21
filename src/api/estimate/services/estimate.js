@@ -173,7 +173,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         if (contactType === "customer") {
             const totalEstimates = await strapi.db.connection.raw(`
                 SELECT
-                    SUM(res.total) AS totalSum
+                    SUM(res.total) AS totalSum,
                     SUM(res.taxes) AS taxesSum
                 FROM estimates as est
                 JOIN estimates_customer_links as est_customer ON est.id = est_customer.estimate_id
@@ -191,7 +191,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
 
             const totalSales = await strapi.db.connection.raw(`
                 SELECT
-                    SUM(res.total) AS totalSum
+                    SUM(res.total) AS totalSum,
                     SUM(res.taxes) AS taxesSum
                 FROM sales as sale
                 JOIN sales_customer_links as sale_customer ON sale.id = sale_customer.sale_id
@@ -219,7 +219,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         if (contactType === "lead") {
             const totalValue = await strapi.db.connection.raw(`
                 SELECT
-                    SUM(res.total) AS totalSum
+                    SUM(res.total) AS totalSum,
                     SUM(res.taxes) AS taxesSum
                 FROM estimates as est
                 JOIN estimates_lead_links as est_lead ON est.id = est_lead.estimate_id
