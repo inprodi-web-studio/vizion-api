@@ -164,6 +164,12 @@
     },
     "website": {
       "type": "string"
+    },
+    "creditHistory": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::customer-credit.customer-credit",
+      "mappedBy": "customer"
     }
   }
 }

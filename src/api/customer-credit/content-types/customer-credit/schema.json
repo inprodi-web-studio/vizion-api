@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "customers_credit",
+  "info": {
+    "singularName": "customer-credit",
+    "pluralName": "customers-credit",
+    "displayName": "Customer Credit",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::customer.customer",
+      "inversedBy": "creditHistory"
+    },
+    "details": {
+      "type": "component",
+      "repeatable": false,
+      "component": "customer.credit"
+    }
+  }
+}

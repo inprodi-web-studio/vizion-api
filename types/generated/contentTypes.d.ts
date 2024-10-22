@@ -1189,6 +1189,11 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
     >;
     credit: Attribute.Component<'customer.credit'>;
     website: Attribute.String;
+    creditHistory: Attribute.Relation<
+      'api::customer.customer',
+      'oneToMany',
+      'api::customer-credit.customer-credit'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1199,6 +1204,42 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::customer.customer',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiCustomerCreditCustomerCredit extends Schema.CollectionType {
+  collectionName: 'customers_credit';
+  info: {
+    singularName: 'customer-credit';
+    pluralName: 'customers-credit';
+    displayName: 'Customer Credit';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    customer: Attribute.Relation<
+      'api::customer-credit.customer-credit',
+      'manyToOne',
+      'api::customer.customer'
+    >;
+    details: Attribute.Component<'customer.credit'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::customer-credit.customer-credit',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::customer-credit.customer-credit',
       'oneToOne',
       'admin::user'
     > &
@@ -2319,6 +2360,7 @@ declare module '@strapi/types' {
       'api::contact-interaction.contact-interaction': ApiContactInteractionContactInteraction;
       'api::contact-source.contact-source': ApiContactSourceContactSource;
       'api::customer.customer': ApiCustomerCustomer;
+      'api::customer-credit.customer-credit': ApiCustomerCreditCustomerCredit;
       'api::document.document': ApiDocumentDocument;
       'api::estimate.estimate': ApiEstimateEstimate;
       'api::estimate-stage.estimate-stage': ApiEstimateStageEstimateStage;

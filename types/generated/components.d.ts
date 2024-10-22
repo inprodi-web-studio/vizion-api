@@ -64,6 +64,7 @@ export interface CustomerCredit extends Schema.Component {
     daysToPay: Attribute.Integer;
     amountLimit: Attribute.Decimal;
     amountUsed: Attribute.Decimal;
+    isActive: Attribute.Boolean;
   };
 }
 

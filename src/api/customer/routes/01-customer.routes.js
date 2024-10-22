@@ -130,6 +130,14 @@ module.exports = {
       },
       {
         method  : "PUT",
+        path    : "delivery-addresses/customers/:uuid/:addressId",
+        handler : "customer.updateDeliveryAddress",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PUT",
         path    : "/insiders/customers/:uuid/:insiderUuid",
         handler : "customer.updateInsider",
         config : {
@@ -172,6 +180,14 @@ module.exports = {
         method  : "DELETE",
         path    : "/contacts/customers/:uuid",
         handler : "customer.delete",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "DELETE",
+        path    : "/delivery-addresses/customers/:uuid/:addressId",
+        handler : "customer.createDeliveryAddress",
         config : {
           policies : ["global::userContext"],
         },

@@ -4,7 +4,7 @@ const findMany = require('../../../helpers/findMany');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const { validateCreate, validateCreateDeliveryAddress } = require('../content-types/customer/customer.validation');
 const { validateKeyUpdate } = require('../../../helpers/validateKeyUpdate');
-const { UnprocessableContentError, ConflictError } = require('../../../helpers/errors');
+const { UnprocessableContentError, ConflictError, NotFoundError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
 const { createCoreController } = require('@strapi/strapi').factories;
@@ -329,6 +329,69 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         });
 
         return updatedCustomer.deliveryAddresses.find( address => address.name === data.name );
+    },
+
+    async updateDeliveryAddress(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        await validateCreateDeliveryAddress(data);
+
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
+
+        const customerAddresses = customer.deliveryAddresses;
+
+        const conflictingAddress = customerAddresses.find( address => address.name === data.name );
+
+        if ( conflictingAddress ) {
+            throw new ConflictError( "Delivery address with this name already exists", {
+                key : "customer.duplicated_DeliveryAddress",
+                path : ctx.request.path,
+            });
+        }
+
+        if ( data.isMain && customerAddresses.length > 0 ) {
+            const index = customerAddresses.findIndex( address => address.isMain );
+            customerAddresses[index].isMain = false;
+        }
+
+        const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+            data : {
+                deliveryAddresses : [
+                    ...customerAddresses,
+                    data,
+                ],
+            },
+            ...customerFields
+        });
+
+        return updatedCustomer.deliveryAddresses.find( address => address.name === data.name );
+    },
+
+    async deleteDeliveryAddress(ctx) {
+        const { uuid, addressId } = ctx.params;
+
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
+
+        const customerAddresses = customer.deliveryAddresses;
+
+        const desiredAddress = customerAddresses.find( address => address.id === addressId );
+
+        if ( !desiredAddress ) {
+            throw new NotFoundError( "Delivery address not found", {
+                key : "customer.notFound_DeliveryAddress",
+                path : ctx.request.path,
+            });
+        }
+
+        const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+            data : {
+                deliveryAddresses : customerAddresses.filter( address => address.id !== addressId ),
+            },
+            ...customerFields
+        });
+
+        return updatedCustomer.deliveryAddresses;
     },
 
     async getFiles(ctx) {
