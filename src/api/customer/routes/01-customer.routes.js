@@ -187,7 +187,7 @@ module.exports = {
       {
         method  : "DELETE",
         path    : "/delivery-addresses/customers/:uuid/:addressId",
-        handler : "customer.createDeliveryAddress",
+        handler : "customer.deleteDeliveryAddress",
         config : {
           policies : ["global::userContext"],
         },
