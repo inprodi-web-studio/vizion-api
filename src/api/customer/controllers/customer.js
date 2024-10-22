@@ -333,7 +333,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
     async updateDeliveryAddress(ctx) {
         const data = ctx.request.body;
-        const { uuid } = ctx.params;
+        const { uuid, addressId } = ctx.params;
 
         await validateCreateDeliveryAddress(data);
 
@@ -355,12 +355,13 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
             customerAddresses[index].isMain = false;
         }
 
+        const desiredIndex = customerAddresses.findIndex( address => address.id == addressId );
+
+        customerAddresses[ desiredIndex ] = data;
+
         const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
             data : {
-                deliveryAddresses : [
-                    ...customerAddresses,
-                    data,
-                ],
+                deliveryAddresses : customerAddresses,
             },
             ...customerFields
         });
@@ -375,7 +376,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         const customerAddresses = customer.deliveryAddresses;
 
-        const desiredAddress = customerAddresses.find( address => address.id === addressId );
+        const desiredAddress = customerAddresses.find( address => address.id == addressId );
 
         if ( !desiredAddress ) {
             throw new NotFoundError( "Delivery address not found", {
@@ -386,7 +387,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
             data : {
-                deliveryAddresses : customerAddresses.filter( address => address.id !== addressId ),
+                deliveryAddresses : customerAddresses.filter( address => address.id != addressId ),
             },
             ...customerFields
         });
