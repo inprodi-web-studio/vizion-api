@@ -26,6 +26,7 @@ const {
   CONTACT_INTERACTION,
   UNITY,
   PACKAGE,
+  CUSTOMER_CREDIT,
 } = require("./constants/models");
 
 module.exports = {
@@ -55,6 +56,7 @@ module.exports = {
         ESTIMATE_STAGE,
         CONTACT_SOURCE,
         ATTRIBUTE_VALUE,
+        CUSTOMER_CREDIT,
         PRODUCT_CATEGORY,
         PRODUCT_ATTRIBUTE,
         PRODUCT_VARIATION,

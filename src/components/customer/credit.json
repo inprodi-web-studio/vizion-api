@@ -17,6 +17,9 @@
     },
     "isActive": {
       "type": "boolean"
+    },
+    "policy": {
+      "type": "string"
     }
   }
 }

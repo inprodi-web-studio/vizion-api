@@ -1,10 +1,10 @@
-const { CUSTOMER, INSIDER, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, ESTIMATE, LEAD } = require('../../../constants/models');
+const { CUSTOMER, INSIDER, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, ESTIMATE, LEAD, CUSTOMER_CREDIT } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findMany = require('../../../helpers/findMany');
 const validateEntityPermission = require('../../../helpers/validateEntityPermission');
-const { validateCreate, validateCreateDeliveryAddress } = require('../content-types/customer/customer.validation');
+const { validateCreate, validateCreateDeliveryAddress, validateCreateCreditLine } = require('../content-types/customer/customer.validation');
 const { validateKeyUpdate } = require('../../../helpers/validateKeyUpdate');
-const { UnprocessableContentError, ConflictError, NotFoundError } = require('../../../helpers/errors');
+const { UnprocessableContentError, ConflictError, NotFoundError, BadRequestError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
 const { createCoreController } = require('@strapi/strapi').factories;
@@ -393,6 +393,109 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         });
 
         return updatedCustomer.deliveryAddresses;
+    },
+
+    async createCreditLine(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        await validateCreateCreditLine( data );
+
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
+
+        if (customer.credit?.id) {
+            throw new BadRequestError("The customer already has a credit line configured", {
+                key : "customer.existingCreditLine",
+                path : ctx.request.path,
+            });
+        }
+
+        const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+            data : {
+                credit : {
+                    ...data,
+                    isActive : true,
+                    amountUsed : 0,
+                    policy : "on-sale"
+                },
+            },
+            ...customerFields
+        });
+
+        await strapi.entityService.create( CUSTOMER_CREDIT, {
+            data : {
+                customer : updatedCustomer.id,
+                details : {
+                    ...data,
+                    isActive : true,
+                    policy : "on-sale",
+                },
+            },
+        });
+
+        return updatedCustomer.credit;
+    },
+
+    async updateCreditLine(ctx) {
+        const data = ctx.request.body;
+        const { uuid } = ctx.params;
+
+        await validateCreateCreditLine( data );
+
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
+
+        const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+            data : {
+                credit : {
+                    ...data,
+                    isActive : true,
+                    amountUsed : customer.credit.amountUsed,
+                    policy : "on-sale"
+                },
+            },
+            ...customerFields
+        });
+
+        await strapi.entityService.create( CUSTOMER_CREDIT, {
+            data : {
+                customer : updatedCustomer.id,
+                details : {
+                    ...data,
+                    isActive : true,
+                    policy : "on-sale",
+                },
+            },
+        });
+
+        return updatedCustomer.credit;
+    },
+
+    async toggleCreditLine(ctx) {
+        const { uuid } = ctx.params;
+
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
+
+        const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+            data : {
+                credit : {
+                    ...customer.credit,
+                    isActive : !customer.credit.isActive
+                },
+            },
+            ...customerFields
+        });
+
+        await strapi.entityService.create( CUSTOMER_CREDIT, {
+            data : {
+                customer : updatedCustomer.id,
+                details : {
+                    ...customer.credit,
+                    isActive : !customer.credit.isActive
+                },
+            },
+        });
+
+        return updatedCustomer.credit;
     },
 
     async getFiles(ctx) {

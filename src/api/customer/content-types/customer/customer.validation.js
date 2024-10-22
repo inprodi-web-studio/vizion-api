@@ -77,7 +77,13 @@ const createDeliveryAddressSchema = yup.object().shape({
     isMain : yup.bool().required(),
 }).strict();
 
+const createCreditLineSchema = yup.object().shape({
+    daysToPay : yup.string().required(),
+    amountLimit : yup.number().required(),
+}).strict();
+
 module.exports = {
     validateCreate : validateYupSchema( createSchema ),
     validateCreateDeliveryAddress : validateYupSchema( createDeliveryAddressSchema ),
+    validateCreateCreditLine : validateYupSchema( createCreditLineSchema ),
 };

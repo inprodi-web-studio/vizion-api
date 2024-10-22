@@ -90,6 +90,14 @@ module.exports = {
       },
       {
         method  : "POST",
+        path    : "/credit-lines/customers/:uuid",
+        handler : "customer.createCreditLine",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "POST",
         path    : "/files/customers/:uuid",
         handler : "customer.uploadFile",
         config : {
@@ -138,6 +146,14 @@ module.exports = {
       },
       {
         method  : "PUT",
+        path    : "/credit-lines/customers/:uuid",
+        handler : "customer.updateCreditLine",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PUT",
         path    : "/insiders/customers/:uuid/:insiderUuid",
         handler : "customer.updateInsider",
         config : {
@@ -164,6 +180,14 @@ module.exports = {
         method  : "PATCH",
         path    : "/contacts/customers/:uuid/toggle",
         handler : "customer.toggleStatus",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PATCH",
+        path    : "/credit-lines/customers/:uuid",
+        handler : "customer.toggleCreditLine",
         config : {
           policies : ["global::userContext"],
         },
