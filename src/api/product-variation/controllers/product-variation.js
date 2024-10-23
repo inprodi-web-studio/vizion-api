@@ -39,6 +39,9 @@ const variationsFields = {
                 attribute : true,
             },
         },
+        packages : {
+            count : true,
+        },
     },
 };
 
