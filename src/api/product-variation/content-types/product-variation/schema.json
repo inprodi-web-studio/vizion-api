@@ -63,6 +63,12 @@
       "type": "component",
       "repeatable": false,
       "component": "product.stock-info"
+    },
+    "packages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::package.package",
+      "mappedBy": "variation"
     }
   }
 }

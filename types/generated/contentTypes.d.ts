@@ -1633,6 +1633,11 @@ export interface ApiPackagePackage extends Schema.CollectionType {
       'api::package.package'
     >;
     realConversion: Attribute.Float;
+    variation: Attribute.Relation<
+      'api::package.package',
+      'manyToOne',
+      'api::product-variation.product-variation'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1968,6 +1973,11 @@ export interface ApiProductVariationProductVariation
     saleInfo: Attribute.Component<'product.sale-information'>;
     purchaseInfo: Attribute.Component<'product.purchase-info'>;
     stockInfo: Attribute.Component<'product.stock-info'>;
+    packages: Attribute.Relation<
+      'api::product-variation.product-variation',
+      'oneToMany',
+      'api::package.package'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

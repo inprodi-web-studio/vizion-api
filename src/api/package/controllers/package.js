@@ -1,4 +1,4 @@
-const { PACKAGE, PRODUCT } = require('../../../constants/models');
+const { PACKAGE, PRODUCT, PRODUCT_VARIATION } = require('../../../constants/models');
 const { ConflictError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
@@ -25,13 +25,25 @@ const packageFields = {
 
 module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
     async find(ctx) {
-        const { productUuid } = ctx.params;
+        const { productUuid, variationUuid } = ctx.params;
 
-        const product = await findOneByUuid( productUuid, PRODUCT );
+        let filters = {};
 
-        const filters = {
-            product : product.id,
-        };
+        if (productUuid) {
+            const product = await findOneByUuid( productUuid, PRODUCT );
+
+            filters = {
+                product : product.id,
+            };
+        }
+
+        if (variationUuid) {
+            const variation = await findOneByUuid( variationUuid, PRODUCT_VARIATION );
+
+            filters = {
+                variation : variation.id,
+            };
+        }
 
         const packages = await findMany( PACKAGE, packageFields, filters );
 
@@ -39,72 +51,135 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const { productUuid } = ctx.params;
+        const { productUuid, variationUuid } = ctx.params;
         const data = ctx.request.body;
 
         await validateCreate( data );
 
-        const product = await findOneByUuid( productUuid, PRODUCT );
+        if (productUuid) {
+            const product = await findOneByUuid( productUuid, PRODUCT );
 
-        const samePackage = await strapi.query( PACKAGE ).count({
-            where : {
-                product : product.id,
-                unity : {
-                    uuid : data.unity,
+            const samePackage = await strapi.query( PACKAGE ).count({
+                where : {
+                    product : product.id,
+                    unity : {
+                        uuid : data.unity,
+                    },
                 },
-            },
-        });
-
-        if ( samePackage > 0 ) {
-            throw new ConflictError( "Package with this unity already exists", {
-                key  : "package.duplicatedUnity",
-                path : ctx.request.path,
             });
+    
+            if ( samePackage > 0 ) {
+                throw new ConflictError( "Package with this unity already exists", {
+                    key  : "package.duplicatedUnity",
+                    path : ctx.request.path,
+                });
+            }
+    
+            await strapi.service( PACKAGE ).validateParallelData( data );
+    
+            const newPackage = await strapi.entityService.create( PACKAGE, {
+                data : {
+                    ...data,
+                    product : product.id,
+                },
+            });
+    
+            return newPackage;
         }
 
-        await strapi.service( PACKAGE ).validateParallelData( data );
+        if (variationUuid) {
+            const variation = await findOneByUuid( variationUuid, PRODUCT_VARIATION );
 
-        const newPackage = await strapi.entityService.create( PACKAGE, {
-            data : {
-                ...data,
-                product : product.id,
-            },
-        });
-
-        return newPackage;
+            const samePackage = await strapi.query( PACKAGE ).count({
+                where : {
+                    variation : variation.id,
+                    unity : {
+                        uuid : data.unity,
+                    },
+                },
+            });
+    
+            if ( samePackage > 0 ) {
+                throw new ConflictError( "Package with this unity already exists", {
+                    key  : "package.duplicatedUnity",
+                    path : ctx.request.path,
+                });
+            }
+    
+            await strapi.service( PACKAGE ).validateParallelData( data );
+    
+            const newPackage = await strapi.entityService.create( PACKAGE, {
+                data : {
+                    ...data,
+                    variation : variation.id,
+                },
+            });
+    
+            return newPackage;
+        }
     },
 
     async update(ctx) {
-        const { productUuid, uuid } = ctx.params;
+        const { productUuid, variationUuid, uuid } = ctx.params;
         const data = ctx.request.body;
 
         await validateCreate( data );
 
-        const product = await findOneByUuid( productUuid, PRODUCT );
         const package = await findOneByUuid( uuid, PACKAGE );
 
-        const samePackage = await strapi.query( PACKAGE ).count({
-            where : {
-                uuid : {
-                    $not : package.uuid,
-                },
-                product : product.id,
-                unity : {
-                    uuid : data.unity,
-                },
-            },
-        });
+        if (productUuid) {
+            const product = await findOneByUuid( productUuid, PRODUCT );
 
-        if ( samePackage > 0 ) {
-            throw new ConflictError( "Package with this unity already exists", {
-                key  : "package.duplicatedUnity",
-                path : ctx.request.path,
+            const samePackage = await strapi.query( PACKAGE ).count({
+                where : {
+                    uuid : {
+                        $not : package.uuid,
+                    },
+                    product : product.id,
+                    unity : {
+                        uuid : data.unity,
+                    },
+                },
             });
+    
+            if ( samePackage > 0 ) {
+                throw new ConflictError( "Package with this unity already exists", {
+                    key  : "package.duplicatedUnity",
+                    path : ctx.request.path,
+                });
+            }
+    
+            await strapi.service( PACKAGE ).validateParallelData( data );
+    
+            await strapi.service( PACKAGE ).updateReferencedPackages( data, package );
         }
 
-        await strapi.service( PACKAGE ).validateParallelData( data );
+        if (variationUuid) {
+            const variation = await findOneByUuid( variationUuid, PRODUCT_VARIATION );
 
-        await strapi.service( PACKAGE ).updateReferencedPackages( data, package );
+            const samePackage = await strapi.query( PACKAGE ).count({
+                where : {
+                    uuid : {
+                        $not : package.uuid,
+                    },
+                    variation : variation.id,
+                    unity : {
+                        uuid : data.unity,
+                    },
+                },
+            });
+    
+            if ( samePackage > 0 ) {
+                throw new ConflictError( "Package with this unity already exists", {
+                    key  : "package.duplicatedUnity",
+                    path : ctx.request.path,
+                });
+            }
+    
+            await strapi.service( PACKAGE ).validateParallelData( data );
+    
+            await strapi.service( PACKAGE ).updateReferencedPackages( data, package );
+        }
 
         const updatedPackage = await strapi.entityService.update( PACKAGE, package.id, {
             data : {
@@ -116,12 +191,19 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
     },
 
     async delete(ctx) {
-        const { productUuid, uuid } = ctx.params;
+        const { productUuid, variationUuid, uuid } = ctx.params;
 
-        await findOneByUuid( productUuid, PRODUCT );
         const package = await findOneByUuid( uuid, PACKAGE );
 
         // TODO: No permitir eliminar si existen relaciones con el paquete
+
+        if (productUuid) {
+            await findOneByUuid( productUuid, PRODUCT );
+        }
+
+        if (variationUuid) {
+            await findOneByUuid( variationUuid, PRODUCT_VARIATION );
+        }
 
         await strapi.service( PACKAGE ).updateOrphanPackages( package );
 
