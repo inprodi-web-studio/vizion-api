@@ -140,6 +140,8 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         for ( let i = 0; i < data.items.length; i++ ) {
             const item = data.items[i];
 
+            data.items[i].realQuantity = 0;
+
             const { id : productId, unity } = await findOneByUuid( item.product, PRODUCT, {
                 populate : {
                     unity : {
