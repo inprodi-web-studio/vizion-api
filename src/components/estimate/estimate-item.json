@@ -14,6 +14,9 @@
     "quantity": {
       "type": "decimal"
     },
+    "realQuantity": {
+      "type": "decimal"
+    },
     "price": {
       "type": "decimal"
     },
@@ -24,6 +27,21 @@
       "type": "component",
       "repeatable": false,
       "component": "estimate.discount"
+    },
+    "unity": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::unity.unity"
+    },
+    "package": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::package.package"
+    },
+    "variation": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product-variation.product-variation"
     }
   }
 }

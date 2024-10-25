@@ -104,9 +104,25 @@ export interface EstimateEstimateItem extends Schema.Component {
       'api::product.product'
     >;
     quantity: Attribute.Decimal;
+    realQuantity: Attribute.Decimal;
     price: Attribute.Decimal;
     iva: Attribute.String;
     discount: Attribute.Component<'estimate.discount'>;
+    unity: Attribute.Relation<
+      'estimate.estimate-item',
+      'oneToOne',
+      'api::unity.unity'
+    >;
+    package: Attribute.Relation<
+      'estimate.estimate-item',
+      'oneToOne',
+      'api::package.package'
+    >;
+    variation: Attribute.Relation<
+      'estimate.estimate-item',
+      'oneToOne',
+      'api::product-variation.product-variation'
+    >;
   };
 }
 

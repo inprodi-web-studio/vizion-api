@@ -1,5 +1,5 @@
 const dayjs = require("dayjs");
-const { ESTIMATE, ESTIMATE_STAGE, USER, CUSTOMER, LEAD, PRICE_LIST, PRODUCT } = require("../../../constants/models");
+const { ESTIMATE, ESTIMATE_STAGE, USER, CUSTOMER, LEAD, PRICE_LIST, PRODUCT, PACKAGE, PRODUCT_VARIATION } = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
@@ -140,8 +140,27 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         for ( let i = 0; i < data.items.length; i++ ) {
             const item = data.items[i];
 
-            const { id : productId } = await findOneByUuid( item.product, PRODUCT );
+            const { id : productId } = await findOneByUuid( item.product, PRODUCT, {
+                populate : {
+                    unity : {
+                        fields : ["id"],
+                    },
+                },
+            });
+
             data.items[i].product = productId;
+
+            if (item.package) {
+                const { id : packageId } = await findOneByUuid( item.package, PACKAGE );
+                data.items[i].package = packageId;
+            }
+
+            if (item.variation) {
+                const { id : variationId } = await findOneByUuid( item.variation, PRODUCT_VARIATION );
+                data.items[i].variation = variationId;
+            }
+
+            data.unity = item.product.unity.id;
         }
 
         if ( data.deliveryAddress ) {
