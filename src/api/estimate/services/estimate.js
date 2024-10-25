@@ -160,7 +160,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 data.items[i].variation = variationId;
             }
 
-            data.unity = unity.id;
+            data.items[i].unity = unity.id;
         }
 
         if ( data.deliveryAddress ) {
