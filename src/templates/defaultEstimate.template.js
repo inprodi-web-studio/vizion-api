@@ -471,7 +471,9 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                     };
 
                     const itemDiscount = item.discount?.amount ?? 0;
-                    const ivaAmount = (item.price - itemDiscount) * ivaDictionary[item.iva];
+                    // const ivaAmount = (item.price - itemDiscount) * ivaDictionary[item.iva];
+
+                    console.log( item );
 
                     return `<div class="body">
                         <div style="grid-column-end: span 6">
@@ -488,15 +490,32 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
 
                                 <div class="product-info">
                                     <p style="font-size: 12px; font-weight: 500;">${ item.product.name }</p>
-                                    <p style="font-size: 10px; font-weight: 400; color: #868E96">${ item.product.sku }</p>
+                                    <p style="font-size: 10px; font-weight: 400; color: #868E96">${ item.product.sku ? item.product.sku : item.variation.sku }</p>
                                 </div>
                             </div>
+
+                            ${item.variation ? `
+                                <div style="margin-top: 10px;">
+                                    ${
+                                        item.variation.values.map( value => `
+                                            <div style="width: 100%; display: flex; align-items: center; justify-content: start; gap: 10px;">
+                                                <div class="label" style="line-height: 1.5;">${value.attribute.name}:</div>
+                                                <div class="info-text" style="line-height: 1.5;">${value.name}</div>
+                                            </div>
+                                        `).join('')
+                                    }
+                                </div>
+                            ` : ""}
 
                             ${item.product.description ? `<div class="description" style="margin-top: 10px">${item.product.description.replaceAll( '"', "'" )}</div>` : ""}
                         </div>
 
-                        <div class="info-text" style="grid-column-end: span 2; width: 100%; text-align: center;">${ item.quantity } ${ item.quantity === 1 ? "Pieza" : "Piezas" }</div>
-
+                        <div style="width: 100%; grid-column-end: span 2;">
+                            <div class="info-text" style="width: 100%; text-align: center;">${ item.quantity } ${ item.package ? item.package.unity.name : item.unity.name }</div>
+                            ${ item.package ? `
+                                <div class="label" style="text-align: center; line-height: 150%; font-size: 10px;">Equivalente a ${Number(item.package.realConversion * item.quantity).toLocaleString()} ${item.unity.name}</div>
+                            ` : ""}
+                        </div>
 
                         <div style="grid-column-end: span 2">
                             <div class="info-text">${ item.discount?.amount ? formatCurrency( (item.price - item.discount.amount) ) : formatCurrency( item.price ) }</div>
