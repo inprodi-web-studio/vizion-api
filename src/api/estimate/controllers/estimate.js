@@ -80,6 +80,28 @@ const estimateFields = {
                             },
                         },
                         discount : true,
+                        package : {
+                            fields : ["uuid", "conversionRate", "realConversion"],
+                            populate : {
+                                unity : true,
+                            },
+                        },
+                        unity : {
+                            fields : ["uuid", "name", "abbreviation"],
+                        },
+                        variation : {
+                            fields : ["uuid", "sku"],
+                            populate : {
+                                values : {
+                                    fields : ["uuid", "name"],
+                                    populate : {
+                                        attribute : {
+                                            fields : ["uuid", "name"],
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
                 resume : {
