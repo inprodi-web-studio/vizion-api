@@ -151,8 +151,9 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
             data.items[i].product = productId;
 
             if (item.package) {
-                const { id : packageId } = await findOneByUuid( item.package, PACKAGE );
+                const { id : packageId, realConversion } = await findOneByUuid( item.package, PACKAGE );
                 data.items[i].package = packageId;
+                data.items[i].realQuantity = realConversion * item.quantity;
             }
 
             if (item.variation) {
