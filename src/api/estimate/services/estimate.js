@@ -140,7 +140,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         for ( let i = 0; i < data.items.length; i++ ) {
             const item = data.items[i];
 
-            const { id : productId } = await findOneByUuid( item.product, PRODUCT, {
+            const { id : productId, unity } = await findOneByUuid( item.product, PRODUCT, {
                 populate : {
                     unity : {
                         fields : ["id"],
@@ -160,7 +160,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 data.items[i].variation = variationId;
             }
 
-            data.unity = item.product.unity.id;
+            data.unity = unity.id;
         }
 
         if ( data.deliveryAddress ) {
