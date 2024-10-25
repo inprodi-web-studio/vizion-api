@@ -67,6 +67,9 @@ const productFields = {
         variations : {
             count : true,
         },
+        packages : {
+            count : true,
+        },
     },
 };
 
