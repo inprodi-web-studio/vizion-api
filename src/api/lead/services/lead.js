@@ -18,6 +18,7 @@ const findOneByUuid       = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
 const validateEntityPermission = require("../../../helpers/validateEntityPermission");
+const { default: axios } = require("axios");
 
 const leadFields = {
     fields   : ["uuid", "tradeName", "finalName", "email", "website", "rating", "isActive", "value", "potential", "createdAt"],
@@ -502,5 +503,47 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         for ( const insider of insiders ) {
             await strapi.entityService.delete(INSIDER, insider.id);
         }
+    },
+
+    async generateAddressData({ mainAddress }) {
+        const {
+            street,
+            extNumber,
+            cp,
+            city,
+            state,
+            country,
+        } = mainAddress;
+
+        let URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${ process.env.MAPBOX_TOKEN }`;
+
+        if (street) {
+            URL = URL + `&street=${ encodeURI(street) }`;
+        }
+
+        if (extNumber) {
+            URL = URL + `&address_number=${ encodeURI(extNumber) }`;
+        }
+
+        if (cp) {
+            URL = URL + `&postcode=${ encodeURI(cp) }`;
+        }
+
+        if (city) {
+            URL = URL + `&locality=${ encodeURI(city) }`;
+        }
+
+        if (state) {
+            URL = URL + `&region=${ encodeURI(state) }`;
+        }
+
+        if (country) {
+            URL = URL + `&country=${ encodeURI(country) }`;
+        }
+        
+        await axios.get( URL ).then( async ({ data }) => {
+            mainAddress.longitude = data.features[0].geometry.coordinates[0].toString();
+            mainAddress.latitude  = data.features[0].geometry.coordinates[1].toString();
+        });
     },
 }));

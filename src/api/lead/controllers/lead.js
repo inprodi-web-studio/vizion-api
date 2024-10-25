@@ -118,6 +118,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         await checkForDuplicates( CUSTOMER, criteria, leadFields );
 
         await strapi.service( LEAD ).validateParallelData( data );
+        await strapi.service(LEAD).generateAddressData(data);
 
         const newLead = await strapi.entityService.create( LEAD, {
             data : {
@@ -171,6 +172,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         await checkForDuplicates( CUSTOMER, criteria, leadFields );
 
         await strapi.service( LEAD ).validateParallelData( data );
+        await strapi.service(LEAD).generateAddressData(data);
 
         const updatedLead = await strapi.entityService.update( LEAD, lead.id, {
             data : {

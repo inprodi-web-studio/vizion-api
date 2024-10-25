@@ -1,7 +1,8 @@
 {
   "collectionName": "components_address_addresses",
   "info": {
-    "displayName": "Address"
+    "displayName": "Address",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -27,6 +28,15 @@
       "type": "string"
     },
     "country": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "string"
+    },
+    "longitude": {
+      "type": "string"
+    },
+    "image": {
       "type": "string"
     }
   }

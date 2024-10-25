@@ -4,6 +4,7 @@ export interface AddressAddress extends Schema.Component {
   collectionName: 'components_address_addresses';
   info: {
     displayName: 'Address';
+    description: '';
   };
   attributes: {
     street: Attribute.String;
@@ -14,6 +15,9 @@ export interface AddressAddress extends Schema.Component {
     city: Attribute.String;
     state: Attribute.String;
     country: Attribute.String;
+    latitude: Attribute.String;
+    longitude: Attribute.String;
+    image: Attribute.String;
   };
 }
 
