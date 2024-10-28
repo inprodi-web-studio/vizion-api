@@ -513,7 +513,7 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             city,
             state,
             country,
-        } = mainAddress;
+        } = mainAddress ?? {};
 
         let URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${ process.env.MAPBOX_TOKEN }`;
 
@@ -530,7 +530,7 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         }
 
         if (city) {
-            URL = URL + `&locality=${ encodeURI(city) }`;
+            URL = URL + `&place=${ encodeURI(city) }`;
         }
 
         if (state) {
