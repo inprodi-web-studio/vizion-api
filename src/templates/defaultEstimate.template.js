@@ -473,8 +473,6 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                     const itemDiscount = item.discount?.amount ?? 0;
                     // const ivaAmount = (item.price - itemDiscount) * ivaDictionary[item.iva];
 
-                    console.log( item );
-
                     return `<div class="body">
                         <div style="grid-column-end: span 6">
                             <div class="product-container">
@@ -495,11 +493,11 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                             </div>
 
                             ${item.variation ? `
-                                <div style="margin-top: 10px;">
+                                <div style="margin-top: 10px; display: flex; width: 100%; flex-direction: column; gap: 4px;">
                                     ${
                                         item.variation.values.map( value => `
                                             <div style="width: 100%; display: flex; align-items: center; justify-content: start; gap: 10px;">
-                                                <div class="label" style="line-height: 1.5;">${value.attribute.name}:</div>
+                                                <div class="label" style="line-height: 1.5; margin: 0;">${value.attribute.name}:</div>
                                                 <div class="info-text" style="line-height: 1.5;">${value.name}</div>
                                             </div>
                                         `).join('')

@@ -56,8 +56,6 @@ const customerFields = {
 
 module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
     async find(ctx) {
-        const user  = ctx.state.user;
-
         const filters = {
             $search : [
                 "email",
@@ -89,7 +87,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const { user, company } = ctx.state;
+        const { company } = ctx.state;
         const data = ctx.request.body;
 
         await validateCreate( data );
@@ -141,6 +139,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         await checkForDuplicates( CUSTOMER, criteria, customerFields );
 
         await strapi.service( CUSTOMER ).validateParallelData( data );
+        await strapi.service( CUSTOMER ).generateAddressData(data);
 
         const newCustomer = await strapi.entityService.create( CUSTOMER, {
             data : {

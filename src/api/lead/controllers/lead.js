@@ -50,8 +50,6 @@ const leadFields = {
 
 module.exports = createCoreController( LEAD, ({ strapi }) => ({
     async find(ctx) {
-        const user  = ctx.state.user;
-
         const filters = {
             $search : [
                 "email",
@@ -83,7 +81,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const { user, company } = ctx.state;
+        const { company } = ctx.state;
         const data = ctx.request.body;
 
         await validateCreate( data );

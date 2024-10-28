@@ -532,8 +532,8 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         const URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${ process.env.MAPBOX_TOKEN }&proximity=ip&q=${ encodeURI( query ) }`;
 
         await axios.get( URL ).then( async ({ data }) => {
-            mainAddress.longitude = data.features[0].geometry.coordinates[0].toString();
-            mainAddress.latitude  = data.features[0].geometry.coordinates[1].toString();
+            mainAddress.longitude = data.features?.[0]?.geometry?.coordinates?.[0]?.toString();
+            mainAddress.latitude  = data.features?.[0]?.geometry?.coordinates?.[1]?.toString();
         });
     },
 }));

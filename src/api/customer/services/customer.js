@@ -243,4 +243,36 @@ module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
             await strapi.entityService.delete(INSIDER, insider.id);
         }
     },
+
+    async generateAddressData({ mainAddress }) {
+        const {
+            street,
+            extNumber,
+            cp,
+            city,
+            state,
+            country,
+        } = mainAddress ?? {};
+
+        let query = "";
+
+        if ( !street && !extNumber && !cp && !city && !state && country ) {
+            query = country;
+        } else if ( !street && !extNumber && !cp && !city && state && country ) {
+            query = `${ state } ${ country }`;
+        } else if ( !street && !extNumber && !cp && city && state && country ) {
+            query = `${city} ${ state } ${ country }`;
+        } else if ( !street && !extNumber && cp && city && state && country ) {
+            query = `${cp} ${city} ${ state } ${ country }`;
+        } else {
+            query = `${ street ? street : "" } ${ extNumber ? extNumber : "" } ${ cp ? cp : "" } ${ city ? city : "" } ${ state ? state : "" } ${ country ? country : "" }`;
+        }
+
+        const URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${ process.env.MAPBOX_TOKEN }&proximity=ip&q=${ encodeURI( query ) }`;
+
+        await axios.get( URL ).then( async ({ data }) => {
+            mainAddress.longitude = data.features?.[0]?.geometry?.coordinates?.[0]?.toString();
+            mainAddress.latitude  = data.features?.[0]?.geometry?.coordinates?.[1]?.toString();
+        });
+    },
 }));
