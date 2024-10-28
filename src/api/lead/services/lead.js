@@ -515,32 +515,23 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             country,
         } = mainAddress ?? {};
 
-        let URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${ process.env.MAPBOX_TOKEN }`;
+        let query = "";
 
-        if (street) {
-            URL = URL + `&street=${ encodeURI(street) }`;
+        let URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${ process.env.MAPBOX_TOKEN }&q=${ encodeURI( query ) }`;
+
+
+        if ( !street && !extNumber && !cp && !city && !state && country ) {
+            query = country;
+        } else if ( !street && !extNumber && !cp && !city && state && country ) {
+            query = `${ state } ${ country }`;
+        } else if ( !street && !extNumber && !cp && city && state && country ) {
+            query = `${city} ${ state } ${ country }`;
+        } else if ( !street && !extNumber && cp && city && state && country ) {
+            query = `${cp} ${city} ${ state } ${ country }`;
+        } else {
+            query = `${ street ? street : "" } ${ extNumber ? extNumber : "" } ${ cp ? cp : "" } ${ city ? city : "" } ${ state ? state : "" } ${ country ? country : "" }`;
         }
 
-        if (extNumber) {
-            URL = URL + `&address_number=${ encodeURI(extNumber) }`;
-        }
-
-        if (cp) {
-            URL = URL + `&postcode=${ encodeURI(cp) }`;
-        }
-
-        if (city) {
-            URL = URL + `&place=${ encodeURI(city) }`;
-        }
-
-        if (state) {
-            URL = URL + `&region=${ encodeURI(state) }`;
-        }
-
-        if (country) {
-            URL = URL + `&country=${ encodeURI(country) }`;
-        }
-        
         await axios.get( URL ).then( async ({ data }) => {
             mainAddress.longitude = data.features[0].geometry.coordinates[0].toString();
             mainAddress.latitude  = data.features[0].geometry.coordinates[1].toString();
