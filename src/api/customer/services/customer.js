@@ -5,6 +5,7 @@ const { createCoreService } = require('@strapi/strapi').factories;
 const moment = require("moment-timezone");
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { BadRequestError } = require('../../../helpers/errors');
+const axios = require('axios');
 
 module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
     async getStats() {
