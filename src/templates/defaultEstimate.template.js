@@ -511,9 +511,9 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                         </div>
 
                         <div style="width: 100%; grid-column-end: span 2;">
-                            <div class="info-text" style="width: 100%; text-align: center;">${ item.quantity } ${ item.package ? item.package.unity.name : item.unity.name }</div>
+                            <div class="info-text" style="width: 100%; text-align: center;">${ item.quantity } ${ item.package ? item.package.unity.name : item.unity?.name ?? "Piezas" }</div>
                             ${ item.package ? `
-                                <div class="label" style="text-align: center; line-height: 150%; font-size: 10px;">Equivalente a ${Number(item.package.realConversion * item.quantity).toLocaleString()} ${item.unity.name}</div>
+                                <div class="label" style="text-align: center; line-height: 150%; font-size: 10px;">Equivalente a ${Number(item.package.realConversion * item.quantity).toLocaleString()} ${item.unity?.name}</div>
                             ` : ""}
                         </div>
 
