@@ -95,6 +95,9 @@
       "relation": "oneToOne",
       "target": "api::estimate.estimate",
       "mappedBy": "sale"
+    },
+    "authorizedAt": {
+      "type": "datetime"
     }
   }
 }

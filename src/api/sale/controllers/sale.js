@@ -1,3 +1,4 @@
+const { auth } = require("strapi-provider-upload-do");
 const { SALE } = require("../../../constants/models");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
@@ -6,7 +7,7 @@ const { validateCreate } = require("../content-types/sale/sale.validation");
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const saleFields = {
-    fields : ["uuid", "fol", "deliveryDate", "date", "paymentScheme", "subject", "comments", "terms", "creditPolicy", "limitPaymentDate", "isAuthorized"],
+    fields : ["uuid", "fol", "deliveryDate", "date", "paymentScheme", "subject", "comments", "terms", "creditPolicy", "limitPaymentDate", "isAuthorized", "authorizedAt"],
     populate : {
         responsible : {
             fields : ["uuid", "name", "middleName", "lastName"],
@@ -162,6 +163,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         const updatedSale = await strapi.entityService.update( SALE, id, {
             data : {
                 isAuthorized : true,
+                authorizedAt : new Date(),
             },
         });
 
