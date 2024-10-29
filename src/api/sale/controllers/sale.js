@@ -151,6 +151,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             },
         });
 
+        await strapi.service(SALE).handleCreditSale( data, updatedSale );
         await strapi.service(SALE).updateCustomerMeta(data);
 
         return updatedSale;
@@ -162,7 +163,11 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         const { id, customer, date } = await findOneByUuid( uuid, SALE, {
             fields : ["date"],
             populate : {
-                customer : true,
+                customer : {
+                    populate : {
+                        credit : true,
+                    },
+                },
             },
         });
 
@@ -173,6 +178,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             },
         });
 
+        await strapi.service(SALE).updateLineCreditUsage(customer.id, customer.credit);
         await strapi.service(SALE).updateCustomerMeta({ customer : customer.id, date });
 
         return updatedSale;
@@ -191,6 +197,8 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         await strapi.service( SALE ).updateEstimateMetaInfo( id );
 
         const deletedSale = await strapi.entityService.delete( SALE, id );
+
+        // TODO: Delete parallel data
 
         await strapi.service(SALE).updateCustomerMeta({ customer : customer.id, date : null });
 

@@ -219,16 +219,36 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
     },
 
     async handleCreditSale({customerCredit, customer}, sale) {
+        const ctx = strapi.requestContext.get();
+        const method = ctx.request.method;
+
         const { policy, daysToPay } = customerCredit;
 
-        await strapi.entityService.create( CREDIT_MOVEMENT, {
-            data : {
-                sale : sale.id,
-                policy,
-                paymentDate : policy === "on-sale" ? dayjs().add(daysToPay, "day").format("YYYY-MM-DD") : null,
-                amountPaid : 0,
-            },
-        });
+        if (method === "POST") {
+            await strapi.entityService.create( CREDIT_MOVEMENT, {
+                data : {
+                    sale : sale.id,
+                    policy,
+                    paymentDate : policy === "on-sale" ? dayjs().add(daysToPay, "day").format("YYYY-MM-DD") : null,
+                    amountPaid : 0,
+                },
+            });
+        }
+
+        if (method === "PUT") {
+            const creditMovement = await strapi.query( CREDIT_MOVEMENT ).findOne({
+                where : {
+                    sale : sale.id,
+                },
+            });
+
+            await strapi.entityService.update( CREDIT_MOVEMENT, creditMovement.id, {
+                data : {
+                    policy,
+                    paymentDate : policy === "on-sale" ? dayjs().add(daysToPay, "day").format("YYYY-MM-DD") : null,
+                },
+            });
+        }
 
         await strapi.service(SALE).updateLineCreditUsage(customer, customerCredit);
     },
