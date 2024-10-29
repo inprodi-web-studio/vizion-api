@@ -292,5 +292,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         for (const creditMovement of creditMovements) {
             await strapi.entityService.delete( CREDIT_MOVEMENT, creditMovement.id );
         }
+
+        // TODO: delete payments
     },
 }));
