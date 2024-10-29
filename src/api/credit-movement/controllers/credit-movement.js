@@ -9,6 +9,9 @@ const creditMovementsFields = {
     populate : {
         sale : {
             fields : ["uuid", "fol", "subject"],
+            populate : {
+                resume : true,
+            },
         },
     },
 };
