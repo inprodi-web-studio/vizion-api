@@ -78,12 +78,6 @@
       "target": "api::payment.payment",
       "mappedBy": "sales"
     },
-    "creditPolicy": {
-      "type": "string"
-    },
-    "limitPaymentDate": {
-      "type": "date"
-    },
     "isAuthorized": {
       "type": "boolean"
     },
@@ -98,6 +92,12 @@
     },
     "authorizedAt": {
       "type": "datetime"
+    },
+    "creditMovement": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::credit-movement.credit-movement",
+      "mappedBy": "sale"
     }
   }
 }

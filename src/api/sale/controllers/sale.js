@@ -1,5 +1,5 @@
 const { auth } = require("strapi-provider-upload-do");
-const { SALE } = require("../../../constants/models");
+const { SALE, PREFERENCE } = require("../../../constants/models");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { validateCreate } = require("../content-types/sale/sale.validation");
@@ -79,8 +79,6 @@ const saleFields = {
 
 module.exports = createCoreController(SALE, ({ strapi }) => ({
     async find(ctx) {
-        const query = ctx.query;
-
         const filters = {
             $search : [
                 "fol",
@@ -116,13 +114,21 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         const fol = await strapi.service( SALE ).generateNextFol( company );
 
+        const preference = await strapi.service( PREFERENCE ).findOrCreate( company, "crm", "sales" );
+
         const newSale = await strapi.entityService.create( SALE, {
             data : {
                 fol,
                 company : company.id,
+                isAuthorized : preference.config.needsAuthorization ? false : true,
                 ...data,
             },
         });
+
+
+        if (!preference.config.needsAuthorization) {
+            await strapi.service(SALE).handleCreditSale( data, newSale );
+        }
 
         await strapi.service(SALE).updateCustomerMeta(data);
 

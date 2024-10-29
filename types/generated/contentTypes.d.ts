@@ -1090,6 +1090,43 @@ export interface ApiContactSourceContactSource extends Schema.CollectionType {
   };
 }
 
+export interface ApiCreditMovementCreditMovement extends Schema.CollectionType {
+  collectionName: 'credit_movements';
+  info: {
+    singularName: 'credit-movement';
+    pluralName: 'credit-movements';
+    displayName: 'Credit Movement';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    sale: Attribute.Relation<
+      'api::credit-movement.credit-movement',
+      'oneToOne',
+      'api::sale.sale'
+    >;
+    policy: Attribute.String;
+    paymentDate: Attribute.Date;
+    amountPaid: Attribute.Decimal;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::credit-movement.credit-movement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::credit-movement.credit-movement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiCustomerCustomer extends Schema.CollectionType {
   collectionName: 'customers';
   info: {
@@ -2043,8 +2080,6 @@ export interface ApiSaleSale extends Schema.CollectionType {
       'manyToMany',
       'api::payment.payment'
     >;
-    creditPolicy: Attribute.String;
-    limitPaymentDate: Attribute.Date;
     isAuthorized: Attribute.Boolean;
     deliveryTime: Attribute.Integer;
     estimate: Attribute.Relation<
@@ -2053,6 +2088,11 @@ export interface ApiSaleSale extends Schema.CollectionType {
       'api::estimate.estimate'
     >;
     authorizedAt: Attribute.DateTime;
+    creditMovement: Attribute.Relation<
+      'api::sale.sale',
+      'oneToOne',
+      'api::credit-movement.credit-movement'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &
@@ -2370,6 +2410,7 @@ declare module '@strapi/types' {
       'api::contact-group.contact-group': ApiContactGroupContactGroup;
       'api::contact-interaction.contact-interaction': ApiContactInteractionContactInteraction;
       'api::contact-source.contact-source': ApiContactSourceContactSource;
+      'api::credit-movement.credit-movement': ApiCreditMovementCreditMovement;
       'api::customer.customer': ApiCustomerCustomer;
       'api::customer-credit.customer-credit': ApiCustomerCreditCustomerCredit;
       'api::document.document': ApiDocumentDocument;

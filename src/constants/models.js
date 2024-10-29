@@ -21,6 +21,7 @@ module.exports = {
     ESTIMATE_STAGE      : "api::estimate-stage.estimate-stage",
     CONTACT_SOURCE      : "api::contact-source.contact-source",
     ATTRIBUTE_VALUE     : "api::attribute-value.attribute-value",
+    CREDIT_MOVEMENT     : "api::credit-movement.credit-movement",
     CUSTOMER_CREDIT     : "api::customer-credit.customer-credit",
     PRODUCT_CATEGORY    : "api::product-category.product-category",
     PRODUCT_ATTRIBUTE   : "api::product-attribute.product-attribute",

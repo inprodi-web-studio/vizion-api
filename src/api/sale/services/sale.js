@@ -1,4 +1,5 @@
-const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE } = require("../../../constants/models");
+const dayjs = require("dayjs");
+const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE, CREDIT_MOVEMENT } = require("../../../constants/models");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
@@ -86,8 +87,14 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const { id : responsibleId } = await findOneByUuid( data.responsible, USER );
         data.responsible = responsibleId;
 
-        const { id : customerId } = await findOneByUuid( data.customer, CUSTOMER );
+        const { id : customerId, credit } = await findOneByUuid( data.customer, CUSTOMER, {
+            populate : {
+                credit : true,
+            },
+        });
+
         data.customer = customerId;
+        data.customerCredit = credit;
 
         const { id : priceListId } = await findOneByUuid( data.priceList, PRICE_LIST );
         data.priceList = priceListId;
@@ -208,6 +215,50 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
             data : {
                 saleMeta : null,
             },
+        });
+    },
+
+    async handleCreditSale({customerCredit, customer}, sale) {
+        const { policy, daysToPay } = customerCredit;
+
+        await strapi.entityService.create( CREDIT_MOVEMENT, {
+            data : {
+                sale : sale.id,
+                policy,
+                paymentDate : policy === "on-sale" ? dayjs().add(daysToPay, "day").format("YYYY-MM-DD") : null,
+                amountPaid : 0,
+            },
+        });
+
+        await strapi.service(SALE).updateLineCreditUsage(customer, customerCredit);
+    },
+
+    async updateLineCreditUsage(customerId, customerCredit) {
+        const totalMovements = await strapi.db.connection.raw(`
+            SELECT
+                SUM(cer.total) AS total_used,
+                SUM(cm.amount_paid) AS total_paid
+            FROM
+                credit_movements cm
+                INNER JOIN credit_movements_sale_links cml ON cm.id = cml.credit_movement_id
+                INNER JOIN sales s ON s.id = cml.sale_id
+                INNER JOIN sales_customer_links scl ON scl.sale_id = s.id
+                INNER JOIN sales_components sc ON sc.entity_id = s.id
+                    AND sc.component_type = 'estimate.resume'
+                INNER JOIN components_estimate_resumes cer ON cer.id = sc.component_id
+            WHERE
+                scl.customer_id = ${customerId}
+                AND s.is_authorized = true;
+        `);
+
+        await strapi.entityService.update( CUSTOMER, customerId, {
+            data : {
+                credit : {
+                    ...customerCredit,
+                    amountUsed : totalMovements[0][0]?.total_used ?? 0,
+                    amountPaid : totalMovements[0][0]?.total_paid ?? 0,
+                }
+            }
         });
     },
 }));

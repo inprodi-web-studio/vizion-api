@@ -27,6 +27,7 @@ const {
   UNITY,
   PACKAGE,
   CUSTOMER_CREDIT,
+  CREDIT_MOVEMENT,
 } = require("./constants/models");
 
 module.exports = {
@@ -55,6 +56,7 @@ module.exports = {
         CONTACT_GROUP,
         ESTIMATE_STAGE,
         CONTACT_SOURCE,
+        CREDIT_MOVEMENT,
         ATTRIBUTE_VALUE,
         CUSTOMER_CREDIT,
         PRODUCT_CATEGORY,

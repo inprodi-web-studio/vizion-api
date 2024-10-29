@@ -8,8 +8,6 @@ const createSchema = yup.object().shape({
     deliveryDate : yup.string().nullable(),
     responsible : yup.string().uuid().required(),
     paymentScheme : yup.string().oneOf(["anticipated", "on-deliver", "on-advance", "deferred", "credit"]).required(),
-    creditPolicy : yup.string().oneOf(["on-sale", "on-deliver"]).nullable(),
-    limitPaymentDate : yup.string().nullable(),
     priceList : yup.string().uuid().required(),
     subject : yup.string().required(),
     items : yup.array().of( yup.object().shape({

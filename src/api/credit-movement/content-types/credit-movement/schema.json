@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "credit_movements",
+  "info": {
+    "singularName": "credit-movement",
+    "pluralName": "credit-movements",
+    "displayName": "Credit Movement"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "sale": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sale.sale",
+      "inversedBy": "creditMovement"
+    },
+    "policy": {
+      "type": "string"
+    },
+    "paymentDate": {
+      "type": "date"
+    },
+    "amountPaid": {
+      "type": "decimal"
+    }
+  }
+}
