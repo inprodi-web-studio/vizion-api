@@ -281,4 +281,16 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
             }
         });
     },
+
+    async deleteParallelData( saleId ) {
+        const creditMovements = await strapi.query( CREDIT_MOVEMENT ).findMany({
+            where : {
+                sale : saleId,
+            },
+        });
+
+        for (const creditMovement of creditMovements) {
+            await strapi.entityService.delete( CREDIT_MOVEMENT, creditMovement.id );
+        }
+    },
 }));

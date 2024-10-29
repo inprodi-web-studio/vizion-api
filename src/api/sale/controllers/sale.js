@@ -187,8 +187,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
     async delete(ctx) {
         const { uuid } = ctx.params;
 
-        const { id, customer, date } = await findOneByUuid( uuid, SALE, {
-            fields : ["date"],
+        const { id, customer } = await findOneByUuid( uuid, SALE, {
             populate : {
                 customer : true,
             },
@@ -196,9 +195,9 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         await strapi.service( SALE ).updateEstimateMetaInfo( id );
 
-        const deletedSale = await strapi.entityService.delete( SALE, id );
+        await strapi.service(SALE).deleteParallelData( id );
 
-        // TODO: Delete parallel data
+        const deletedSale = await strapi.entityService.delete( SALE, id );
 
         await strapi.service(SALE).updateCustomerMeta({ customer : customer.id, date : null });
 
