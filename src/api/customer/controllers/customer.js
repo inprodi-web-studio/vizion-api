@@ -443,8 +443,8 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
 
-        if ( customer.credit.amountUsed < data.amountLimit ) {
-            throw new BadRequestError("The amount used must be less than the new amount limit", {
+        if ( customer.credit.amountUsed > data.amountLimit ) {
+            throw new BadRequestError("The amount used can't be less than the new amount limit", {
                 key : "customer.invalidNewAmountLimit",
                 path : ctx.request.path,
             });
