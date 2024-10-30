@@ -218,9 +218,13 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         });
     },
 
-    async handleCreditSale({customerCredit, customer}, sale) {
+    async handleCreditSale({customerCredit, customer, paymentScheme}, sale) {
         const ctx = strapi.requestContext.get();
         const method = ctx.request.method;
+
+        if (paymentScheme !== "credit") {
+            return;
+        }
 
         const { policy, daysToPay } = customerCredit;
 
