@@ -224,7 +224,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
 
         const { policy, daysToPay } = customerCredit;
 
-        if (method === "POST") {
+        if (method === "POST" || method === "PATCH") {
             await strapi.entityService.create( CREDIT_MOVEMENT, {
                 data : {
                     sale : sale.id,
