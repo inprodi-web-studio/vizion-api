@@ -161,7 +161,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         const { uuid } = ctx.params;
 
         const sale = await findOneByUuid( uuid, SALE, {
-            fields : ["date"],
+            fields : ["date", "paymentScheme"],
             populate : {
                 customer : {
                     populate : {
@@ -178,7 +178,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             },
         });
 
-        await strapi.service(SALE).handleCreditSale({customer : sale.customer.id, customerCredit : sale.customer.credit}, sale);
+        await strapi.service(SALE).handleCreditSale({customer : sale.customer.id, customerCredit : sale.customer.credit, paymentScheme : sale.paymentScheme}, sale);
         await strapi.service(SALE).updateCustomerMeta({ customer : sale.customer.id, date : sale.date });
 
         return updatedSale;
