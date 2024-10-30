@@ -443,6 +443,13 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
 
+        if ( customer.credit.amountUsed < data.amountLimit ) {
+            throw new BadRequestError("The amount used must be less than the new amount limit", {
+                key : "customer.invalidNewAmountLimit",
+                path : ctx.request.path,
+            });
+        }
+
         const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
             data : {
                 credit : {

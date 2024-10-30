@@ -74,6 +74,9 @@ const saleFields = {
                 },
             },
         },
+        payments : {
+            fields : ["uuid", "amount", "date", "fol", "paymentMethod", "comments"],
+        },
     }
 };
 
