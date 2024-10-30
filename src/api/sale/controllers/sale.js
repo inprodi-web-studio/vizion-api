@@ -171,7 +171,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             },
         });
 
-        const updatedSale = await strapi.entityService.update( SALE, id, {
+        const updatedSale = await strapi.entityService.update( SALE, sale.id, {
             data : {
                 isAuthorized : true,
                 authorizedAt : new Date(),
