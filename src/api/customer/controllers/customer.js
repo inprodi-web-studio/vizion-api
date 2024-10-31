@@ -245,11 +245,19 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
     async toggleStatus(ctx) {
         const { uuid } = ctx.params;
 
-        const { id, isArchived } = await validateEntityPermission( uuid, CUSTOMER );
+        const { id, isArchived, credit } = await validateEntityPermission( uuid, CUSTOMER, {
+            populate : {
+                credit : true,
+            },
+        });
 
         const updatedCustomer = await strapi.entityService.update( CUSTOMER, id, {
             data : {
                 isArchived : !isArchived,
+                credit : {
+                    ...credit,
+                    isActive : !isArchived ? false : credit.isActive,
+                },
             },
             ...customerFields
         });
