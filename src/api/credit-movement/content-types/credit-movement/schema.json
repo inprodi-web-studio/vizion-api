@@ -26,6 +26,9 @@
     },
     "daysToPay": {
       "type": "integer"
+    },
+    "amountPaid": {
+      "type": "decimal"
     }
   }
 }

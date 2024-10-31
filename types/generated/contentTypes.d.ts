@@ -1110,6 +1110,7 @@ export interface ApiCreditMovementCreditMovement extends Schema.CollectionType {
     >;
     policy: Attribute.String;
     daysToPay: Attribute.Integer;
+    amountPaid: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
