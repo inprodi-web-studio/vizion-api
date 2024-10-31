@@ -491,16 +491,6 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
             ...customerFields
         });
 
-        await strapi.entityService.create( CUSTOMER_CREDIT, {
-            data : {
-                customer : updatedCustomer.id,
-                details : {
-                    ...customer.credit,
-                    isActive : !customer.credit.isActive
-                },
-            },
-        });
-
         return updatedCustomer.credit;
     },
 
