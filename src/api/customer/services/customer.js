@@ -1,4 +1,4 @@
-const { CUSTOMER, USER, CONTACT_GROUP, CONTACT_SOURCE, TAG, PRICE_LIST, ESTIMATE, TASK, NOTE, CONTACT_INTERACTION, INSIDER, SALE } = require('../../../constants/models');
+const { CUSTOMER, USER, CONTACT_GROUP, CONTACT_SOURCE, TAG, PRICE_LIST, ESTIMATE, TASK, NOTE, CONTACT_INTERACTION, INSIDER, SALE, CUSTOMER_CREDIT } = require('../../../constants/models');
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
@@ -202,6 +202,16 @@ module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
 
         for ( const estimate of estimates ) {
             await strapi.entityService.delete(ESTIMATE, estimate.id);
+        }
+
+        const creditHistory = await strapi.db.query( CUSTOMER_CREDIT ).findMany({
+            where : {
+                customer : id,
+            },
+        });
+
+        for ( const credit of creditHistory ) {
+            await strapi.entityService.delete(CUSTOMER_CREDIT, credit.id);
         }
 
         const tasks = await strapi.db.query( TASK ).findMany({
