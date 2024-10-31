@@ -8,6 +8,7 @@ module.exports = {
     SALE                : "api::sale.sale",
     UNITY               : "api::unity.unity",
     PACKAGE             : "api::package.package",
+    PAYMENT             : "api::payment.payment",
     COMPANY             : "api::company.company",
     PRODUCT             : "api::product.product",
     INSIDER             : "api::insider.insider",

@@ -233,8 +233,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 data : {
                     sale : sale.id,
                     policy,
-                    paymentDate : policy === "on-sale" ? dayjs().add(daysToPay, "day").format("YYYY-MM-DD") : null,
-                    amountPaid : 0,
+                    daysToPay,
                 },
             });
         }
@@ -249,7 +248,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
             await strapi.entityService.update( CREDIT_MOVEMENT, creditMovement.id, {
                 data : {
                     policy,
-                    paymentDate : policy === "on-sale" ? dayjs().add(daysToPay, "day").format("YYYY-MM-DD") : null,
+                    daysToPay,
                 },
             });
         }
@@ -280,7 +279,6 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 credit : {
                     ...customerCredit,
                     amountUsed : totalMovements[0][0]?.total_used ?? 0,
-                    amountPaid : totalMovements[0][0]?.total_paid ?? 0,
                 }
             }
         });

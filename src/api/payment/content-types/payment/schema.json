@@ -36,11 +36,28 @@
     "comments": {
       "type": "string"
     },
-    "sales": {
+    "sale": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "manyToOne",
       "target": "api::sale.sale",
       "inversedBy": "payments"
+    },
+    "status": {
+      "type": "string"
+    },
+    "daysDifference": {
+      "type": "string"
+    },
+    "files": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     }
   }
 }

@@ -1096,6 +1096,7 @@ export interface ApiCreditMovementCreditMovement extends Schema.CollectionType {
     singularName: 'credit-movement';
     pluralName: 'credit-movements';
     displayName: 'Credit Movement';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -1108,8 +1109,7 @@ export interface ApiCreditMovementCreditMovement extends Schema.CollectionType {
       'api::sale.sale'
     >;
     policy: Attribute.String;
-    paymentDate: Attribute.Date;
-    amountPaid: Attribute.Decimal;
+    daysToPay: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1715,11 +1715,14 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
     fol: Attribute.Integer;
     paymentMethod: Attribute.String;
     comments: Attribute.String;
-    sales: Attribute.Relation<
+    sale: Attribute.Relation<
       'api::payment.payment',
-      'manyToMany',
+      'manyToOne',
       'api::sale.sale'
     >;
+    status: Attribute.String;
+    daysDifference: Attribute.String;
+    files: Attribute.Media;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2075,11 +2078,6 @@ export interface ApiSaleSale extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
-    payments: Attribute.Relation<
-      'api::sale.sale',
-      'manyToMany',
-      'api::payment.payment'
-    >;
     isAuthorized: Attribute.Boolean;
     deliveryTime: Attribute.Integer;
     estimate: Attribute.Relation<
@@ -2092,6 +2090,11 @@ export interface ApiSaleSale extends Schema.CollectionType {
       'api::sale.sale',
       'oneToOne',
       'api::credit-movement.credit-movement'
+    >;
+    payments: Attribute.Relation<
+      'api::sale.sale',
+      'oneToMany',
+      'api::payment.payment'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

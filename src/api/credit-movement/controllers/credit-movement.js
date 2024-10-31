@@ -5,7 +5,7 @@ const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const creditMovementsFields = {
-    fields   : ["uuid", "policy", "paymentDate", "amountPaid", "createdAt"],
+    fields   : ["uuid", "policy", "daysToPay", "createdAt"],
     populate : {
         sale : {
             fields : ["uuid", "fol", "subject"],

@@ -72,12 +72,6 @@
       "relation": "oneToOne",
       "target": "api::company.company"
     },
-    "payments": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::payment.payment",
-      "mappedBy": "sales"
-    },
     "isAuthorized": {
       "type": "boolean"
     },
@@ -97,6 +91,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::credit-movement.credit-movement",
+      "mappedBy": "sale"
+    },
+    "payments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::payment.payment",
       "mappedBy": "sale"
     }
   }
