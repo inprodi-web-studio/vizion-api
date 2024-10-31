@@ -1713,7 +1713,7 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
     amount: Attribute.Decimal;
     date: Attribute.Date;
     fol: Attribute.Integer;
-    paymenthForm: Attribute.String;
+    paymentMethod: Attribute.String;
     comments: Attribute.String;
     sales: Attribute.Relation<
       'api::payment.payment',

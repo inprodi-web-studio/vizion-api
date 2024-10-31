@@ -30,7 +30,7 @@
     "fol": {
       "type": "integer"
     },
-    "paymenthForm": {
+    "paymentMethod": {
       "type": "string"
     },
     "comments": {
