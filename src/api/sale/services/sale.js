@@ -257,10 +257,9 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
     },
 
     async updateLineCreditUsage(customerId, customerCredit) {
-        const totalMovements = await strapi.db.connection.raw(`
+        const used = await strapi.db.connection.raw(`
             SELECT
                 SUM(cer.total) AS total_used,
-                SUM(cm.amount_paid) AS total_paid
             FROM
                 credit_movements cm
                 INNER JOIN credit_movements_sale_links cml ON cm.id = cml.credit_movement_id
@@ -274,8 +273,22 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 AND s.is_authorized = true;
         `);
 
-        const totalUsed = totalMovements[0][0]?.total_used ?? 0;
-        const totalPaid = totalMovements[0][0]?.total_paid ?? 0;
+        const paid = await strapi.db.connection.raw(`
+            SELECT
+                SUM(p.amount) AS total_paid
+            FROM
+                credit_movements cm
+                INNER JOIN credit_movements_payment_links cml ON cm.id = cml.credit_movement_id
+                INNER JOIN payments p ON p.id = cml.payment_id
+                INNER JOIN payments_sale_links psl ON psl.payment_id = p.id
+                INNER JOIN sales s ON s.id = psl.sale_id
+                INNER JOIN sales_customer_links scl ON scl.sale_id = s.id
+            WHERE
+                scl.customer_id = ${customerId}
+        `);
+
+        const totalUsed = used[0][0]?.total_used ?? 0;
+        const totalPaid = paid[0][0]?.total_paid ?? 0;
 
         const balance = totalUsed - totalPaid;
 
