@@ -52,6 +52,12 @@
     },
     "daysDifference": {
       "type": "integer"
+    },
+    "creditMovement": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::credit-movement.credit-movement",
+      "mappedBy": "payment"
     }
   }
 }

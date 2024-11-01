@@ -27,8 +27,11 @@
     "daysToPay": {
       "type": "integer"
     },
-    "amountPaid": {
-      "type": "decimal"
+    "payment": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::payment.payment",
+      "inversedBy": "creditMovement"
     }
   }
 }

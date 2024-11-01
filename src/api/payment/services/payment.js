@@ -10,10 +10,15 @@ module.exports = createCoreService(PAYMENT, ({ strapi }) => ({
         const ctx = strapi.requestContext.get();
         const { uuid } = ctx.params; 
 
-        const { id, payments, resume, paymentScheme, date } = await findOneByUuid( uuid, SALE, {
+        const { id, payments, resume, paymentScheme, date, customer } = await findOneByUuid( uuid, SALE, {
             populate : {
                 payments : true,
                 resume   : true,
+                customer : {
+                    populate : {
+                        credit : true,
+                    },
+                },
             },
         });
 
@@ -28,7 +33,7 @@ module.exports = createCoreService(PAYMENT, ({ strapi }) => ({
 
         data.sale = id;
 
-        const { status, daysDifference } = await strapi.service(PAYMENT).calculateStatus({ ...data, paymentScheme, payments, date });
+        const { status, daysDifference } = await strapi.service(PAYMENT).calculateStatus({ ...data, paymentScheme, payments, date, customer });
 
         data.status         = status;
         data.daysDifference = daysDifference;
@@ -54,7 +59,7 @@ module.exports = createCoreService(PAYMENT, ({ strapi }) => ({
         return lastFol[0].fol + 1;
     },
 
-    async calculateStatus({ paymentScheme, payments, sale, date }) {
+    async calculateStatus({ paymentScheme, payments, sale, date, customer }) {
         let status;
         let daysDifference;
 
@@ -105,5 +110,20 @@ module.exports = createCoreService(PAYMENT, ({ strapi }) => ({
             status,
             daysDifference,
         };
+    },
+
+    async handleCreditPayment(payment) {
+        const ctx = strapi.requestContext.get();
+        const method = ctx.request.method;
+
+        if (method === "POST") {
+            await strapi.entityService.create( CREDIT_MOVEMENT, {
+                data : {
+                    payment : payment.id,
+                },
+            });
+        }
+
+        await strapi.service(SALE).updateLineCreditUsage(payment.sale.customer.id, payment.sale.customer.credit);
     },
 }));

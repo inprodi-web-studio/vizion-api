@@ -274,11 +274,16 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 AND s.is_authorized = true;
         `);
 
+        const totalUsed = totalMovements[0][0]?.total_used ?? 0;
+        const totalPaid = totalMovements[0][0]?.total_paid ?? 0;
+
+        const balance = totalUsed - totalPaid;
+
         await strapi.entityService.update( CUSTOMER, customerId, {
             data : {
                 credit : {
                     ...customerCredit,
-                    amountUsed : totalMovements[0][0]?.total_used ?? 0,
+                    amountUsed : balance,
                 }
             }
         });

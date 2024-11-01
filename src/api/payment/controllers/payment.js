@@ -67,6 +67,8 @@ module.exports = createCoreController(PAYMENT, ({ strapi }) => ({
             ...paymentFields
         });
 
+        await strapi.service(PAYMENT).handleCreditPayment(newPayment);
+
         return newPayment;
     },
 

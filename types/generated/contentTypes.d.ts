@@ -1110,7 +1110,11 @@ export interface ApiCreditMovementCreditMovement extends Schema.CollectionType {
     >;
     policy: Attribute.String;
     daysToPay: Attribute.Integer;
-    amountPaid: Attribute.Decimal;
+    payment: Attribute.Relation<
+      'api::credit-movement.credit-movement',
+      'oneToOne',
+      'api::payment.payment'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1714,6 +1718,11 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
     status: Attribute.String;
     files: Attribute.Media;
     daysDifference: Attribute.Integer;
+    creditMovement: Attribute.Relation<
+      'api::payment.payment',
+      'oneToOne',
+      'api::credit-movement.credit-movement'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
