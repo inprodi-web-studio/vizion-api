@@ -7,27 +7,29 @@ const { createCoreController } = require('@strapi/strapi').factories;
 const paymentFields = {
     fields : ["uuid", "date", "fol", "amount", "paymentMethod", "comments", "status", "daysDifference"],
     populate : {
-        customer : {
-            fields : ["uuid", "finalName", "isArchived"],
+        sale : {
+            fields : ["uuid", "fol", "subject", "date"],
             populate : {
-                credit : true,
-                mainAddress : true,
-                fiscalInfo : {
-                    fields : ["legalName", "rfc", "regime"],
+                customer : {
+                    fields : ["uuid", "finalName", "isArchived"],
                     populate : {
-                        address : true,
-                    },
-                },
-                deliveryAddresses : {
-                    fields : ["name", "isMain"],
-                    populate : {
-                        address : true,
+                        credit : true,
+                        mainAddress : true,
+                        fiscalInfo : {
+                            fields : ["legalName", "rfc", "regime"],
+                            populate : {
+                                address : true,
+                            },
+                        },
+                        deliveryAddresses : {
+                            fields : ["name", "isMain"],
+                            populate : {
+                                address : true,
+                            },
+                        },
                     },
                 },
             },
-        },
-        sale : {
-            fields : ["uuid", "fol", "subject", "date"],
         },
     },
 };
@@ -62,6 +64,7 @@ module.exports = createCoreController(PAYMENT, ({ strapi }) => ({
                 fol,
                 ...data,
             },
+            ...paymentFields
         });
 
         return newPayment;

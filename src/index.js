@@ -28,6 +28,7 @@ const {
   PACKAGE,
   CUSTOMER_CREDIT,
   CREDIT_MOVEMENT,
+  PAYMENT,
 } = require("./constants/models");
 
 module.exports = {
@@ -47,6 +48,7 @@ module.exports = {
         PRODUCT,
         INSIDER,
         COMPANY,
+        PAYMENT,
         CUSTOMER,
         DOCUMENT,
         ESTIMATE,

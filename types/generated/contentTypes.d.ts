@@ -1220,11 +1220,6 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
       'oneToMany',
       'api::sale.sale'
     >;
-    payments: Attribute.Relation<
-      'api::customer.customer',
-      'oneToMany',
-      'api::payment.payment'
-    >;
     credit: Attribute.Component<'customer.credit'>;
     website: Attribute.String;
     creditHistory: Attribute.Relation<
@@ -1706,11 +1701,6 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
   };
   attributes: {
     uuid: Attribute.String;
-    customer: Attribute.Relation<
-      'api::payment.payment',
-      'manyToOne',
-      'api::customer.customer'
-    >;
     amount: Attribute.Decimal;
     date: Attribute.Date;
     fol: Attribute.Integer;
@@ -1722,8 +1712,8 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
       'api::sale.sale'
     >;
     status: Attribute.String;
-    daysDifference: Attribute.String;
     files: Attribute.Media;
+    daysDifference: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

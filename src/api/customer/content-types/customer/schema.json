@@ -150,12 +150,6 @@
       "target": "api::sale.sale",
       "mappedBy": "customer"
     },
-    "payments": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::payment.payment",
-      "mappedBy": "customer"
-    },
     "credit": {
       "displayName": "credit",
       "type": "component",

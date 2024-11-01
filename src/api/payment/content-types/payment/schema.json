@@ -15,12 +15,6 @@
     "uuid": {
       "type": "string"
     },
-    "customer": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::customer.customer",
-      "inversedBy": "payments"
-    },
     "amount": {
       "type": "decimal"
     },
@@ -45,9 +39,6 @@
     "status": {
       "type": "string"
     },
-    "daysDifference": {
-      "type": "string"
-    },
     "files": {
       "type": "media",
       "multiple": true,
@@ -58,6 +49,9 @@
         "videos",
         "audios"
       ]
+    },
+    "daysDifference": {
+      "type": "integer"
     }
   }
 }

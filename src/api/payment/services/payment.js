@@ -26,7 +26,7 @@ module.exports = createCoreService(PAYMENT, ({ strapi }) => ({
             });
         }
 
-        data.sales = id;
+        data.sale = id;
 
         const { status, daysDifference } = await strapi.service(PAYMENT).calculateStatus({ ...data, paymentScheme, payments, date });
 
@@ -80,7 +80,7 @@ module.exports = createCoreService(PAYMENT, ({ strapi }) => ({
             case "credit":
                 const { policy, daysToPay } = await strapi.query(CREDIT_MOVEMENT).findOne({
                     where : {
-                        sale : sale.id,
+                        sale,
                     },
                 });
 
