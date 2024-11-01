@@ -13,6 +13,9 @@ const creditMovementsFields = {
                 resume : true,
             },
         },
+        payment : {
+            fields : ["uuid", "amount", "date", "fol"],
+        },
     },
 };
 
