@@ -259,7 +259,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
     async updateLineCreditUsage(customerId, customerCredit) {
         const used = await strapi.db.connection.raw(`
             SELECT
-                SUM(cer.total) AS total_used,
+                SUM(cer.total) AS total_used
             FROM
                 credit_movements cm
                 INNER JOIN credit_movements_sale_links cml ON cm.id = cml.credit_movement_id
@@ -305,7 +305,16 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
     async deleteParallelData( saleId ) {
         const creditMovements = await strapi.query( CREDIT_MOVEMENT ).findMany({
             where : {
-                sale : saleId,
+                $or : [
+                    {
+                        sale : saleId,
+                    },
+                    {
+                        payment : {
+                            sale : saleId,
+                        },
+                    },
+                ],
             },
         });
 
