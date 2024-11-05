@@ -73,7 +73,28 @@ module.exports = createCoreController(PAYMENT, ({ strapi }) => ({
         return newPayment;
     },
 
-    async update() {},
+    async update(ctx) {
+        const data = ctx.request.body;
+        const { uuid, paymentUuid } = ctx.params;
+
+        await validateCreate( data );
+
+        await findOneByUuid( uuid, SALE );
+        const payment = await findOneByUuid( paymentUuid, PAYMENT, paymentFields );
+
+        await strapi.service(PAYMENT).validateParallellData( data );
+
+        const updatedPayment = await strapi.entityService.update( PAYMENT, payment.id, {
+            data : {
+                ...data,
+            },
+            ...paymentFields
+        });
+
+        await strapi.service(PAYMENT).handleCreditPayment(updatedPayment);
+
+        return updatedPayment;
+    },
 
     async delete(ctx) {
         const { uuid, paymentUuid } = ctx.params;
