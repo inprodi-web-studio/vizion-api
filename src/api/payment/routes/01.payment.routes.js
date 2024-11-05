@@ -18,7 +18,7 @@ module.exports = {
       },
       {
         method: "PUT",
-        path: "/sales/:uuid/payments/:uuid",
+        path: "/sales/:uuid/payments/:paymentUuid",
         handler: "payment.update",
         config: {
           policies: ["global::userContext"],
@@ -26,7 +26,7 @@ module.exports = {
       },
       {
         method: "DELETE",
-        path: "/sales/:uuid/payments/:uuid",
+        path: "/sales/:uuid/payments/:paymentUuid",
         handler: "payment.delete",
         config: {
           policies: ["global::userContext"],

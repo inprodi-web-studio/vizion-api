@@ -1,5 +1,6 @@
-const { PAYMENT } = require('../../../constants/models');
+const { PAYMENT, SALE } = require('../../../constants/models');
 const findMany = require('../../../helpers/findMany');
+const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { validateCreate } = require('../content-types/payment/payment.validation');
 
 const { createCoreController } = require('@strapi/strapi').factories;
@@ -74,5 +75,16 @@ module.exports = createCoreController(PAYMENT, ({ strapi }) => ({
 
     async update() {},
 
-    async delete() {},
+    async delete(ctx) {
+        const { uuid, paymentUuid } = ctx.params;
+
+        await findOneByUuid( uuid, SALE );
+        const payment = await findOneByUuid( paymentUuid, PAYMENT, paymentFields );
+
+        await strapi.service(PAYMENT).handleCreditPayment(payment);
+
+        const deletedPayment = await strapi.entityService.delete( PAYMENT, payment.id, paymentFields );
+
+        return deletedPayment;
+    },
 }));
