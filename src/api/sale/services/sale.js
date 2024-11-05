@@ -290,6 +290,11 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const totalUsed = used[0][0]?.total_used ?? 0;
         const totalPaid = paid[0][0]?.total_paid ?? 0;
 
+        console.log({
+            totalUsed,
+            totalPaid
+        });
+
         const balance = totalUsed - totalPaid;
 
         await strapi.entityService.update( CUSTOMER, customerId, {

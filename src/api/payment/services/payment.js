@@ -125,7 +125,11 @@ module.exports = createCoreService(PAYMENT, ({ strapi }) => ({
         }
 
         if (method === "DELETE") {
-            const creditMovement = await findOneByUuid( payment.uuid, PAYMENT );
+            const creditMovement = await strapi.query(CREDIT_MOVEMENT).findOne({
+                where : {
+                    payment : payment.id,
+                },
+            });
 
             await strapi.entityService.delete( CREDIT_MOVEMENT, creditMovement.id );
         }
