@@ -67,6 +67,29 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 AND sale.created_at BETWEEN '${startOfLastMonth}' AND '${endOfLastMonth}'
         `);
 
+        const totalSalesAmount = await strapi.db.connection.raw(`
+            SELECT
+                SUM(res.total) AS totalSum,
+            FROM sales as sale
+            JOIN sales_company_links as sale_company ON sale.id = sale_company.sale_id
+            JOIN sales_components as sale_components ON sale.id = sale_components.entity_id
+            JOIN components_estimate_resumes AS res ON sale_components.component_id = res.id
+            WHERE sale_company.company_id = ${company.id}
+                AND sale_components.component_type = 'estimate.resume'
+                AND sale.is_authorized = 1
+        `);
+
+        const totalPaymentsAmount = await strapi.db.connection.raw(`
+            SELECT
+                SUM(payment.amount) AS totalSum
+            FROM payments as payment
+            JOIN payments_sale_links as payment_sale ON payment.id = payment_sale.payment_id
+            JOIN sales as sale ON sale.id = payment_sale.sale_id
+            JOIN sales_company_links as sale_company ON sale.id = sale_company.sale_id
+            WHERE sale_company.company_id = ${company.id}
+                AND sale.is_authorized = 1
+        `);
+
         return {
             new : {
                 current : salesThisMonth,
@@ -80,6 +103,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 current : totalThisMonthQuery[0][0].averageTicket ?? 0,
                 passed  : totalLastMonthQuery[0][0].averageTicket ?? 0,
             },
+            receivable : totalSalesAmount[0][0].totalSum ?? 0 - totalPaymentsAmount[0][0].totalSum ?? 0,
         };
     },
 
