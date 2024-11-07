@@ -69,7 +69,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
 
         const totalSalesAmount = await strapi.db.connection.raw(`
             SELECT
-                SUM(res.total) AS totalSum,
+                SUM(res.total) AS totalSum
             FROM sales as sale
             JOIN sales_company_links as sale_company ON sale.id = sale_company.sale_id
             JOIN sales_components as sale_components ON sale.id = sale_components.entity_id
