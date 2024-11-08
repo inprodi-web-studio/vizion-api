@@ -90,6 +90,9 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 AND sale.is_authorized = 1
         `);
 
+        const totalSell = totalSalesAmount[0][0].totalSum ?? 0;
+        const totalPaid = totalPaymentsAmount[0][0].totalSum ?? 0;
+
         return {
             new : {
                 current : salesThisMonth,
@@ -103,7 +106,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 current : totalThisMonthQuery[0][0].averageTicket ?? 0,
                 passed  : totalLastMonthQuery[0][0].averageTicket ?? 0,
             },
-            receivable : totalSalesAmount[0][0].totalSum ?? 0 - totalPaymentsAmount[0][0].totalSum ?? 0,
+            receivable : totalSell - totalPaid,
         };
     },
 
