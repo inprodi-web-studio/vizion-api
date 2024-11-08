@@ -15,6 +15,7 @@ module.exports = {
     ESTIMATE            : "api::estimate.estimate",
     CUSTOMER            : "api::customer.customer",
     DOCUMENT            : "api::document.document",
+    WAREHOUSE           : "api::warehouse.warehouse",
     INVITATION          : "api::invitation.invitation",
     PRICE_LIST          : "api::price-list.price-list",
     PREFERENCE          : "api::preference.preference",

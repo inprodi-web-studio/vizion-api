@@ -2389,6 +2389,44 @@ export interface ApiUserSessionUserSession extends Schema.CollectionType {
   };
 }
 
+export interface ApiWarehouseWarehouse extends Schema.CollectionType {
+  collectionName: 'warehouses';
+  info: {
+    singularName: 'warehouse';
+    pluralName: 'warehouses';
+    displayName: 'Warehouse';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    address: Attribute.Component<'address.address'>;
+    isActive: Attribute.Boolean;
+    company: Attribute.Relation<
+      'api::warehouse.warehouse',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::warehouse.warehouse',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::warehouse.warehouse',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -2439,6 +2477,7 @@ declare module '@strapi/types' {
       'api::task.task': ApiTaskTask;
       'api::unity.unity': ApiUnityUnity;
       'api::user-session.user-session': ApiUserSessionUserSession;
+      'api::warehouse.warehouse': ApiWarehouseWarehouse;
     }
   }
 }

@@ -29,6 +29,7 @@ const {
   CUSTOMER_CREDIT,
   CREDIT_MOVEMENT,
   PAYMENT,
+  WAREHOUSE,
 } = require("./constants/models");
 
 module.exports = {
@@ -52,6 +53,7 @@ module.exports = {
         CUSTOMER,
         DOCUMENT,
         ESTIMATE,
+        WAREHOUSE,
         INVITATION,
         PRICE_LIST,
         PREFERENCE,
