@@ -53,13 +53,12 @@ module.exports = createCoreController(WAREHOUSE, ({ strapi }) => ({
     },
 
     async update(ctx) {
-        const { company } = ctx.state;
         const { uuid } = ctx.params;
         const data = ctx.request.body;
 
         await validateCreate( data );
 
-        const warehouse = findOneByUuid( uuid, WAREHOUSE );
+        const warehouse = await findOneByUuid( uuid, WAREHOUSE );
 
         await checkForDuplicates( WAREHOUSE, [
             {
