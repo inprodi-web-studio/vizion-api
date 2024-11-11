@@ -43,6 +43,7 @@ module.exports = createCoreController(WAREHOUSE, ({ strapi }) => ({
         const newWarehouse = await strapi.entityService.create(WAREHOUSE, {
             data : {
                 ...data,
+                isActive : false,
                 company : company.id,
             },
             ...warehouseFields
@@ -71,7 +72,6 @@ module.exports = createCoreController(WAREHOUSE, ({ strapi }) => ({
         const updatedWarehouse = await strapi.entityService.update(WAREHOUSE, warehouse.id, {
             data : {
                 ...data,
-                company : company.id,
             },
             ...warehouseFields
         });
