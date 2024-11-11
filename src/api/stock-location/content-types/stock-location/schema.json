@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "stock_locations",
+  "info": {
+    "singularName": "stock-location",
+    "pluralName": "stock-locations",
+    "displayName": "Stock Location",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "identifier": {
+      "type": "string"
+    },
+    "allowDeliveries": {
+      "type": "boolean"
+    },
+    "allowDispatches": {
+      "type": "boolean"
+    },
+    "receivableFrom": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock-location.stock-location"
+    },
+    "warehouse": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::warehouse.warehouse"
+    }
+  }
+}

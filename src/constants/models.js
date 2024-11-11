@@ -20,6 +20,7 @@ module.exports = {
     PRICE_LIST          : "api::price-list.price-list",
     PREFERENCE          : "api::preference.preference",
     CONTACT_GROUP       : "api::contact-group.contact-group",
+    STOCK_LOCATION      : "api::stock-location.stock-location",
     ESTIMATE_STAGE      : "api::estimate-stage.estimate-stage",
     CONTACT_SOURCE      : "api::contact-source.contact-source",
     ATTRIBUTE_VALUE     : "api::attribute-value.attribute-value",

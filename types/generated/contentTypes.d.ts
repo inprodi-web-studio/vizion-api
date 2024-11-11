@@ -2105,6 +2105,50 @@ export interface ApiSaleSale extends Schema.CollectionType {
   };
 }
 
+export interface ApiStockLocationStockLocation extends Schema.CollectionType {
+  collectionName: 'stock_locations';
+  info: {
+    singularName: 'stock-location';
+    pluralName: 'stock-locations';
+    displayName: 'Stock Location';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    identifier: Attribute.String;
+    allowDeliveries: Attribute.Boolean;
+    allowDispatches: Attribute.Boolean;
+    receivableFrom: Attribute.Relation<
+      'api::stock-location.stock-location',
+      'oneToMany',
+      'api::stock-location.stock-location'
+    >;
+    warehouse: Attribute.Relation<
+      'api::stock-location.stock-location',
+      'oneToOne',
+      'api::warehouse.warehouse'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::stock-location.stock-location',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::stock-location.stock-location',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSuscriptionPaymentSuscriptionPayment
   extends Schema.CollectionType {
   collectionName: 'suscription_payments';
@@ -2470,6 +2514,7 @@ declare module '@strapi/types' {
       'api::product-category.product-category': ApiProductCategoryProductCategory;
       'api::product-variation.product-variation': ApiProductVariationProductVariation;
       'api::sale.sale': ApiSaleSale;
+      'api::stock-location.stock-location': ApiStockLocationStockLocation;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;
       'api::suscription-plan.suscription-plan': ApiSuscriptionPlanSuscriptionPlan;
       'api::suscription-status.suscription-status': ApiSuscriptionStatusSuscriptionStatus;
