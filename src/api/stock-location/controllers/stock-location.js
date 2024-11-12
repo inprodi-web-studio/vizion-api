@@ -58,4 +58,14 @@ module.exports = createCoreController(STOCK_LOCATION, ({ strapi }) => ({
 
         return newStockLocation;
     },
+
+    async delete(ctx) {
+        const { uuid } = ctx.params;
+
+        const stockLocation = await findOneByUuid( uuid, STOCK_LOCATION );
+
+        const deletedStockLocation = await strapi.entityService.delete( STOCK_LOCATION, stockLocation.id, stockLocationFields );
+
+        return deletedStockLocation;
+    },
 }));

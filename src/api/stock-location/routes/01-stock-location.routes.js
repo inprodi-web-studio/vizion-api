@@ -24,5 +24,13 @@ module.exports = {
           policies: ["global::userContext"],
         },
       },
+      {
+        method: "DELETE",
+        path: "/warehouses/:uuid/stock-locations/:locationUuid",
+        handler: "stock-location.delete",
+        config: {
+          policies: ["global::userContext"],
+        },
+      },
     ],
 };
