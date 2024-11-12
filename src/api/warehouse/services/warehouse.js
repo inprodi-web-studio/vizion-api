@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { WAREHOUSE } = require('../../../constants/models');
+const { WAREHOUSE, STOCK_LOCATION } = require('../../../constants/models');
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
@@ -34,5 +34,17 @@ module.exports = createCoreService(WAREHOUSE, ({ strapi }) => ({
             address.longitude = data.features?.[0]?.geometry?.coordinates?.[0]?.toString();
             address.latitude  = data.features?.[0]?.geometry?.coordinates?.[1]?.toString();
         });
+    },
+
+    async deleteParallelData(id) {
+        const locations = await strapi.query(STOCK_LOCATION).findMany({
+            where : {
+                warehouse : id,
+            },
+        });
+
+        for ( const location of locations ) {
+            await strapi.entityService.delete(STOCK_LOCATION, location.id);
+        }
     },
 }));

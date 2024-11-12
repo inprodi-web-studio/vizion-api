@@ -5,7 +5,6 @@ const createSchema = yup.object().shape({
     identifier : yup.string().required(),
     allowDeliveries : yup.boolean().required(),
     allowDispatches : yup.boolean().required(),
-    receivableFrom : yup.array().of( yup.string().uuid() ).nullable(),
 }).strict();
 
 module.exports = {

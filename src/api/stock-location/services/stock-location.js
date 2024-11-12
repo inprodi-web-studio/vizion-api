@@ -47,14 +47,4 @@ module.exports = createCoreService(STOCK_LOCATION, ({ strapi }) => ({
             });
         }
     },
-
-    async validateParallelData(data) {
-        if ( data.receivableFrom ) {
-            for ( let i = 0; i < data.receivableFrom.length; i++ ) {
-                const { id : locationId } = await findOneByUuid( data.receivableFrom[i], STOCK_LOCATION );
-
-                data.receivableFrom[i] = locationId;
-            }
-        }
-    },
 }));

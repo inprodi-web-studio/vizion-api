@@ -2122,11 +2122,6 @@ export interface ApiStockLocationStockLocation extends Schema.CollectionType {
     identifier: Attribute.String;
     allowDeliveries: Attribute.Boolean;
     allowDispatches: Attribute.Boolean;
-    receivableFrom: Attribute.Relation<
-      'api::stock-location.stock-location',
-      'oneToMany',
-      'api::stock-location.stock-location'
-    >;
     warehouse: Attribute.Relation<
       'api::stock-location.stock-location',
       'manyToOne',

@@ -128,6 +128,8 @@ module.exports = createCoreController(WAREHOUSE, ({ strapi }) => ({
 
         const { id } = await findOneByUuid( uuid, WAREHOUSE );
 
+        await strapi.service(WAREHOUSE).deleteParallelData( id );
+
         const deletedWarehouse = await strapi.entityService.delete( WAREHOUSE, id, warehouseFields );
 
         return deletedWarehouse;

@@ -27,11 +27,6 @@
     "allowDispatches": {
       "type": "boolean"
     },
-    "receivableFrom": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::stock-location.stock-location"
-    },
     "warehouse": {
       "type": "relation",
       "relation": "manyToOne",
