@@ -41,6 +41,14 @@ module.exports = {
         },
       },
       {
+        method: "PATCH",
+        path: "/warehouses/:uuid/layout",
+        handler: "warehouse.updateLayout",
+        config: {
+          policies: ["global::userContext"],
+        },
+      },
+      {
         method: "DELETE",
         path: "/warehouses/:uuid",
         handler: "warehouse.delete",

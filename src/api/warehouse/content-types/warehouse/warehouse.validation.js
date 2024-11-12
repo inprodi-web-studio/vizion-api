@@ -14,6 +14,11 @@ const createSchema = yup.object().shape({
     }).strict().required(),
 }).strict();
 
+const updateLayoutSchema = yup.object().shape({
+    layout : yup.array().of( yup.object() ).required(),
+}).strict();
+
 module.exports = {
     validateCreate : validateYupSchema( createSchema ),
+    validateUpdateLayout : validateYupSchema( updateLayoutSchema ),
 };

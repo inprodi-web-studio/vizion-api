@@ -2,7 +2,7 @@ const { WAREHOUSE } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const { validateCreate } = require('../content-types/warehouse/warehouse.validation');
+const { validateCreate, validateUpdateLayout } = require('../content-types/warehouse/warehouse.validation');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
@@ -94,6 +94,24 @@ module.exports = createCoreController(WAREHOUSE, ({ strapi }) => ({
         const updatedWarehouse = await strapi.entityService.update(WAREHOUSE, id, {
             data : {
                 isActive : !isActive,
+            },
+            ...warehouseFields
+        });
+
+        return updatedWarehouse;
+    },
+
+    async updateLayout(ctx) {
+        const { uuid } = ctx.params;
+        const data = ctx.request.body;
+
+        await validateUpdateLayout( data );
+
+        const { id } = await findOneByUuid( uuid, WAREHOUSE );
+
+        const updatedWarehouse = await strapi.entityService.update( WAREHOUSE, id, {
+            data : {
+                layout : data.layout,
             },
             ...warehouseFields
         });
