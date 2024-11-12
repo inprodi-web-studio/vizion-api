@@ -7,7 +7,7 @@ const { validateCreate, validateUpdateLayout } = require('../content-types/wareh
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const warehouseFields = {
-    fields : ["uuid", "name", "isActive"],
+    fields : ["uuid", "name", "isActive", "layout"],
     populate : {
         address : true,
     },
