@@ -10,6 +10,9 @@ const warehouseFields = {
     fields : ["uuid", "name", "isActive", "layout"],
     populate : {
         address : true,
+        locations : {
+            count : true,
+        },
     },
 };
 
@@ -51,6 +54,7 @@ module.exports = createCoreController(WAREHOUSE, ({ strapi }) => ({
         const newWarehouse = await strapi.entityService.create(WAREHOUSE, {
             data : {
                 ...data,
+                layout : [],
                 isActive : false,
                 company : company.id,
             },

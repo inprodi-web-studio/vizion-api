@@ -34,8 +34,9 @@
     },
     "warehouse": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::warehouse.warehouse"
+      "relation": "manyToOne",
+      "target": "api::warehouse.warehouse",
+      "inversedBy": "locations"
     }
   }
 }

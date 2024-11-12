@@ -33,6 +33,12 @@
     },
     "layout": {
       "type": "json"
+    },
+    "locations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock-location.stock-location",
+      "mappedBy": "warehouse"
     }
   }
 }

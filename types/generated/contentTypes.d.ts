@@ -2129,7 +2129,7 @@ export interface ApiStockLocationStockLocation extends Schema.CollectionType {
     >;
     warehouse: Attribute.Relation<
       'api::stock-location.stock-location',
-      'oneToOne',
+      'manyToOne',
       'api::warehouse.warehouse'
     >;
     createdAt: Attribute.DateTime;
@@ -2455,6 +2455,11 @@ export interface ApiWarehouseWarehouse extends Schema.CollectionType {
       'api::company.company'
     >;
     layout: Attribute.JSON;
+    locations: Attribute.Relation<
+      'api::warehouse.warehouse',
+      'oneToMany',
+      'api::stock-location.stock-location'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
