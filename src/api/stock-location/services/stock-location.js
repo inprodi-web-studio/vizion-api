@@ -15,7 +15,7 @@ module.exports = createCoreService(STOCK_LOCATION, ({ strapi }) => ({
                 warehouse : warehouse.id,
                 ...( method === "PUT" && ({
                     uuid : {
-                        $not: ctx.params.uuid
+                        $not: ctx.params.locationUuid
                     },
                 }))
             },
@@ -34,7 +34,7 @@ module.exports = createCoreService(STOCK_LOCATION, ({ strapi }) => ({
                 warehouse : warehouse.id,
                 ...( method === "PUT" && ({
                     uuid : {
-                        $not: ctx.params.uuid
+                        $not: ctx.params.locationUuid
                     },
                 }))
             },
