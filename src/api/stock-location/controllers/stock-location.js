@@ -44,9 +44,9 @@ module.exports = createCoreController(STOCK_LOCATION, ({ strapi }) => ({
 
         const warehouse = await findOneByUuid( uuid, WAREHOUSE );
 
-        await strapi.service(WAREHOUSE).checkForDuplicates(data, warehouse);
+        await strapi.service(STOCK_LOCATION).checkForDuplicates(data, warehouse);
         
-        await strapi.service(WAREHOUSE).validateParallelData(data);
+        await strapi.service(STOCK_LOCATION).validateParallelData(data);
 
         const newStockLocation = await strapi.entityService.create( STOCK_LOCATION, {
             data : {
