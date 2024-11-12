@@ -1,7 +1,7 @@
 const { STOCK_LOCATION, WAREHOUSE } = require('../../../constants/models');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const { validateCreate } = require('../content-types/stock-location/stsock-location.validation');
+const { validateCreate } = require('../content-types/stock-location/stock-location.validation');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 

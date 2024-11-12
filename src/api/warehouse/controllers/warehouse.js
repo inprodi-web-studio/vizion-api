@@ -26,6 +26,14 @@ module.exports = createCoreController(WAREHOUSE, ({ strapi }) => ({
         return warehouses;
     },
 
+    async findOne(ctx) {
+        const { uuid } = ctx.params;
+
+        const warehouse = await findOneByUuid( uuid, WAREHOUSE, warehouseFields );
+
+        return warehouse;
+    },
+
     async create(ctx) {
         const { company } = ctx.state;
         const data = ctx.request.body;

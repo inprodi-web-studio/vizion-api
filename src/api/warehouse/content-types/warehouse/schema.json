@@ -30,6 +30,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::company.company"
+    },
+    "layout": {
+      "type": "json"
     }
   }
 }

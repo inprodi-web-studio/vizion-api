@@ -9,6 +9,14 @@ module.exports = {
         },
       },
       {
+        method: "GET",
+        path: "/warehouses/:uuid",
+        handler: "warehouse.findOne",
+        config: {
+          policies: ["global::userContext"],
+        },
+      },
+      {
         method: "POST",
         path: "/warehouses",
         handler: "warehouse.create",

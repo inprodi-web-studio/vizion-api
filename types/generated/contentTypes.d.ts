@@ -2454,6 +2454,7 @@ export interface ApiWarehouseWarehouse extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
+    layout: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
