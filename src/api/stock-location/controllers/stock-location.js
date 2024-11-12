@@ -11,9 +11,6 @@ const stockLocationFields = {
         warehouse : {
             fields : ["uuid", "name"],
         },
-        receivableFrom : {
-            fields : ["uuid", "name", "identifier"],
-        },
     },
 };
 
