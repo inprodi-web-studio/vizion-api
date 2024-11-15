@@ -110,6 +110,18 @@
       "relation": "manyToOne",
       "target": "api::unity.unity",
       "inversedBy": "products"
+    },
+    "stocks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock.stock",
+      "mappedBy": "product"
+    },
+    "badges": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-badge.product-badge",
+      "mappedBy": "product"
     }
   }
 }

@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "stock_movements",
+  "info": {
+    "singularName": "stock-movement",
+    "pluralName": "stock-movements",
+    "displayName": "Stock Movement",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "quantity": {
+      "type": "float"
+    },
+    "type": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product"
+    },
+    "motive": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::adjustment-motive.adjustment-motive"
+    },
+    "location": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::stock-location.stock-location"
+    }
+  }
+}

@@ -798,6 +798,43 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
 }
 
+export interface ApiAdjustmentMotiveAdjustmentMotive
+  extends Schema.CollectionType {
+  collectionName: 'adjustment_motives';
+  info: {
+    singularName: 'adjustment-motive';
+    pluralName: 'adjustment-motives';
+    displayName: 'Adjustment Motive';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    title: Attribute.String;
+    company: Attribute.Relation<
+      'api::adjustment-motive.adjustment-motive',
+      'oneToOne',
+      'api::company.company'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::adjustment-motive.adjustment-motive',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::adjustment-motive.adjustment-motive',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiAttributeValueAttributeValue extends Schema.CollectionType {
   collectionName: 'attribute_values';
   info: {
@@ -1878,6 +1915,16 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'manyToOne',
       'api::unity.unity'
     >;
+    stocks: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::stock.stock'
+    >;
+    badges: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::product-badge.product-badge'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1930,6 +1977,42 @@ export interface ApiProductAttributeProductAttribute
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::product-attribute.product-attribute',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiProductBadgeProductBadge extends Schema.CollectionType {
+  collectionName: 'product_badges';
+  info: {
+    singularName: 'product-badge';
+    pluralName: 'product-badges';
+    displayName: 'Product Badge';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    expirationDate: Attribute.Date;
+    product: Attribute.Relation<
+      'api::product-badge.product-badge',
+      'manyToOne',
+      'api::product.product'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::product-badge.product-badge',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::product-badge.product-badge',
       'oneToOne',
       'admin::user'
     > &
@@ -2105,6 +2188,47 @@ export interface ApiSaleSale extends Schema.CollectionType {
   };
 }
 
+export interface ApiStockStock extends Schema.CollectionType {
+  collectionName: 'stocks';
+  info: {
+    singularName: 'stock';
+    pluralName: 'stocks';
+    displayName: 'Stock';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    product: Attribute.Relation<
+      'api::stock.stock',
+      'manyToOne',
+      'api::product.product'
+    >;
+    location: Attribute.Relation<
+      'api::stock.stock',
+      'manyToOne',
+      'api::stock-location.stock-location'
+    >;
+    quantity: Attribute.Float;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::stock.stock',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::stock.stock',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiStockLocationStockLocation extends Schema.CollectionType {
   collectionName: 'stock_locations';
   info: {
@@ -2127,6 +2251,11 @@ export interface ApiStockLocationStockLocation extends Schema.CollectionType {
       'manyToOne',
       'api::warehouse.warehouse'
     >;
+    stocks: Attribute.Relation<
+      'api::stock-location.stock-location',
+      'oneToMany',
+      'api::stock.stock'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2137,6 +2266,54 @@ export interface ApiStockLocationStockLocation extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::stock-location.stock-location',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiStockMovementStockMovement extends Schema.CollectionType {
+  collectionName: 'stock_movements';
+  info: {
+    singularName: 'stock-movement';
+    pluralName: 'stock-movements';
+    displayName: 'Stock Movement';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    quantity: Attribute.Float;
+    type: Attribute.String;
+    comments: Attribute.String;
+    product: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'api::product.product'
+    >;
+    motive: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'api::adjustment-motive.adjustment-motive'
+    >;
+    location: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'api::stock-location.stock-location'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::stock-movement.stock-movement',
       'oneToOne',
       'admin::user'
     > &
@@ -2490,6 +2667,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
+      'api::adjustment-motive.adjustment-motive': ApiAdjustmentMotiveAdjustmentMotive;
       'api::attribute-value.attribute-value': ApiAttributeValueAttributeValue;
       'api::company.company': ApiCompanyCompany;
       'api::company-niche.company-niche': ApiCompanyNicheCompanyNiche;
@@ -2512,10 +2690,13 @@ declare module '@strapi/types' {
       'api::price-list.price-list': ApiPriceListPriceList;
       'api::product.product': ApiProductProduct;
       'api::product-attribute.product-attribute': ApiProductAttributeProductAttribute;
+      'api::product-badge.product-badge': ApiProductBadgeProductBadge;
       'api::product-category.product-category': ApiProductCategoryProductCategory;
       'api::product-variation.product-variation': ApiProductVariationProductVariation;
       'api::sale.sale': ApiSaleSale;
+      'api::stock.stock': ApiStockStock;
       'api::stock-location.stock-location': ApiStockLocationStockLocation;
+      'api::stock-movement.stock-movement': ApiStockMovementStockMovement;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;
       'api::suscription-plan.suscription-plan': ApiSuscriptionPlanSuscriptionPlan;
       'api::suscription-status.suscription-status': ApiSuscriptionStatusSuscriptionStatus;

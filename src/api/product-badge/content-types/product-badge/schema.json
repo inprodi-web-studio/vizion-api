@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "product_badges",
+  "info": {
+    "singularName": "product-badge",
+    "pluralName": "product-badges",
+    "displayName": "Product Badge"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "expirationDate": {
+      "type": "date"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "inversedBy": "badges"
+    }
+  }
+}

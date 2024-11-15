@@ -11,7 +11,6 @@ const warehouseFields = {
     populate : {
         address : true,
         locations : {
-            fields : ["uuid", "name", "identifier"],
             count : true,
         },
     },

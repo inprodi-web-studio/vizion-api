@@ -31,6 +31,10 @@ const {
   PAYMENT,
   WAREHOUSE,
   STOCK_LOCATION,
+  STOCK,
+  PRODUCT_BADGE,
+  STOCK_MOVEMENT,
+  ADJUSTMENT_MOTIVE,
 } = require("./constants/models");
 
 module.exports = {
@@ -46,6 +50,7 @@ module.exports = {
         NOTE,
         SALE,
         UNITY,
+        STOCK,
         PACKAGE,
         PRODUCT,
         INSIDER,
@@ -58,7 +63,9 @@ module.exports = {
         INVITATION,
         PRICE_LIST,
         PREFERENCE,
+        PRODUCT_BADGE,
         CONTACT_GROUP,
+        STOCK_MOVEMENT,
         ESTIMATE_STAGE,
         CONTACT_SOURCE,
         STOCK_LOCATION,
@@ -66,6 +73,7 @@ module.exports = {
         ATTRIBUTE_VALUE,
         CUSTOMER_CREDIT,
         PRODUCT_CATEGORY,
+        ADJUSTMENT_MOTIVE,
         PRODUCT_ATTRIBUTE,
         PRODUCT_VARIATION,
         CONTACT_INTERACTION,

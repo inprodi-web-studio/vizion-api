@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "adjustment_motives",
+  "info": {
+    "singularName": "adjustment-motive",
+    "pluralName": "adjustment-motives",
+    "displayName": "Adjustment Motive",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    }
+  }
+}
