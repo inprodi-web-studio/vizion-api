@@ -30,24 +30,28 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
         let filters = {};
 
         if (productUuid) {
-            const product = await findOneByUuid( productUuid, PRODUCT );
+            const product = await findOneByUuid( productUuid, PRODUCT, {
+                populate : {
+                    packages : packageFields,
+                },
+            });
 
-            filters = {
-                product : product.id,
+            return {
+                data : product.packages,
             };
         }
 
         if (variationUuid) {
-            const variation = await findOneByUuid( variationUuid, PRODUCT_VARIATION );
+            const variation = await findOneByUuid( variationUuid, PRODUCT_VARIATION, {
+                populate : {
+                    packages : packageFields,
+                },
+            });
 
-            filters = {
-                variation : variation.id,
+            return {
+                data : variation.packages,
             };
         }
-
-        const packages = await findMany( PACKAGE, packageFields, filters );
-
-        return packages;
     },
 
     async create(ctx) {
