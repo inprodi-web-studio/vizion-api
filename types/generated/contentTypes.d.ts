@@ -1702,6 +1702,11 @@ export interface ApiPackagePackage extends Schema.CollectionType {
       'api::package.package'
     >;
     realConversion: Attribute.Float;
+    product: Attribute.Relation<
+      'api::package.package',
+      'manyToOne',
+      'api::product.product'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
