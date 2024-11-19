@@ -98,6 +98,11 @@
       "relation": "oneToMany",
       "target": "api::payment.payment",
       "mappedBy": "sale"
+    },
+    "stockPackages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::package.package"
     }
   }
 }

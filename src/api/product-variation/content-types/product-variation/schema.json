@@ -67,7 +67,12 @@
     "packages": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::package.package",
+      "target": "api::package.package"
+    },
+    "stocks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock.stock",
       "mappedBy": "variation"
     }
   }

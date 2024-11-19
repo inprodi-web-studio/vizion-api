@@ -1696,22 +1696,12 @@ export interface ApiPackagePackage extends Schema.CollectionType {
       'api::unity.unity'
     >;
     conversionRate: Attribute.Float;
-    product: Attribute.Relation<
-      'api::package.package',
-      'manyToOne',
-      'api::product.product'
-    >;
     referenceUnity: Attribute.Relation<
       'api::package.package',
       'oneToOne',
       'api::package.package'
     >;
     realConversion: Attribute.Float;
-    variation: Attribute.Relation<
-      'api::package.package',
-      'manyToOne',
-      'api::product-variation.product-variation'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1925,6 +1915,11 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'oneToMany',
       'api::product-badge.product-badge'
     >;
+    stockPackages: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::package.package'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2107,6 +2102,11 @@ export interface ApiProductVariationProductVariation
       'oneToMany',
       'api::package.package'
     >;
+    stocks: Attribute.Relation<
+      'api::product-variation.product-variation',
+      'oneToMany',
+      'api::stock.stock'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2185,6 +2185,11 @@ export interface ApiSaleSale extends Schema.CollectionType {
       'oneToMany',
       'api::payment.payment'
     >;
+    stockPackages: Attribute.Relation<
+      'api::sale.sale',
+      'oneToMany',
+      'api::package.package'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &
@@ -2225,7 +2230,7 @@ export interface ApiStockStock extends Schema.CollectionType {
     >;
     variation: Attribute.Relation<
       'api::stock.stock',
-      'oneToOne',
+      'manyToOne',
       'api::product-variation.product-variation'
     >;
     createdAt: Attribute.DateTime;

@@ -102,8 +102,7 @@
     "packages": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::package.package",
-      "mappedBy": "product"
+      "target": "api::package.package"
     },
     "unity": {
       "type": "relation",
@@ -122,6 +121,11 @@
       "relation": "oneToMany",
       "target": "api::product-badge.product-badge",
       "mappedBy": "product"
+    },
+    "stockPackages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::package.package"
     }
   }
 }

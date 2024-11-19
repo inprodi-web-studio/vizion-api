@@ -1,4 +1,4 @@
-const { STOCK_MOVEMENT, PRODUCT, STOCK_LOCATION, ADJUSTMENT_MOTIVE, PRODUCT_BADGE } = require('../../../constants/models');
+const { STOCK_MOVEMENT, PRODUCT, STOCK_LOCATION, ADJUSTMENT_MOTIVE, PRODUCT_BADGE, PRODUCT_VARIATION } = require('../../../constants/models');
 const { BadRequestError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
@@ -24,6 +24,12 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                         path : ctx.request.url,
                         key : `[${i}]-stock-movement.requiredVariation`,
                     });
+                }
+
+                if ( type === "variable" ) {
+                    const { id } = await findOneByUuid( data[i].variation, PRODUCT_VARIATION );
+
+                    data[i].variation = id;
                 }
     
                 const { newBadge } = await strapi.service( STOCK_MOVEMENT ).validateBadge( data[i], stockInfo, i );
@@ -96,6 +102,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                     name : data.badge.name,
                     expirationDate : data.badge.expirationDate,
                     product : data.product,
+                    variation : data.variation,
                 },
             });
 
@@ -108,14 +115,23 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
     },
 
     async handleAdjustment(data, createdBadges) {
-        console.log(createdBadges);
         const ctx = strapi.requestContext.get();
+
         try {
             await strapi.db.connection.raw('START TRANSACTION;');
     
             for (let i = 0; i < data.length; i++) {
                 const item = data[i];
-                const { product, location, quantity, motive, badge, comments } = item;
+
+                const {
+                    product,
+                    location,
+                    quantity,
+                    motive,
+                    badge,
+                    comments,
+                    variation,
+                } = item;
     
                 try {
                     const [result] = await strapi.db.connection.raw(`
@@ -125,11 +141,14 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                         JOIN stocks AS s ON s.id = spl.stock_id
                         LEFT JOIN stocks_badge_links AS sbl ON s.id = sbl.stock_id
                         LEFT JOIN product_badges AS pb ON sbl.product_badge_id = pb.id
+                        LEFT JOIN stocks_variation_links AS svl ON s.id = svl.stock_id
+                        LEFT JOIN product_variations AS pv ON svl.product_variation_id = pv.id
                         WHERE spl.product_id = ?
                         AND sll.stock_location_id = ?
                         AND (? IS NULL OR pb.id = ?)
+                        AND (? IS NULL OR pv.id = ?)
                         FOR UPDATE;
-                    `, [product, location, badge ?? null, badge ?? null]);
+                    `, [product, location, badge ?? null, badge ?? null, variation ?? null, variation ?? null]);
     
                     let stockId, currentQuantity;
     
@@ -168,6 +187,13 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                                 INSERT INTO stocks_badge_links (stock_id, product_badge_id)
                                 VALUES (?, ?);
                             `, [stockId, badge]);
+                        }
+
+                        if (variation) {
+                            await strapi.db.connection.raw(`
+                                INSERT INTO stocks_variation_links (stock_id, product_variation_id)
+                                VALUES (?, ?);
+                            `, [stockId, variation]);
                         }
                     }
     
@@ -215,6 +241,13 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                             INSERT INTO stock_movements_badge_links (stock_movement_id, product_badge_id)
                             VALUES(?, ?)
                         `, [stockMovementId, badge]);
+                    }
+
+                    if (variation) {
+                        await strapi.db.connection.raw(`
+                            INSERT INTO stock_movements_variation_links (stock_movement_id, product_variation_id)
+                            VALUES(?, ?)
+                        `, [stockMovementId, variation]);
                     }
     
                 } catch (e) {

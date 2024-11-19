@@ -23,12 +23,6 @@
     "conversionRate": {
       "type": "float"
     },
-    "product": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::product.product",
-      "inversedBy": "packages"
-    },
     "referenceUnity": {
       "type": "relation",
       "relation": "oneToOne",
@@ -36,12 +30,6 @@
     },
     "realConversion": {
       "type": "float"
-    },
-    "variation": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::product-variation.product-variation",
-      "inversedBy": "packages"
     }
   }
 }
