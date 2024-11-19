@@ -38,6 +38,16 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::stock-location.stock-location"
+    },
+    "badge": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product-badge.product-badge"
+    },
+    "variation": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product-variation.product-variation"
     }
   }
 }

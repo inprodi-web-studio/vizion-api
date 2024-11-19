@@ -1990,6 +1990,7 @@ export interface ApiProductBadgeProductBadge extends Schema.CollectionType {
     singularName: 'product-badge';
     pluralName: 'product-badges';
     displayName: 'Product Badge';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -2002,6 +2003,11 @@ export interface ApiProductBadgeProductBadge extends Schema.CollectionType {
       'api::product-badge.product-badge',
       'manyToOne',
       'api::product.product'
+    >;
+    variation: Attribute.Relation<
+      'api::product-badge.product-badge',
+      'oneToOne',
+      'api::product-variation.product-variation'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -2212,6 +2218,16 @@ export interface ApiStockStock extends Schema.CollectionType {
       'api::stock-location.stock-location'
     >;
     quantity: Attribute.Float;
+    badge: Attribute.Relation<
+      'api::stock.stock',
+      'oneToOne',
+      'api::product-badge.product-badge'
+    >;
+    variation: Attribute.Relation<
+      'api::stock.stock',
+      'oneToOne',
+      'api::product-variation.product-variation'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2303,6 +2319,16 @@ export interface ApiStockMovementStockMovement extends Schema.CollectionType {
       'api::stock-movement.stock-movement',
       'oneToOne',
       'api::stock-location.stock-location'
+    >;
+    badge: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'api::product-badge.product-badge'
+    >;
+    variation: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'api::product-variation.product-variation'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

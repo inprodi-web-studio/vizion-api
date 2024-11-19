@@ -2,6 +2,12 @@ const { yup, validateYupSchema } = require("../../../../helpers/validators");
 
 const createAdjustment = yup.array().of( yup.object().shape({
     product : yup.string().uuid().required(),
+    badge : yup.object().shape({
+        uuid : yup.string().uuid().nullable(),
+        name : yup.string().nullable(),
+        expirationDate : yup.string().nullable(),
+    }).nullable(),
+    variation : yup.string().uuid().nullable(),
     location : yup.string().uuid().required(),
     quantity : yup.number().required(),
     motive : yup.string().uuid().required(),

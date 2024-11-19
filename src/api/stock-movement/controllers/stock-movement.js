@@ -1,4 +1,4 @@
-const { STOCK_MOVEMENT } = require("../../../constants/models");
+const { STOCK_MOVEMENT, STOCK } = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const { validateCreateAdjustment } = require("../content-types/stock-movement/stock-movement.validation");
 
@@ -14,9 +14,9 @@ module.exports = createCoreController(STOCK_MOVEMENT, ({ strapi }) => ({
 
         await validateCreateAdjustment(data);
 
-        await strapi.service( STOCK_MOVEMENT ).validateAdjustmentParallelData( data );
+        const { createdBadges } = await strapi.service( STOCK_MOVEMENT ).validateAdjustmentParallelData( data );
 
-        await strapi.service( STOCK_MOVEMENT ).handleAdjustment( data );
+        await strapi.service( STOCK_MOVEMENT ).handleAdjustment( data, createdBadges );
 
         return "success";
     },

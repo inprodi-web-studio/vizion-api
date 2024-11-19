@@ -400,7 +400,7 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
     },
 
     async prepareLeadData(uuid, data = {}) {
-        return await validateEntityPermission( uuid, LEAD, {
+        return await findOneByUuid( uuid, LEAD, {
             fields : [ ...leadFields.fields ],
             populate : {
                 estimates : true,
@@ -427,8 +427,6 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         const difference   = today.diff( leadCreation, "day" );
 
         let id = lead.id;
-
-        await strapi.service(LEAD).deleteParallelData(lead.id);
 
         delete lead.createdAt;
         delete lead.uuid;

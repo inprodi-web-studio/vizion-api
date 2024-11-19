@@ -4,7 +4,8 @@
   "info": {
     "singularName": "product-badge",
     "pluralName": "product-badges",
-    "displayName": "Product Badge"
+    "displayName": "Product Badge",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -25,6 +26,11 @@
       "relation": "manyToOne",
       "target": "api::product.product",
       "inversedBy": "badges"
+    },
+    "variation": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product-variation.product-variation"
     }
   }
 }
