@@ -126,7 +126,8 @@
     "stockPackages": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::package.package"
+      "target": "api::package.package",
+      "mappedBy": "stockProduct"
     }
   }
 }
