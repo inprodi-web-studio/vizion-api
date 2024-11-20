@@ -18,12 +18,14 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                 SELECT
                     JSON_OBJECT(
                         'uuid', p.uuid,
-                        'name', p.name
+                        'name', p.name,
+                        'sku', p.sku
                     ) AS product,
                     JSON_ARRAYAGG(
                         JSON_OBJECT(
                             'uuid', s.uuid,
                             'quantity', s.quantity,
+                            'packageQuantity', s.package_quantity,
                             'unity', JSON_OBJECT(
                                 'uuid', u.uuid,
                                 'name', u.name,
@@ -70,13 +72,20 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                     sl.id = ?
                 GROUP BY
                     p.id
+                ORDER BY
+                    p.name ASC
                 LIMIT 30;
             `, [location.id]);
 
-            return result.map( row => ({
+            const formatData = result.map( row => ({
                 product : JSON.parse( row.product ),
                 stocks : JSON.parse( row.stocks )
             }));
+
+            return {
+                results : formatData,
+                pagination : {},
+            };
         } catch (e) {
             console.log(e);
 

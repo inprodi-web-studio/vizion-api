@@ -2258,6 +2258,7 @@ export interface ApiStockStock extends Schema.CollectionType {
       'oneToOne',
       'api::package.package'
     >;
+    packageQuantity: Attribute.Float;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2370,6 +2371,7 @@ export interface ApiStockMovementStockMovement extends Schema.CollectionType {
       'oneToOne',
       'api::package.package'
     >;
+    packageQuantity: Attribute.Float;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

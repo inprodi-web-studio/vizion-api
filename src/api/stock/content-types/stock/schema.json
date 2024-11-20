@@ -50,6 +50,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::package.package"
+    },
+    "packageQuantity": {
+      "type": "float"
     }
   }
 }

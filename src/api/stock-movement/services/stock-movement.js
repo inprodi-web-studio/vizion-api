@@ -51,9 +51,10 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 data[i].motive = motiveId;
 
                 if ( data[i].package ) {
-                    const { id : packageId } = await findOneByUuid( data[i].package, PACKAGE );
+                    const { id : packageId, realConversion } = await findOneByUuid( data[i].package, PACKAGE );
 
                     data[i].package = packageId;
+                    data[i].packageRealConversion = realConversion;
                 }
             }
     
@@ -142,14 +143,16 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                     comments,
                     variation,
                     unity,
-                    package
+                    package,
+                    packageRealConversion,
                 } = item;
     
                 try {
                     const [ result ] = await strapi.db.connection.raw(`
                         SELECT
                             spl.stock_id,
-                            s.quantity
+                            s.quantity,
+                            s.package_quantity
                         FROM
                             stocks_product_links AS spl
                             JOIN stocks_location_links AS sll ON spl.stock_id = sll.stock_id
@@ -182,11 +185,12 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                         package ?? null
                     ]);
 
-                    let stockId, currentQuantity;
+                    let stockId, currentQuantity, currentPackageQuantity;
     
                     if (result.length) {
                         stockId = result[0].stock_id;
                         currentQuantity = result[0].quantity;
+                        currentPackageQuantity = result[0].package_quantity;
                     } else {
                         if (quantity < 0) {
                             throw new BadRequestError(`Item with index ${i} has a negative quantity for a new stock`, {
@@ -197,12 +201,13 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
     
                         // Inserta el nuevo stock y relaciones
                         const [insertStockResult] = await strapi.db.connection.raw(`
-                            INSERT INTO stocks (uuid, quantity)
-                            VALUES (UUID(), 0);
+                            INSERT INTO stocks (uuid, quantity, package_quantity)
+                            VALUES (UUID(), 0, 0);
                         `);
     
-                        stockId = insertStockResult.insertId;
-                        currentQuantity = 0;
+                        stockId                = insertStockResult.insertId;
+                        currentQuantity        = 0;
+                        currentPackageQuantity = 0;
     
                         await strapi.db.connection.raw(`
                             INSERT INTO stocks_product_links (stock_id, product_id)
@@ -240,8 +245,16 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                             `, [stockId, package]);
                         }
                     }
-    
-                    const newQuantity = currentQuantity + quantity;
+
+                    let packageQuantity = 0;
+                    let newQuantity = 0;
+
+                    if ( package ) {
+                        packageQuantity = currentPackageQuantity + quantity;
+                        newQuantity = currentQuantity + (quantity * packageRealConversion);
+                    } else {
+                        newQuantity = currentQuantity + quantity;
+                    }
     
                     if (newQuantity < 0) {
                         throw new BadRequestError(`Item with index ${i} has a negative quantity for an existing stock`, {
@@ -253,15 +266,15 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                     // Actualiza la cantidad de stock
                     await strapi.db.connection.raw(`
                         UPDATE stocks
-                        SET quantity = ?
+                        SET quantity = ?, package_quantity = ?
                         WHERE id = ?;
-                    `, [newQuantity, stockId]);
+                    `, [newQuantity, packageQuantity, stockId]);
 
                     // Registramos el movimiento de inventario
                     const [ insertStockMovementResult ] = await strapi.db.connection.raw(`
-                        INSERT INTO stock_movements ( uuid, quantity, type, comments )
-                        VALUES( UUID(), ?, ?, ?)
-                    `, [quantity, "adjustment", comments ?? ""]);
+                        INSERT INTO stock_movements ( uuid, quantity, type, comments, package_quantity )
+                        VALUES( UUID(), ?, ?, ?, ?)
+                    `, [quantity, "adjustment", comments ?? "", packageQuantity]);
 
                     const stockMovementId = insertStockMovementResult.insertId;
 
