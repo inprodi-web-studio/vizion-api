@@ -22,18 +22,6 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::company.company"
-    },
-    "product_variations": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::product-variation.product-variation",
-      "mappedBy": "stock"
-    },
-    "stockVariation": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::product-variation.product-variation",
-      "inversedBy": "stockPackages"
     }
   }
 }

@@ -67,25 +67,14 @@
     "packages": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::package.package"
+      "target": "api::package.package",
+      "mappedBy": "stockVariation"
     },
     "stocks": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::stock.stock",
       "mappedBy": "variation"
-    },
-    "stock": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::adjustment-motive.adjustment-motive",
-      "inversedBy": "product_variations"
-    },
-    "stockPackages": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::adjustment-motive.adjustment-motive",
-      "mappedBy": "stockVariation"
     }
   }
 }

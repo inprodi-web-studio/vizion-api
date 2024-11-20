@@ -818,16 +818,6 @@ export interface ApiAdjustmentMotiveAdjustmentMotive
       'oneToOne',
       'api::company.company'
     >;
-    product_variations: Attribute.Relation<
-      'api::adjustment-motive.adjustment-motive',
-      'oneToMany',
-      'api::product-variation.product-variation'
-    >;
-    stockVariation: Attribute.Relation<
-      'api::adjustment-motive.adjustment-motive',
-      'manyToOne',
-      'api::product-variation.product-variation'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1722,6 +1712,11 @@ export interface ApiPackagePackage extends Schema.CollectionType {
       'manyToOne',
       'api::product.product'
     >;
+    stockVariation: Attribute.Relation<
+      'api::package.package',
+      'manyToOne',
+      'api::product-variation.product-variation'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2127,16 +2122,6 @@ export interface ApiProductVariationProductVariation
       'oneToMany',
       'api::stock.stock'
     >;
-    stock: Attribute.Relation<
-      'api::product-variation.product-variation',
-      'manyToOne',
-      'api::adjustment-motive.adjustment-motive'
-    >;
-    stockPackages: Attribute.Relation<
-      'api::product-variation.product-variation',
-      'oneToMany',
-      'api::adjustment-motive.adjustment-motive'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2263,6 +2248,16 @@ export interface ApiStockStock extends Schema.CollectionType {
       'manyToOne',
       'api::product-variation.product-variation'
     >;
+    unity: Attribute.Relation<
+      'api::stock.stock',
+      'oneToOne',
+      'api::unity.unity'
+    >;
+    package: Attribute.Relation<
+      'api::stock.stock',
+      'oneToOne',
+      'api::package.package'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2364,6 +2359,16 @@ export interface ApiStockMovementStockMovement extends Schema.CollectionType {
       'api::stock-movement.stock-movement',
       'oneToOne',
       'api::product-variation.product-variation'
+    >;
+    unity: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'api::unity.unity'
+    >;
+    package: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'api::package.package'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

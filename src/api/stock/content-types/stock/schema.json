@@ -40,6 +40,16 @@
       "relation": "manyToOne",
       "target": "api::product-variation.product-variation",
       "inversedBy": "stocks"
+    },
+    "unity": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::unity.unity"
+    },
+    "package": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::package.package"
     }
   }
 }

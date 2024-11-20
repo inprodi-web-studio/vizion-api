@@ -48,6 +48,16 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::product-variation.product-variation"
+    },
+    "unity": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::unity.unity"
+    },
+    "package": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::package.package"
     }
   }
 }

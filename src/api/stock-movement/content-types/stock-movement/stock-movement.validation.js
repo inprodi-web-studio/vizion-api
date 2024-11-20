@@ -10,6 +10,7 @@ const createAdjustment = yup.array().of( yup.object().shape({
     variation : yup.string().uuid().nullable(),
     location : yup.string().uuid().required(),
     quantity : yup.number().required(),
+    package : yup.string().uuid().nullable(),
     motive : yup.string().uuid().required(),
     comments : yup.string().nullable(),
 }).strict() ).min(1)

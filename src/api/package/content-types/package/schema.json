@@ -42,6 +42,12 @@
       "relation": "manyToOne",
       "target": "api::product.product",
       "inversedBy": "stockPackages"
+    },
+    "stockVariation": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product-variation.product-variation",
+      "inversedBy": "packages"
     }
   }
 }

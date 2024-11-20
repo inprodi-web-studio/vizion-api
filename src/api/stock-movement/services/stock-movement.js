@@ -1,4 +1,4 @@
-const { STOCK_MOVEMENT, PRODUCT, STOCK_LOCATION, ADJUSTMENT_MOTIVE, PRODUCT_BADGE, PRODUCT_VARIATION } = require('../../../constants/models');
+const { STOCK_MOVEMENT, PRODUCT, STOCK_LOCATION, ADJUSTMENT_MOTIVE, PRODUCT_BADGE, PRODUCT_VARIATION, PACKAGE } = require('../../../constants/models');
 const { BadRequestError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
@@ -11,13 +11,17 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
 
         try {
             for ( let i = 0; i < data.length; i++ ) {
-                const { id : productId, stockInfo, type } = await findOneByUuid( data[i].product, PRODUCT, {
+                const { id : productId, stockInfo, type, unity } = await findOneByUuid( data[i].product, PRODUCT, {
                     populate : {
                         stockInfo : true,
+                        unity : {
+                            fields : ["id"],
+                        },
                     },
                 });
     
                 data[i].product = productId;
+                data[i].unity = unity.id;
 
                 if ( type === "variable" && !data[i].variation ) {
                     throw new BadRequestError( `Item with index ${ i } is a variable product but no variation was specified`, {
@@ -45,6 +49,12 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 const { id : motiveId } = await findOneByUuid( data[i].motive, ADJUSTMENT_MOTIVE );
     
                 data[i].motive = motiveId;
+
+                if ( data[i].package ) {
+                    const { id : packageId } = await findOneByUuid( data[i].package, PACKAGE );
+
+                    data[i].package = packageId;
+                }
             }
     
             return {
@@ -131,25 +141,47 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                     badge,
                     comments,
                     variation,
+                    unity,
+                    package
                 } = item;
     
                 try {
-                    const [result] = await strapi.db.connection.raw(`
-                        SELECT spl.stock_id, s.quantity
-                        FROM stocks_product_links AS spl
-                        JOIN stocks_location_links AS sll ON spl.stock_id = sll.stock_id
-                        JOIN stocks AS s ON s.id = spl.stock_id
-                        LEFT JOIN stocks_badge_links AS sbl ON s.id = sbl.stock_id
-                        LEFT JOIN product_badges AS pb ON sbl.product_badge_id = pb.id
-                        LEFT JOIN stocks_variation_links AS svl ON s.id = svl.stock_id
-                        LEFT JOIN product_variations AS pv ON svl.product_variation_id = pv.id
-                        WHERE spl.product_id = ?
-                        AND sll.stock_location_id = ?
-                        AND (? IS NULL OR pb.id = ?)
-                        AND (? IS NULL OR pv.id = ?)
+                    const [ result ] = await strapi.db.connection.raw(`
+                        SELECT
+                            spl.stock_id,
+                            s.quantity
+                        FROM
+                            stocks_product_links AS spl
+                            JOIN stocks_location_links AS sll ON spl.stock_id = sll.stock_id
+                            JOIN stocks AS s ON s.id = spl.stock_id
+                            JOIN stocks_unity_links AS sul ON s.id = sul.stock_id
+                            JOIN unities AS u ON sul.unity_id = u.id
+                            LEFT JOIN stocks_package_links AS spacl ON s.id = spacl.stock_id
+                            LEFT JOIN packages AS p ON spacl.package_id = p.id
+                            LEFT JOIN stocks_badge_links AS sbl ON s.id = sbl.stock_id
+                            LEFT JOIN product_badges AS pb ON sbl.product_badge_id = pb.id
+                            LEFT JOIN stocks_variation_links AS svl ON s.id = svl.stock_id
+                            LEFT JOIN product_variations AS pv ON svl.product_variation_id = pv.id
+                        WHERE
+                            spl.product_id = ?
+                            AND sll.stock_location_id = ?
+                            AND u.id = ?
+                            AND ((? IS NULL AND pb.id IS NULL) OR pb.id = ?)
+                            AND ((? IS NULL AND pv.id IS NULL) OR pv.id = ?)
+                            AND ((? IS NULL AND p.id IS NULL) OR p.id = ?)
                         FOR UPDATE;
-                    `, [product, location, badge ?? null, badge ?? null, variation ?? null, variation ?? null]);
-    
+                    `, [
+                        product,
+                        location,
+                        unity,
+                        badge ?? null,
+                        badge ?? null, 
+                        variation ?? null, 
+                        variation ?? null,
+                        package ?? null,
+                        package ?? null
+                    ]);
+
                     let stockId, currentQuantity;
     
                     if (result.length) {
@@ -182,6 +214,11 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                             VALUES (?, ?);
                         `, [stockId, location]);
 
+                        await strapi.db.connection.raw(`
+                            INSERT INTO stocks_unity_links (stock_id, unity_id)
+                            VALUES (?, ?);
+                        `, [stockId, unity]);
+
                         if (badge) {
                             await strapi.db.connection.raw(`
                                 INSERT INTO stocks_badge_links (stock_id, product_badge_id)
@@ -194,6 +231,13 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                                 INSERT INTO stocks_variation_links (stock_id, product_variation_id)
                                 VALUES (?, ?);
                             `, [stockId, variation]);
+                        }
+
+                        if (package) {
+                            await strapi.db.connection.raw(`
+                                INSERT INTO stocks_package_links (stock_id, package_id)
+                                VALUES (?, ?);
+                            `, [stockId, package]);
                         }
                     }
     
@@ -214,7 +258,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                     `, [newQuantity, stockId]);
 
                     // Registramos el movimiento de inventario
-                    const [insertStockMovementResult] = await strapi.db.connection.raw(`
+                    const [ insertStockMovementResult ] = await strapi.db.connection.raw(`
                         INSERT INTO stock_movements ( uuid, quantity, type, comments )
                         VALUES( UUID(), ?, ?, ?)
                     `, [quantity, "adjustment", comments ?? ""]);
@@ -236,6 +280,11 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                         VALUES(?, ?)
                     `, [stockMovementId, location]);
 
+                    await strapi.db.connection.raw(`
+                        INSERT INTO stock_movements_unity_links (stock_movement_id, unity_id)
+                        VALUES(?, ?)
+                    `, [stockMovementId, unity]);
+
                     if (badge) {
                         await strapi.db.connection.raw(`
                             INSERT INTO stock_movements_badge_links (stock_movement_id, product_badge_id)
@@ -248,6 +297,13 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                             INSERT INTO stock_movements_variation_links (stock_movement_id, product_variation_id)
                             VALUES(?, ?)
                         `, [stockMovementId, variation]);
+                    }
+
+                    if (package) {
+                        await strapi.db.connection.raw(`
+                            INSERT INTO stock_movements_package_links (stock_movement_id, package_id)
+                            VALUES(?, ?)
+                        `, [stockMovementId, package]);
                     }
     
                 } catch (e) {
@@ -276,5 +332,5 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 path: ctx.request.url,
             });
         }
-    }    
+    }
 }));
