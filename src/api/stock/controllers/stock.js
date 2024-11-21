@@ -89,8 +89,10 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                 stocks : JSON.parse( row.stocks )
             }));
 
+            const parsedData = await strapi.service(STOCK).formatStockData( formatData );
+
             return {
-                results : formatData,
+                results : parsedData,
                 pagination : {},
             };
         } catch (e) {
