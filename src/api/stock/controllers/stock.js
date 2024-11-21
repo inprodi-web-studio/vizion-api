@@ -19,7 +19,12 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                     JSON_OBJECT(
                         'uuid', p.uuid,
                         'name', p.name,
-                        'sku', p.sku
+                        'sku', p.sku,
+				        'unity', JSON_OBJECT(
+				            'uuid', ANY_VALUE(pru.uuid),
+				            'name', ANY_VALUE(pru.name),
+				            'abbreviation', ANY_VALUE(pru.abbreviation)
+				        )
                     ) AS product,
                     JSON_ARRAYAGG(
                         JSON_OBJECT(
@@ -60,6 +65,8 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                     JOIN stocks AS s ON s.id = spl.stock_id
                     JOIN stocks_unity_links AS sul ON s.id = sul.stock_id
                     JOIN unities AS u ON sul.unity_id = u.id
+                    JOIN products_unity_links AS prul ON p.id = prul.product_id
+                    JOIN unities AS pru ON prul.unity_id = pru.id
                     LEFT JOIN stocks_badge_links AS sbl ON s.id = sbl.stock_id
                     LEFT JOIN product_badges AS pb ON sbl.product_badge_id = pb.id
                     LEFT JOIN stocks_package_links AS spacl ON s.id = spacl.stock_id
