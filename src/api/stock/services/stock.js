@@ -26,6 +26,7 @@ module.exports = createCoreService(STOCK, ({ strapi }) => ({
             product: item.product,
             variation: {
                 uuid: variationUuid,
+                values : variationStock.variation.values,
                 stocks: [],
             },
             };
@@ -41,7 +42,7 @@ module.exports = createCoreService(STOCK, ({ strapi }) => ({
         });
 
         Object.values(variationsMap).forEach((variationItem) => {
-        parsedData.push(variationItem);
+            parsedData.push(variationItem);
         });
     } else {
         parsedData.push(item);
