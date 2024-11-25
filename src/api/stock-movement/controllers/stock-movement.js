@@ -1,5 +1,4 @@
 const { STOCK_MOVEMENT, STOCK } = require("../../../constants/models");
-const { BadRequestError } = require("../../../helpers/errors");
 const { validateCreateAdjustment } = require("../content-types/stock-movement/stock-movement.validation");
 
 const { createCoreController } = require('@strapi/strapi').factories;
