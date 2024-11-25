@@ -68,13 +68,19 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::package.package",
-      "mappedBy": "stockVariation"
+      "mappedBy": "variation"
     },
     "stocks": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::stock.stock",
       "mappedBy": "variation"
+    },
+    "stockPackages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::adjustment-motive.adjustment-motive",
+      "mappedBy": "stockVariation"
     }
   }
 }

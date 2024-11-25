@@ -43,7 +43,7 @@
       "target": "api::product.product",
       "inversedBy": "stockPackages"
     },
-    "stockVariation": {
+    "variation": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::product-variation.product-variation",

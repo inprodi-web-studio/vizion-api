@@ -818,6 +818,11 @@ export interface ApiAdjustmentMotiveAdjustmentMotive
       'oneToOne',
       'api::company.company'
     >;
+    stockVariation: Attribute.Relation<
+      'api::adjustment-motive.adjustment-motive',
+      'manyToOne',
+      'api::product-variation.product-variation'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1712,7 +1717,7 @@ export interface ApiPackagePackage extends Schema.CollectionType {
       'manyToOne',
       'api::product.product'
     >;
-    stockVariation: Attribute.Relation<
+    variation: Attribute.Relation<
       'api::package.package',
       'manyToOne',
       'api::product-variation.product-variation'
@@ -2121,6 +2126,11 @@ export interface ApiProductVariationProductVariation
       'api::product-variation.product-variation',
       'oneToMany',
       'api::stock.stock'
+    >;
+    stockPackages: Attribute.Relation<
+      'api::product-variation.product-variation',
+      'oneToMany',
+      'api::adjustment-motive.adjustment-motive'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
