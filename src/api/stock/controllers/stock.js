@@ -1,9 +1,46 @@
-const { STOCK, WAREHOUSE, STOCK_LOCATION } = require('../../../constants/models');
+const { STOCK, WAREHOUSE, STOCK_LOCATION, PRODUCT, PRODUCT_VARIATION, PRODUCT_BADGE, PACKAGE } = require('../../../constants/models');
 const { BadRequestError } = require('../../../helpers/errors');
+const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 const product = require('../../product/controllers/product');
 
 const { createCoreController } = require('@strapi/strapi').factories;
+
+const stockFields = {
+    fields : ["uuid", "quantity", "packageQuantity"],
+    populate : {
+        product : {
+            fields : ["uuid", "name", "sku"],
+        },
+        badge : {
+            fields : ["uuid", "name", "expirationDate"],
+        },
+        variation : {
+            fields : ["uuid", "name", "sku"],
+            populate : {
+                values : {
+                    fields : ["uuid", "name"],
+                    populate : {
+                        attribute : {
+                            fields : ["uuid", "name"],
+                        },
+                    },
+                }
+            },
+        },
+        unity : {
+            fields : ["uuid", "name", "abbreviation"],
+        },
+        package : {
+            fields : ["uuid", "conversionRate", "realConversion"],
+            populate : {
+                unity : {
+                    fields : ["uuid", "name", "abbreviation"],
+                }
+            },
+        },
+    },
+};
 
 module.exports = createCoreController(STOCK, ({ strapi }) => ({
     async find(ctx) {
@@ -152,5 +189,61 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                 path: ctx.request.url,
             });
         }
+    },
+
+    async getStockByEntity(ctx) {
+        const { locationUuid } = ctx.params;
+        const { product, variation, badge, package } = ctx.query;
+
+        const location = await findOneByUuid( locationUuid, STOCK_LOCATION );
+
+        if (package) {
+            const { id : packageId } = await findOneByUuid( package, PACKAGE );
+
+            const stocks = await findMany( STOCK, stockFields, {
+                package : packageId,
+                location : location.id,
+            }, false );
+
+            return stocks;
+        }
+
+        if (badge) {
+            const { id : badgeId } = await findOneByUuid( badge, PRODUCT_BADGE );
+
+            const stocks = await findMany( STOCK, stockFields, {
+                badge : badgeId,
+                location : location.id,
+            }, false );
+
+            return stocks;
+        }
+
+        if (variation) {
+            const { id : variationId } = await findOneByUuid( variation, PRODUCT_VARIATION );
+
+            const stocks = await findMany( STOCK, stockFields, {
+                variation : variationId,
+                location : location.id,
+            }, false );
+
+            return stocks;
+        }
+
+        if (product) {
+            const { id : productId } = await findOneByUuid( product, PRODUCT );
+
+            const stocks = await findMany( STOCK, stockFields, {
+                product : productId,
+                location : location.id,
+            }, false );
+
+            return stocks;
+        }
+
+        throw new BadRequestError("Invalid parameters", {
+            key: "stock.invalidParameters",
+            path: ctx.request.url,
+        });
     },
 }));

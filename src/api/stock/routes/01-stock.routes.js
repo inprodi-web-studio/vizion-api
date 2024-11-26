@@ -8,5 +8,13 @@ module.exports = {
           policies : ["global::userContext"],
         },
       },
+      {
+        method  : "GET",
+        path    : "/stocks/:locationUuid",
+        handler : "stock.getStockByEntity",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
     ],
 }
