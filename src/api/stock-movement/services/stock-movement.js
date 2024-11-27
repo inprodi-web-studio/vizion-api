@@ -98,6 +98,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 where : {
                     name : data.badge.name,
                     product : data.product,
+                    variation : data.variation,
                 },
             });
 
