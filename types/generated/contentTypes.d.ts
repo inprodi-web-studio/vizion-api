@@ -2292,6 +2292,8 @@ export interface ApiShelfPositionShelfPosition extends Schema.CollectionType {
       'oneToMany',
       'api::stock.stock'
     >;
+    rotation: Attribute.String;
+    partitions: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2359,6 +2361,7 @@ export interface ApiStockStock extends Schema.CollectionType {
       'manyToOne',
       'api::shelf-position.shelf-position'
     >;
+    positionPartition: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

@@ -27,17 +27,17 @@ module.exports = createCoreService(SHELF, ({ strapi }) => ({
         }
     },
 
-    async createPositions( shelfId, { xPositions, yPositions } ) {
+    async createPositions( shelfId, data ) {
         const positions = [];
 
-        for (let x = 0; x < xPositions; x++) {
-          for (let y = 0; y < yPositions; y++) {
+        for (const { xPosition, yPosition, rotation, partitions } of data.coordinates) {
             positions.push({
-                xPosition: x,
-                yPosition: y,
-                shelf: shelfId,
+                xPosition,
+                yPosition,
+                rotation,
+                partitions,
+                shelf : shelfId
             });
-          }
         }
       
         await strapi.db.query(SHELF_POSITION).createMany({

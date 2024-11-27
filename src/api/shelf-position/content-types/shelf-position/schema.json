@@ -32,6 +32,12 @@
       "relation": "oneToMany",
       "target": "api::stock.stock",
       "mappedBy": "position"
+    },
+    "rotation": {
+      "type": "string"
+    },
+    "partitions": {
+      "type": "integer"
     }
   }
 }
