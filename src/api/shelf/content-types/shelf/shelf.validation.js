@@ -6,7 +6,6 @@ const createSchema = yup.object().shape({
     yPositions : yup.number().required().min(1).max(20),
     location : yup.string().uuid().required(),
     coordinates : yup.array().of( yup.object().shape({
-        name : yup.string().required(),
         xPosition : yup.number().required(),
         yPosition : yup.number().required(),
         rotation : yup.string().oneOf(["low", "medium", "high"]).required(),
