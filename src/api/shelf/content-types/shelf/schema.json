@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shelves",
+  "info": {
+    "singularName": "shelf",
+    "pluralName": "shelves",
+    "displayName": "Shelf",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "xPositions": {
+      "type": "integer"
+    },
+    "yPositions": {
+      "type": "integer"
+    },
+    "positions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::shelf-position.shelf-position",
+      "mappedBy": "shelf"
+    },
+    "location": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::stock-location.stock-location",
+      "inversedBy": "shelves"
+    }
+  }
+}

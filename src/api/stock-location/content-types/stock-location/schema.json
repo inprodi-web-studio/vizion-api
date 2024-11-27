@@ -38,6 +38,12 @@
       "relation": "oneToMany",
       "target": "api::stock.stock",
       "mappedBy": "location"
+    },
+    "shelves": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::shelf.shelf",
+      "mappedBy": "location"
     }
   }
 }

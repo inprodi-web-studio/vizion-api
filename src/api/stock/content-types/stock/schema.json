@@ -53,6 +53,12 @@
     },
     "packageQuantity": {
       "type": "float"
+    },
+    "position": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::shelf-position.shelf-position",
+      "inversedBy": "stocks"
     }
   }
 }

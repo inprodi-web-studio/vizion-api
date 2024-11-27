@@ -35,6 +35,8 @@ const {
   PRODUCT_BADGE,
   STOCK_MOVEMENT,
   ADJUSTMENT_MOTIVE,
+  SHELF,
+  SHELF_POSITION,
 } = require("./constants/models");
 
 module.exports = {
@@ -51,6 +53,7 @@ module.exports = {
         SALE,
         UNITY,
         STOCK,
+        SHELF,
         PACKAGE,
         PRODUCT,
         INSIDER,
@@ -69,6 +72,7 @@ module.exports = {
         ESTIMATE_STAGE,
         CONTACT_SOURCE,
         STOCK_LOCATION,
+        SHELF_POSITION,
         CREDIT_MOVEMENT,
         ATTRIBUTE_VALUE,
         CUSTOMER_CREDIT,

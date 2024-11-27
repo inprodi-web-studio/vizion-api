@@ -2224,6 +2224,91 @@ export interface ApiSaleSale extends Schema.CollectionType {
   };
 }
 
+export interface ApiShelfShelf extends Schema.CollectionType {
+  collectionName: 'shelves';
+  info: {
+    singularName: 'shelf';
+    pluralName: 'shelves';
+    displayName: 'Shelf';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    xPositions: Attribute.Integer;
+    yPositions: Attribute.Integer;
+    positions: Attribute.Relation<
+      'api::shelf.shelf',
+      'oneToMany',
+      'api::shelf-position.shelf-position'
+    >;
+    location: Attribute.Relation<
+      'api::shelf.shelf',
+      'manyToOne',
+      'api::stock-location.stock-location'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::shelf.shelf',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::shelf.shelf',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiShelfPositionShelfPosition extends Schema.CollectionType {
+  collectionName: 'shelf_positions';
+  info: {
+    singularName: 'shelf-position';
+    pluralName: 'shelf-positions';
+    displayName: 'Shelf Position';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    shelf: Attribute.Relation<
+      'api::shelf-position.shelf-position',
+      'manyToOne',
+      'api::shelf.shelf'
+    >;
+    xPosition: Attribute.Integer;
+    yPosition: Attribute.Integer;
+    stocks: Attribute.Relation<
+      'api::shelf-position.shelf-position',
+      'oneToMany',
+      'api::stock.stock'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::shelf-position.shelf-position',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::shelf-position.shelf-position',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiStockStock extends Schema.CollectionType {
   collectionName: 'stocks';
   info: {
@@ -2269,6 +2354,11 @@ export interface ApiStockStock extends Schema.CollectionType {
       'api::package.package'
     >;
     packageQuantity: Attribute.Float;
+    position: Attribute.Relation<
+      'api::stock.stock',
+      'manyToOne',
+      'api::shelf-position.shelf-position'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2312,6 +2402,11 @@ export interface ApiStockLocationStockLocation extends Schema.CollectionType {
       'api::stock-location.stock-location',
       'oneToMany',
       'api::stock.stock'
+    >;
+    shelves: Attribute.Relation<
+      'api::stock-location.stock-location',
+      'oneToMany',
+      'api::shelf.shelf'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -2772,6 +2867,8 @@ declare module '@strapi/types' {
       'api::product-category.product-category': ApiProductCategoryProductCategory;
       'api::product-variation.product-variation': ApiProductVariationProductVariation;
       'api::sale.sale': ApiSaleSale;
+      'api::shelf.shelf': ApiShelfShelf;
+      'api::shelf-position.shelf-position': ApiShelfPositionShelfPosition;
       'api::stock.stock': ApiStockStock;
       'api::stock-location.stock-location': ApiStockLocationStockLocation;
       'api::stock-movement.stock-movement': ApiStockMovementStockMovement;

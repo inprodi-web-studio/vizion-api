@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shelf_positions",
+  "info": {
+    "singularName": "shelf-position",
+    "pluralName": "shelf-positions",
+    "displayName": "Shelf Position",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "shelf": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::shelf.shelf",
+      "inversedBy": "positions"
+    },
+    "xPosition": {
+      "type": "integer"
+    },
+    "yPosition": {
+      "type": "integer"
+    },
+    "stocks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock.stock",
+      "mappedBy": "position"
+    }
+  }
+}
