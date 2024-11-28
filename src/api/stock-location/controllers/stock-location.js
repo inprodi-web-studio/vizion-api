@@ -11,6 +11,9 @@ const stockLocationFields = {
         warehouse : {
             fields : ["uuid", "name"],
         },
+        shelves : {
+            fields : ["uuid", "name", "xPositions", "yPositions"],
+        },
     },
 };
 
