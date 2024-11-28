@@ -1,3 +1,4 @@
+const { uuid } = require('uuidv4');
 const { SHELF, STOCK_LOCATION, SHELF_POSITION } = require('../../../constants/models');
 const { ConflictError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
@@ -27,21 +28,23 @@ module.exports = createCoreService(SHELF, ({ strapi }) => ({
         }
     },
 
-    async createPositions( shelfId, data ) {
-        const positions = [];
-
-        for (const { xPosition, yPosition, rotation, partitions } of data.coordinates) {
-            positions.push({
-                xPosition,
-                yPosition,
-                rotation,
-                partitions,
-                shelf : shelfId
+    async createPositions(shelfId, data) {
+        const promises = [];
+      
+        for ( const { xPosition, yPosition, rotation, partitions } of data.coordinates ) {
+            const promise = strapi.entityService.create( SHELF_POSITION, {
+                data : {
+                    xPosition,
+                    yPosition,
+                    rotation,
+                    partitions,
+                    shelf: shelfId,
+                },
             });
+
+            promises.push(promise);
         }
       
-        await strapi.db.query(SHELF_POSITION).createMany({
-          data : positions,
-        });
-    },
+        await Promise.all(promises);
+      },
 }));
