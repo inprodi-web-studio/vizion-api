@@ -1,4 +1,5 @@
 const { SHELF } = require('../../../constants/models');
+const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { validateCreate } = require('../content-types/shelf/shelf.validation');
 
 const { createCoreController } = require('@strapi/strapi').factories;
@@ -29,5 +30,17 @@ module.exports = createCoreController(SHELF, ({ strapi }) => ({
         await strapi.service(SHELF).createPositions( newShelf.id, data );
 
         return newShelf;
+    },
+
+    async delete(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id } = await findOneByUuid( uuid, SHELF );
+
+        await strapi.service(SHELF).deleteParallelData(id);
+
+        const deletedShelf = await strapi.entityService.delete( SHELF, id, shelfFields );
+
+        return deletedShelf;
     },
 }));

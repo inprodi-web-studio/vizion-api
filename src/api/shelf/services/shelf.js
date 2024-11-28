@@ -47,4 +47,20 @@ module.exports = createCoreService(SHELF, ({ strapi }) => ({
       
         await Promise.all(promises);
       },
+
+      async deleteParallelData(shelfId) {
+        const promises = [];
+
+        const shelfPositions = await strapi.query( SHELF_POSITION ).findMany({
+            where : {
+                shelf : shelfId,
+            },
+        });
+
+        for ( const { id } of shelfPositions ) {
+            promises.push( strapi.entityService.delete( SHELF_POSITION, id ) );
+        }
+
+        await Promise.all( promises );
+      },
 }));

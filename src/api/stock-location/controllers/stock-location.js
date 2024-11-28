@@ -83,6 +83,8 @@ module.exports = createCoreController(STOCK_LOCATION, ({ strapi }) => ({
 
         const stockLocation = await findOneByUuid( locationUuid, STOCK_LOCATION );
 
+        await strapi.service(STOCK_LOCATION).deleteParallelData( stockLocation.id );
+
         const deletedStockLocation = await strapi.entityService.delete( STOCK_LOCATION, stockLocation.id, stockLocationFields );
 
         return deletedStockLocation;

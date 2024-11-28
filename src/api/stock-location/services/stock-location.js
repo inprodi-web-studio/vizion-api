@@ -1,4 +1,4 @@
-const { STOCK_LOCATION } = require('../../../constants/models');
+const { STOCK_LOCATION, SHELF, SHELF_POSITION } = require('../../../constants/models');
 const { ConflictError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
@@ -46,5 +46,33 @@ module.exports = createCoreService(STOCK_LOCATION, ({ strapi }) => ({
                 path : ctx.request.path,
             });
         }
+    },
+
+    async deleteParallelData( stockLocationId ) {
+        const promises = [];
+
+        const shelfs = await strapi.query( SHELF ).findMany({
+            where : {
+                location : stockLocationId,
+            },
+        });
+
+        const shelfPositions = await strapi.query( SHELF_POSITION ).findMany({
+            where : {
+                shelf : {
+                    location : stockLocationId,
+                },
+            },
+        });
+
+        for ( const { id } of shelfPositions ) {
+            promises.push( strapi.entityService.delete( SHELF_POSITION, id ) );
+        }
+
+        for ( const { id } of shelfs ) {
+            promises.push( strapi.entityService.delete( SHELF, id ) );
+        }
+
+        await Promise.all( promises );
     },
 }));

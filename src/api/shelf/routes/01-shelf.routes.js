@@ -8,5 +8,13 @@ module.exports = {
           policies : ["global::userContext"],
         },
       },
+      {
+        method  : "DELETE",
+        path    : "/shelfs/:uuid",
+        handler : "shelf.delete",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
     ],
 }
