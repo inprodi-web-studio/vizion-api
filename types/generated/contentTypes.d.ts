@@ -2480,6 +2480,12 @@ export interface ApiStockMovementStockMovement extends Schema.CollectionType {
       'api::package.package'
     >;
     packageQuantity: Attribute.Float;
+    position: Attribute.Relation<
+      'api::stock-movement.stock-movement',
+      'oneToOne',
+      'api::shelf-position.shelf-position'
+    >;
+    positionPartition: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

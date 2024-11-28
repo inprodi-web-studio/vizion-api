@@ -1,4 +1,4 @@
-const { STOCK_MOVEMENT, PRODUCT, STOCK_LOCATION, ADJUSTMENT_MOTIVE, PRODUCT_BADGE, PRODUCT_VARIATION, PACKAGE } = require('../../../constants/models');
+const { STOCK_MOVEMENT, PRODUCT, STOCK_LOCATION, ADJUSTMENT_MOTIVE, PRODUCT_BADGE, PRODUCT_VARIATION, PACKAGE, SHELF, SHELF_POSITION } = require('../../../constants/models');
 const { BadRequestError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
@@ -45,6 +45,12 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 const { id : stockLocationId } = await findOneByUuid( data[i].location, STOCK_LOCATION, {}, false );
     
                 data[i].location = stockLocationId;
+
+                if ( data[i].shelf ) {
+                    const { id : shelfId } = await findOneByUuid( data[i].shelf, SHELF );
+
+                    data[i].shelf = shelfId;
+                }
     
                 const { id : motiveId } = await findOneByUuid( data[i].motive, ADJUSTMENT_MOTIVE );
     
@@ -146,6 +152,10 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                     unity,
                     package,
                     packageRealConversion,
+                    shelf,
+                    xPosition,
+                    yPosition,
+                    partition
                 } = item;
     
                 try {
@@ -166,6 +176,10 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                             LEFT JOIN product_badges AS pb ON sbl.product_badge_id = pb.id
                             LEFT JOIN stocks_variation_links AS svl ON s.id = svl.stock_id
                             LEFT JOIN product_variations AS pv ON svl.product_variation_id = pv.id
+                            LEFT JOIN stocks_position_links AS sposl ON s.id = sposl.stock_id
+                            LEFT JOIN shelf_positions AS shpos ON sposl.shelf_position_id = shpos.id
+                            LEFT JOIN shelf_positions_shelf_links AS shpos_shelf ON shpos.id = shpos_shelf.shelf_position_id
+                            LEFT JOIN shelves AS sh ON shpos_shelf.shelf_id = sh.id
                         WHERE
                             spl.product_id = ?
                             AND sll.stock_location_id = ?
@@ -173,6 +187,10 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                             AND ((? IS NULL AND pb.id IS NULL) OR pb.id = ?)
                             AND ((? IS NULL AND pv.id IS NULL) OR pv.id = ?)
                             AND ((? IS NULL AND p.id IS NULL) OR p.id = ?)
+                            AND ((? IS NULL AND sh.id IS NULL) OR sh.id = ?)
+                            AND ((? IS NULL AND shpos.x_position IS NULL) OR shpos.x_position = ?)
+                            AND ((? IS NULL AND shpos.y_position IS NULL) OR shpos.y_position = ?)
+                            AND ((? IS NULL AND s.position_partition IS NULL) OR s.position_partition = ?)
                         FOR UPDATE;
                     `, [
                         product,
@@ -183,7 +201,15 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                         variation ?? null, 
                         variation ?? null,
                         package ?? null,
-                        package ?? null
+                        package ?? null,
+                        shelf ?? null,
+                        shelf ?? null,
+                        xPosition ?? null,
+                        xPosition ?? null,
+                        yPosition ?? null,
+                        yPosition ?? null,
+                        partition ?? null,
+                        partition ?? null
                     ]);
 
                     let stockId, currentQuantity, currentPackageQuantity;
@@ -245,6 +271,21 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                                 VALUES (?, ?);
                             `, [stockId, package]);
                         }
+
+                        if (shelf) {
+                            const { id : positionId } = await strapi.query(SHELF_POSITION).findOne({
+                                where : {
+                                    xPosition,
+                                    yPosition,
+                                    shelf,
+                                },
+                            });
+
+                            await strapi.db.connection.raw(`
+                                INSERT INTO stocks_position_links (stock_id, shelf_position_id)
+                                VALUES (?, ?);
+                            `, [stockId, positionId]);
+                        }
                     }
 
                     let packageQuantity = 0;
@@ -267,15 +308,15 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                     // Actualiza la cantidad de stock
                     await strapi.db.connection.raw(`
                         UPDATE stocks
-                        SET quantity = ?, package_quantity = ?
+                        SET quantity = ?, package_quantity = ?, position_partition = ?
                         WHERE id = ?;
-                    `, [newQuantity, packageQuantity, stockId]);
+                    `, [newQuantity, packageQuantity, partition ?? null, stockId]);
 
                     // Registramos el movimiento de inventario
                     const [ insertStockMovementResult ] = await strapi.db.connection.raw(`
-                        INSERT INTO stock_movements ( uuid, quantity, type, comments, package_quantity )
-                        VALUES( UUID(), ?, ?, ?, ?)
-                    `, [quantity, "adjustment", comments ?? "", packageQuantity]);
+                        INSERT INTO stock_movements ( uuid, quantity, type, comments, package_quantity, position_partition )
+                        VALUES( UUID(), ?, ?, ?, ?, ?)
+                    `, [quantity, "adjustment", comments ?? "", packageQuantity, partition ?? null]);
 
                     const stockMovementId = insertStockMovementResult.insertId;
 
@@ -319,7 +360,21 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                             VALUES(?, ?)
                         `, [stockMovementId, package]);
                     }
-    
+
+                    if (shelf) {
+                        const { id : positionId } = await strapi.query(SHELF_POSITION).findOne({
+                            where : {
+                                xPosition,
+                                yPosition,
+                                shelf,
+                            },
+                        });
+
+                        await strapi.db.connection.raw(`
+                            INSERT INTO stock_movements_position_links (stock_movement_id, shelf_position_id)
+                            VALUES(?, ?)
+                        `, [stockMovementId, positionId]);
+                    }
                 } catch (e) {
                     throw e;
                 }

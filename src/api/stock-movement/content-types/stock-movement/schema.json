@@ -61,6 +61,14 @@
     },
     "packageQuantity": {
       "type": "float"
+    },
+    "position": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::shelf-position.shelf-position"
+    },
+    "positionPartition": {
+      "type": "integer"
     }
   }
 }
