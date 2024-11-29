@@ -7,7 +7,7 @@ const product = require('../../product/controllers/product');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const stockFields = {
-    fields : ["uuid", "quantity", "packageQuantity"],
+    fields : ["uuid", "quantity", "packageQuantity", "positionPartition"],
     populate : {
         product : {
             fields : ["uuid", "name", "sku"],
@@ -38,6 +38,9 @@ const stockFields = {
                     fields : ["uuid", "name", "abbreviation"],
                 }
             },
+        },
+        position : {
+            fields : ["uuid", "xPosition", "yPosition", "rotation", "partitions"],
         },
     },
 };
