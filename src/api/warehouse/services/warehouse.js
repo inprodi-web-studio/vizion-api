@@ -36,6 +36,18 @@ module.exports = createCoreService(WAREHOUSE, ({ strapi }) => ({
         });
     },
 
+    async sanitizeLayout({ layout }) {
+        const completedNodes = layout.filter( i => i.data?.uuid );
+
+        for ( let i = 0; i < completedNodes.length; i++ ) {
+            const node = completedNodes[i];
+
+            node.selected = false;
+        }
+
+        return completedNodes;
+    },
+
     async deleteParallelData(id) {
         const locations = await strapi.query(STOCK_LOCATION).findMany({
             where : {

@@ -113,9 +113,11 @@ module.exports = createCoreController(WAREHOUSE, ({ strapi }) => ({
 
         const { id } = await findOneByUuid( uuid, WAREHOUSE );
 
+        const sanitizedLayout =await strapi.service(WAREHOUSE).sanitizeLayout( data );
+
         const updatedWarehouse = await strapi.entityService.update( WAREHOUSE, id, {
             data : {
-                layout : data.layout,
+                layout : sanitizedLayout,
             },
             ...warehouseFields
         });
