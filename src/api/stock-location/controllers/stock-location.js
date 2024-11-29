@@ -13,6 +13,11 @@ const stockLocationFields = {
         },
         shelves : {
             fields : ["uuid", "name", "xPositions", "yPositions"],
+            populate : {
+                positions : {
+                    fields : ["uuid", "xPosition", "yPosition", "rotation", "partitions"],
+                },
+            },
         },
     },
 };
