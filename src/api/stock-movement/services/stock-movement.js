@@ -1,4 +1,14 @@
-const { STOCK_MOVEMENT, PRODUCT, STOCK_LOCATION, ADJUSTMENT_MOTIVE, PRODUCT_BADGE, PRODUCT_VARIATION, PACKAGE, SHELF, SHELF_POSITION } = require('../../../constants/models');
+const {
+    STOCK_MOVEMENT,
+    PRODUCT,
+    STOCK_LOCATION,
+    ADJUSTMENT_MOTIVE,
+    PRODUCT_BADGE,
+    PRODUCT_VARIATION,
+    PACKAGE,
+    SHELF,
+    SHELF_POSITION,
+} = require('../../../constants/models');
 const { BadRequestError } = require('../../../helpers/errors');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 
@@ -51,10 +61,18 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
 
                     data[i].shelf = shelfId;
                 }
+
+                if (data[i].origin.shelf) {
+                    const { id : shelfId } = await findOneByUuid( data[i].origin.shelf, SHELF );
+
+                    data[i].origin.shelf = shelfId;
+                }
+
+                if ( data[i].motive ) {
+                    const { id : motiveId } = await findOneByUuid( data[i].motive, ADJUSTMENT_MOTIVE );
     
-                const { id : motiveId } = await findOneByUuid( data[i].motive, ADJUSTMENT_MOTIVE );
-    
-                data[i].motive = motiveId;
+                    data[i].motive = motiveId;
+                }
 
                 if ( data[i].package ) {
                     const { id : packageId, realConversion } = await findOneByUuid( data[i].package, PACKAGE );
@@ -159,58 +177,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 } = item;
     
                 try {
-                    const [ result ] = await strapi.db.connection.raw(`
-                        SELECT
-                            spl.stock_id,
-                            s.quantity,
-                            s.package_quantity
-                        FROM
-                            stocks_product_links AS spl
-                            JOIN stocks_location_links AS sll ON spl.stock_id = sll.stock_id
-                            JOIN stocks AS s ON s.id = spl.stock_id
-                            JOIN stocks_unity_links AS sul ON s.id = sul.stock_id
-                            JOIN unities AS u ON sul.unity_id = u.id
-                            LEFT JOIN stocks_package_links AS spacl ON s.id = spacl.stock_id
-                            LEFT JOIN packages AS p ON spacl.package_id = p.id
-                            LEFT JOIN stocks_badge_links AS sbl ON s.id = sbl.stock_id
-                            LEFT JOIN product_badges AS pb ON sbl.product_badge_id = pb.id
-                            LEFT JOIN stocks_variation_links AS svl ON s.id = svl.stock_id
-                            LEFT JOIN product_variations AS pv ON svl.product_variation_id = pv.id
-                            LEFT JOIN stocks_position_links AS sposl ON s.id = sposl.stock_id
-                            LEFT JOIN shelf_positions AS shpos ON sposl.shelf_position_id = shpos.id
-                            LEFT JOIN shelf_positions_shelf_links AS shpos_shelf ON shpos.id = shpos_shelf.shelf_position_id
-                            LEFT JOIN shelves AS sh ON shpos_shelf.shelf_id = sh.id
-                        WHERE
-                            spl.product_id = ?
-                            AND sll.stock_location_id = ?
-                            AND u.id = ?
-                            AND ((? IS NULL AND pb.id IS NULL) OR pb.id = ?)
-                            AND ((? IS NULL AND pv.id IS NULL) OR pv.id = ?)
-                            AND ((? IS NULL AND p.id IS NULL) OR p.id = ?)
-                            AND ((? IS NULL AND sh.id IS NULL) OR sh.id = ?)
-                            AND ((? IS NULL AND shpos.x_position IS NULL) OR shpos.x_position = ?)
-                            AND ((? IS NULL AND shpos.y_position IS NULL) OR shpos.y_position = ?)
-                            AND ((? IS NULL AND s.position_partition IS NULL) OR s.position_partition = ?)
-                        FOR UPDATE;
-                    `, [
-                        product,
-                        location,
-                        unity,
-                        badge ?? null,
-                        badge ?? null, 
-                        variation ?? null, 
-                        variation ?? null,
-                        package ?? null,
-                        package ?? null,
-                        shelf ?? null,
-                        shelf ?? null,
-                        xPosition ?? null,
-                        xPosition ?? null,
-                        yPosition ?? null,
-                        yPosition ?? null,
-                        partition ?? null,
-                        partition ?? null
-                    ]);
+                    const result = await strapi.service( STOCK_MOVEMENT ).getStock(item);
 
                     let stockId, currentQuantity, currentPackageQuantity;
     
@@ -401,5 +368,112 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 path: ctx.request.url,
             });
         }
-    }
+    },
+
+    async handleRelocation(data) {
+        const ctx = strapi.requestContext.get();
+
+        try {
+            await strapi.db.connection.raw('START TRANSACTION;');
+
+            for ( let i = 0; i < data.length; i++ ) {
+                const item = data[i];
+
+                try {
+                    const originStock = await strapi.service( STOCK_MOVEMENT ).getStock({
+                        ...item,
+                        shelf : item.origin.shelf,
+                        xPosition : item.origin.xPosition,
+                        yPosition : item.origin.yPosition,
+                        partition : item.origin.partition
+                    });
+
+                    if ( originStock.length === 0 ) {
+                        throw new BadRequestError( `Item with index ${ i } does not exist in stock`, {
+                            path : ctx.request.url,
+                            key : `[${i}]-stock-movement.notInStock`,
+                        });
+                    }
+
+                    // TODO: RECORDAR QUE SE PUEDE UTILIZAR EL AJUSTE DE INVENTARIO PARA REALIZAR LA REUBICACIÓN
+                } catch(e) {
+                    throw e;
+                }
+            }
+
+            await strapi.db.connection.raw('COMMIT;');
+        } catch (e) {
+            throw e;
+        }
+    },
+
+    async getStock(data) {
+        const {
+            product,
+            location,
+            badge,
+            variation,
+            unity,
+            package,
+            shelf,
+            xPosition,
+            yPosition,
+            partition
+        } = data;
+
+        const [ result ] = await strapi.db.connection.raw(`
+            SELECT
+                spl.stock_id,
+                s.quantity,
+                s.package_quantity
+            FROM
+                stocks_product_links AS spl
+                JOIN stocks_location_links AS sll ON spl.stock_id = sll.stock_id
+                JOIN stocks AS s ON s.id = spl.stock_id
+                JOIN stocks_unity_links AS sul ON s.id = sul.stock_id
+                JOIN unities AS u ON sul.unity_id = u.id
+                LEFT JOIN stocks_package_links AS spacl ON s.id = spacl.stock_id
+                LEFT JOIN packages AS p ON spacl.package_id = p.id
+                LEFT JOIN stocks_badge_links AS sbl ON s.id = sbl.stock_id
+                LEFT JOIN product_badges AS pb ON sbl.product_badge_id = pb.id
+                LEFT JOIN stocks_variation_links AS svl ON s.id = svl.stock_id
+                LEFT JOIN product_variations AS pv ON svl.product_variation_id = pv.id
+                LEFT JOIN stocks_position_links AS sposl ON s.id = sposl.stock_id
+                LEFT JOIN shelf_positions AS shpos ON sposl.shelf_position_id = shpos.id
+                LEFT JOIN shelf_positions_shelf_links AS shpos_shelf ON shpos.id = shpos_shelf.shelf_position_id
+                LEFT JOIN shelves AS sh ON shpos_shelf.shelf_id = sh.id
+            WHERE
+                spl.product_id = ?
+                AND sll.stock_location_id = ?
+                AND u.id = ?
+                AND ((? IS NULL AND pb.id IS NULL) OR pb.id = ?)
+                AND ((? IS NULL AND pv.id IS NULL) OR pv.id = ?)
+                AND ((? IS NULL AND p.id IS NULL) OR p.id = ?)
+                AND ((? IS NULL AND sh.id IS NULL) OR sh.id = ?)
+                AND ((? IS NULL AND shpos.x_position IS NULL) OR shpos.x_position = ?)
+                AND ((? IS NULL AND shpos.y_position IS NULL) OR shpos.y_position = ?)
+                AND ((? IS NULL AND s.position_partition IS NULL) OR s.position_partition = ?)
+            FOR UPDATE;
+        `, [
+            product,
+            location,
+            unity,
+            badge ?? null,
+            badge ?? null, 
+            variation ?? null, 
+            variation ?? null,
+            package ?? null,
+            package ?? null,
+            shelf ?? null,
+            shelf ?? null,
+            xPosition ?? null,
+            xPosition ?? null,
+            yPosition ?? null,
+            yPosition ?? null,
+            partition ?? null,
+            partition ?? null
+        ]);
+
+        return result ?? [];
+    },
 }));

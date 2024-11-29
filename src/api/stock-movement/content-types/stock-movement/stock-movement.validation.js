@@ -17,8 +17,34 @@ const createAdjustment = yup.array().of( yup.object().shape({
     package : yup.string().uuid().nullable(),
     motive : yup.string().uuid().required(),
     comments : yup.string().nullable(),
-}).strict() ).min(1)
+}).strict() ).min(1);
+
+const createReubication = yup.array().of( yup.object().shape({
+    product : yup.string().uuid().required(),
+    badge : yup.object().shape({
+        uuid : yup.string().uuid().nullable(),
+        name : yup.string().nullable(),
+        expirationDate : yup.string().nullable(),
+    }).nullable(),
+    variation : yup.string().uuid().nullable(),
+    location : yup.string().uuid().required(),
+    package : yup.string().uuid().nullable(),
+    quantity : yup.number().required(),
+    origin : yup.object().shape({
+        shelf : yup.string().uuid(),
+        xPosition : yup.number(),
+        yPosition : yup.number(),
+        partition : yup.number(),
+    }).strict().required(),
+    destination : yup.object().shape({
+        shelf : yup.string().uuid(),
+        xPosition : yup.number(),
+        yPosition : yup.number(),
+        partition : yup.number(),
+    }).strict().required(),
+}).strict() ).min(1);
 
 module.exports = {
     validateCreateAdjustment : validateYupSchema( createAdjustment ),
+    validateCreateReubication : validateYupSchema( createReubication ),
 };

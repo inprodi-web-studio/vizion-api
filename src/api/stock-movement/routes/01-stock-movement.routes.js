@@ -8,5 +8,13 @@ module.exports = {
           policies: ["global::userContext"],
         },
       },
+      {
+        method: "POST",
+        path: "/stock-movements/relocation",
+        handler: "stock-movement.createRelocation",
+        config: {
+          policies: ["global::userContext"],
+        },
+      },
     ],
 };
