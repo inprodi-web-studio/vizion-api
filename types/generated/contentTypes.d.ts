@@ -1606,7 +1606,7 @@ export interface ApiLeadLead extends Schema.CollectionType {
       'api::company.company'
     >;
     value: Attribute.Decimal;
-    potential: Attribute.Integer;
+    potential: Attribute.Float;
     cellphone: Attribute.Component<'contact.phone'>;
     finalName: Attribute.String;
     documents: Attribute.Relation<

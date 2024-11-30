@@ -78,7 +78,7 @@
       "type": "decimal"
     },
     "potential": {
-      "type": "integer"
+      "type": "float"
     },
     "cellphone": {
       "type": "component",
