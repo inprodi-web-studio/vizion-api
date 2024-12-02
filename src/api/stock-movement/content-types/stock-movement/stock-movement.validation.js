@@ -21,15 +21,11 @@ const createAdjustment = yup.array().of( yup.object().shape({
 
 const createReubication = yup.array().of( yup.object().shape({
     product : yup.string().uuid().required(),
-    badge : yup.object().shape({
-        uuid : yup.string().uuid().nullable(),
-        name : yup.string().nullable(),
-        expirationDate : yup.string().nullable(),
-    }).nullable(),
+    badge : yup.string().uuid().nullable(),
     variation : yup.string().uuid().nullable(),
     location : yup.string().uuid().required(),
     package : yup.string().uuid().nullable(),
-    quantity : yup.number().required(),
+    quantity : yup.number().min(0).required(),
     origin : yup.object().shape({
         shelf : yup.string().uuid(),
         xPosition : yup.number(),

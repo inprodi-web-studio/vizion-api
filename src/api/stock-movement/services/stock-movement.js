@@ -62,10 +62,16 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                     data[i].shelf = shelfId;
                 }
 
-                if (data[i].origin.shelf) {
+                if (data[i].origin?.shelf) {
                     const { id : shelfId } = await findOneByUuid( data[i].origin.shelf, SHELF );
 
                     data[i].origin.shelf = shelfId;
+                }
+
+                if (data[i].destination?.shelf) {
+                    const { id : shelfId } = await findOneByUuid( data[i].destination.shelf, SHELF );
+
+                    data[i].destination.shelf = shelfId;
                 }
 
                 if ( data[i].motive ) {
@@ -110,6 +116,12 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
             data.badge = badgeId;
         }
 
+        if ( typeof data.badge === "string" ) {
+            const { id : badgeId } = await findOneByUuid( data.badge, PRODUCT_BADGE, {}, false );
+
+            data.badge = badgeId;
+        }
+
         if ( data.badge?.name ) {
             if ( isPerishable && !data.badge.expirationDate ) {
                 throw new BadRequestError( `Item with index ${ i } is perishable but no expiration date was specified`, {
@@ -122,7 +134,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 where : {
                     name : data.badge.name,
                     product : data.product,
-                    variation : data.variation,
+                    ...( data.variation && { variation : data.variation } ),
                 },
             });
 
@@ -157,194 +169,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
             await strapi.db.connection.raw('START TRANSACTION;');
     
             for (let i = 0; i < data.length; i++) {
-                const item = data[i];
-
-                const {
-                    product,
-                    location,
-                    quantity,
-                    motive,
-                    badge,
-                    comments,
-                    variation,
-                    unity,
-                    package,
-                    packageRealConversion,
-                    shelf,
-                    xPosition,
-                    yPosition,
-                    partition
-                } = item;
-    
-                try {
-                    const result = await strapi.service( STOCK_MOVEMENT ).getStock(item);
-
-                    let stockId, currentQuantity, currentPackageQuantity;
-    
-                    if (result.length) {
-                        stockId = result[0].stock_id;
-                        currentQuantity = result[0].quantity;
-                        currentPackageQuantity = result[0].package_quantity;
-                    } else {
-                        if (quantity < 0) {
-                            throw new BadRequestError(`Item with index ${i} has a negative quantity for a new stock`, {
-                                path: ctx.request.url,
-                                key: `[${i}]-stock-movement.negativeQuantityNew`,
-                            });
-                        }
-    
-                        // Inserta el nuevo stock y relaciones
-                        const [insertStockResult] = await strapi.db.connection.raw(`
-                            INSERT INTO stocks (uuid, quantity, package_quantity)
-                            VALUES (UUID(), 0, 0);
-                        `);
-    
-                        stockId                = insertStockResult.insertId;
-                        currentQuantity        = 0;
-                        currentPackageQuantity = 0;
-    
-                        await strapi.db.connection.raw(`
-                            INSERT INTO stocks_product_links (stock_id, product_id)
-                            VALUES (?, ?);
-                        `, [stockId, product]);
-    
-                        await strapi.db.connection.raw(`
-                            INSERT INTO stocks_location_links (stock_id, stock_location_id)
-                            VALUES (?, ?);
-                        `, [stockId, location]);
-
-                        await strapi.db.connection.raw(`
-                            INSERT INTO stocks_unity_links (stock_id, unity_id)
-                            VALUES (?, ?);
-                        `, [stockId, unity]);
-
-                        if (badge) {
-                            await strapi.db.connection.raw(`
-                                INSERT INTO stocks_badge_links (stock_id, product_badge_id)
-                                VALUES (?, ?);
-                            `, [stockId, badge]);
-                        }
-
-                        if (variation) {
-                            await strapi.db.connection.raw(`
-                                INSERT INTO stocks_variation_links (stock_id, product_variation_id)
-                                VALUES (?, ?);
-                            `, [stockId, variation]);
-                        }
-
-                        if (package) {
-                            await strapi.db.connection.raw(`
-                                INSERT INTO stocks_package_links (stock_id, package_id)
-                                VALUES (?, ?);
-                            `, [stockId, package]);
-                        }
-
-                        if (shelf) {
-                            const { id : positionId } = await strapi.query(SHELF_POSITION).findOne({
-                                where : {
-                                    xPosition,
-                                    yPosition,
-                                    shelf,
-                                },
-                            });
-
-                            await strapi.db.connection.raw(`
-                                INSERT INTO stocks_position_links (stock_id, shelf_position_id)
-                                VALUES (?, ?);
-                            `, [stockId, positionId]);
-                        }
-                    }
-
-                    let packageQuantity = 0;
-                    let newQuantity = 0;
-
-                    if ( package ) {
-                        packageQuantity = currentPackageQuantity + quantity;
-                        newQuantity = currentQuantity + (quantity * packageRealConversion);
-                    } else {
-                        newQuantity = currentQuantity + quantity;
-                    }
-    
-                    if (newQuantity < 0) {
-                        throw new BadRequestError(`Item with index ${i} has a negative quantity for an existing stock`, {
-                            path: ctx.request.url,
-                            key: `[${i}]-stock-movement.negativeQuantityExisting`,
-                        });
-                    }
-    
-                    // Actualiza la cantidad de stock
-                    await strapi.db.connection.raw(`
-                        UPDATE stocks
-                        SET quantity = ?, package_quantity = ?, position_partition = ?
-                        WHERE id = ?;
-                    `, [newQuantity, packageQuantity, partition ?? null, stockId]);
-
-                    // Registramos el movimiento de inventario
-                    const [ insertStockMovementResult ] = await strapi.db.connection.raw(`
-                        INSERT INTO stock_movements ( uuid, quantity, type, comments, package_quantity, position_partition )
-                        VALUES( UUID(), ?, ?, ?, ?, ?)
-                    `, [quantity, "adjustment", comments ?? "", packageQuantity, partition ?? null]);
-
-                    const stockMovementId = insertStockMovementResult.insertId;
-
-                    await strapi.db.connection.raw(`
-                        INSERT INTO stock_movements_product_links (stock_movement_id, product_id)
-                        VALUES(?, ?)    
-                    `, [stockMovementId, product]);
-
-                    await strapi.db.connection.raw(`
-                        INSERT INTO stock_movements_motive_links (stock_movement_id, adjustment_motive_id)
-                        VALUES(?, ?)
-                    `, [stockMovementId, motive]);
-
-                    await strapi.db.connection.raw(`
-                        INSERT INTO stock_movements_location_links (stock_movement_id, stock_location_id)
-                        VALUES(?, ?)
-                    `, [stockMovementId, location]);
-
-                    await strapi.db.connection.raw(`
-                        INSERT INTO stock_movements_unity_links (stock_movement_id, unity_id)
-                        VALUES(?, ?)
-                    `, [stockMovementId, unity]);
-
-                    if (badge) {
-                        await strapi.db.connection.raw(`
-                            INSERT INTO stock_movements_badge_links (stock_movement_id, product_badge_id)
-                            VALUES(?, ?)
-                        `, [stockMovementId, badge]);
-                    }
-
-                    if (variation) {
-                        await strapi.db.connection.raw(`
-                            INSERT INTO stock_movements_variation_links (stock_movement_id, product_variation_id)
-                            VALUES(?, ?)
-                        `, [stockMovementId, variation]);
-                    }
-
-                    if (package) {
-                        await strapi.db.connection.raw(`
-                            INSERT INTO stock_movements_package_links (stock_movement_id, package_id)
-                            VALUES(?, ?)
-                        `, [stockMovementId, package]);
-                    }
-
-                    if (shelf) {
-                        const { id : positionId } = await strapi.query(SHELF_POSITION).findOne({
-                            where : {
-                                xPosition,
-                                yPosition,
-                                shelf,
-                            },
-                        });
-
-                        await strapi.db.connection.raw(`
-                            INSERT INTO stock_movements_position_links (stock_movement_id, shelf_position_id)
-                            VALUES(?, ?)
-                        `, [stockMovementId, positionId]);
-                    }
-                } catch (e) {
-                    throw e;
-                }
+                await strapi.service(STOCK_MOVEMENT).createOrUpdateStock( data[i] );
             }
     
             await strapi.db.connection.raw('COMMIT;');
@@ -377,33 +202,42 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
             await strapi.db.connection.raw('START TRANSACTION;');
 
             for ( let i = 0; i < data.length; i++ ) {
-                const item = data[i];
+                // Adjust stock from origin
+                await strapi.service(STOCK_MOVEMENT).createOrUpdateStock({
+                    ...data[i],
+                    shelf : data[i].origin?.shelf,
+                    xPosition : data[i].origin?.xPosition,
+                    yPosition : data[i].origin?.yPosition,
+                    partition : data[i].origin?.partition,
+                    quantity  : -data[i].quantity,
+                }, false, "relocation" );
 
-                try {
-                    const originStock = await strapi.service( STOCK_MOVEMENT ).getStock({
-                        ...item,
-                        shelf : item.origin.shelf,
-                        xPosition : item.origin.xPosition,
-                        yPosition : item.origin.yPosition,
-                        partition : item.origin.partition
-                    });
-
-                    if ( originStock.length === 0 ) {
-                        throw new BadRequestError( `Item with index ${ i } does not exist in stock`, {
-                            path : ctx.request.url,
-                            key : `[${i}]-stock-movement.notInStock`,
-                        });
-                    }
-
-                    // TODO: RECORDAR QUE SE PUEDE UTILIZAR EL AJUSTE DE INVENTARIO PARA REALIZAR LA REUBICACIÓN
-                } catch(e) {
-                    throw e;
-                }
+                // Adjust stock to destination
+                await strapi.service(STOCK_MOVEMENT).createOrUpdateStock({
+                    ...data[i],
+                    shelf : data[i].destination?.shelf,
+                    xPosition : data[i].destination?.xPosition,
+                    yPosition : data[i].destination?.yPosition,
+                    partition : data[i].destination?.partition,
+                    quantity  : data[i].quantity,
+                }, true, "relocation" );
             }
 
             await strapi.db.connection.raw('COMMIT;');
         } catch (e) {
-            throw e;
+            // Revierte la transacción si hay algún error
+            await strapi.db.connection.raw('ROLLBACK;');
+
+            console.log(e);
+
+            if (e.key && (e.key.includes("stock-movement.negativeQuantityExisting") || e.key.includes("stock-movement.negativeQuantityNew"))) {
+                throw e;
+            }
+
+            throw new BadRequestError("Error while adjusting stock", {
+                key: "stock-movement.sqlError",
+                path: ctx.request.url,
+            });
         }
     },
 
@@ -475,5 +309,222 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
         ]);
 
         return result ?? [];
+    },
+
+    async createOrUpdateStock(data, letCreate = true, type = "adjustment") {
+        const ctx = strapi.requestContext.get();
+
+        const {
+            location,
+            product,
+            unity,
+            badge,
+            variation,
+            partition,
+            package,
+            packageRealConversion,
+            shelf,
+            quantity,
+            xPosition,
+            yPosition,
+        } = data;
+
+        try {
+            const result = await strapi.service( STOCK_MOVEMENT ).getStock(data);
+
+            let stockId, currentQuantity, currentPackageQuantity;
+
+            if (result.length > 0) {
+                stockId = result[0].stock_id;
+                currentQuantity = result[0].quantity;
+                currentPackageQuantity = result[0].package_quantity;
+            } else if ( letCreate ) {
+                if (quantity < 0) {
+                    throw new BadRequestError(`An item has a negative quantity for a new stock`, {
+                        path: ctx.request.url,
+                        key: `stock-movement.negativeQuantityNew`,
+                    });
+                }
+
+                // Inserta el nuevo stock y relaciones
+                const [insertStockResult] = await strapi.db.connection.raw(`
+                    INSERT INTO stocks (uuid, quantity, package_quantity)
+                    VALUES (UUID(), 0, 0);
+                `);
+
+                stockId                = insertStockResult.insertId;
+                currentQuantity        = 0;
+                currentPackageQuantity = 0;
+
+                await strapi.db.connection.raw(`
+                    INSERT INTO stocks_product_links (stock_id, product_id)
+                    VALUES (?, ?);
+                `, [stockId, product]);
+
+                await strapi.db.connection.raw(`
+                    INSERT INTO stocks_location_links (stock_id, stock_location_id)
+                    VALUES (?, ?);
+                `, [stockId, location]);
+
+                await strapi.db.connection.raw(`
+                    INSERT INTO stocks_unity_links (stock_id, unity_id)
+                    VALUES (?, ?);
+                `, [stockId, unity]);
+
+                if (badge) {
+                    await strapi.db.connection.raw(`
+                        INSERT INTO stocks_badge_links (stock_id, product_badge_id)
+                        VALUES (?, ?);
+                    `, [stockId, badge]);
+                }
+
+                if (variation) {
+                    await strapi.db.connection.raw(`
+                        INSERT INTO stocks_variation_links (stock_id, product_variation_id)
+                        VALUES (?, ?);
+                    `, [stockId, variation]);
+                }
+
+                if (package) {
+                    await strapi.db.connection.raw(`
+                        INSERT INTO stocks_package_links (stock_id, package_id)
+                        VALUES (?, ?);
+                    `, [stockId, package]);
+                }
+
+                if (shelf) {
+                    const { id : positionId } = await strapi.query(SHELF_POSITION).findOne({
+                        where : {
+                            xPosition,
+                            yPosition,
+                            shelf,
+                        },
+                    });
+
+                    await strapi.db.connection.raw(`
+                        INSERT INTO stocks_position_links (stock_id, shelf_position_id)
+                        VALUES (?, ?);
+                    `, [stockId, positionId]);
+                }
+            } else {
+                throw new BadRequestError(`Item does not exist in stock`, {
+                    path: ctx.request.url,
+                    key: `stock-movement.notInStock`,
+                });
+            }
+
+            let packageQuantity = 0;
+            let newQuantity = 0;
+
+            if ( package ) {
+                packageQuantity = currentPackageQuantity + quantity;
+                newQuantity = currentQuantity + (quantity * packageRealConversion);
+            } else {
+                newQuantity = currentQuantity + quantity;
+            }
+
+            if (newQuantity < 0) {
+                throw new BadRequestError(`An item has a negative quantity for an existing stock`, {
+                    path: ctx.request.url,
+                    key: `stock-movement.negativeQuantityExisting`,
+                });
+            }
+
+            // Actualiza la cantidad de stock
+            await strapi.db.connection.raw(`
+                UPDATE stocks
+                SET quantity = ?, package_quantity = ?, position_partition = ?
+                WHERE id = ?;
+            `, [newQuantity, packageQuantity, partition ?? null, stockId]);
+
+            await strapi.service( STOCK_MOVEMENT ).registerStockMovement(data, type);
+        } catch (e) {
+            throw e;
+        }
+    },
+    async registerStockMovement(data, type) {
+        const {
+            quantity,
+            location,
+            comments,
+            packageQuantity,
+            partition,
+            product,
+            motive,
+            unity,
+            badge,
+            variation,
+            package,
+            shelf,
+            xPosition,
+            yPosition,
+        } = data;
+
+        console.log([quantity, type, comments ?? "", packageQuantity ?? null, partition ?? null]);
+
+        const [ insertStockMovementResult ] = await strapi.db.connection.raw(`
+            INSERT INTO stock_movements ( uuid, quantity, type, comments, package_quantity, position_partition )
+            VALUES( UUID(), ?, ?, ?, ?, ?)
+        `, [quantity, type, comments ?? "", packageQuantity ?? null, partition ?? null]);
+
+        const stockMovementId = insertStockMovementResult.insertId;
+
+        await strapi.db.connection.raw(`
+            INSERT INTO stock_movements_product_links (stock_movement_id, product_id)
+            VALUES(?, ?)    
+        `, [stockMovementId, product]);
+
+        if (motive) {
+            await strapi.db.connection.raw(`
+                INSERT INTO stock_movements_motive_links (stock_movement_id, adjustment_motive_id)
+                VALUES(?, ?)
+            `, [stockMovementId, motive]);
+        }
+
+        await strapi.db.connection.raw(`
+            INSERT INTO stock_movements_location_links (stock_movement_id, stock_location_id)
+            VALUES(?, ?)
+        `, [stockMovementId, location]);
+
+        await strapi.db.connection.raw(`
+            INSERT INTO stock_movements_unity_links (stock_movement_id, unity_id)
+            VALUES(?, ?)
+        `, [stockMovementId, unity]);
+
+        if (badge) {
+            await strapi.db.connection.raw(`
+                INSERT INTO stock_movements_badge_links (stock_movement_id, product_badge_id)
+                VALUES(?, ?)
+            `, [stockMovementId, badge]);
+        }
+
+        if (variation) {
+            await strapi.db.connection.raw(`
+                INSERT INTO stock_movements_variation_links (stock_movement_id, product_variation_id)
+                VALUES(?, ?)
+            `, [stockMovementId, variation]);
+        }
+
+        if (package) {
+            await strapi.db.connection.raw(`
+                INSERT INTO stock_movements_package_links (stock_movement_id, package_id)
+                VALUES(?, ?)
+            `, [stockMovementId, package]);
+        }
+
+        if (shelf) {
+            const { id : positionId } = await strapi.query(SHELF_POSITION).findOne({
+                where : {
+                    xPosition,
+                    yPosition,
+                    shelf,
+                },
+            });
+
+            await strapi.db.connection.raw(`
+                INSERT INTO stock_movements_position_links (stock_movement_id, shelf_position_id)
+                VALUES(?, ?)
+            `, [stockMovementId, positionId]);
+        }
     },
 }));
