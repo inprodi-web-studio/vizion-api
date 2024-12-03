@@ -244,9 +244,10 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
             return stocks;
         }
 
-        throw new BadRequestError("Invalid parameters", {
-            key: "stock.invalidParameters",
-            path: ctx.request.url,
-        });
+        const stocks = await findMany( STOCK, stockFields, {
+            location : location.id,
+        }, false );
+
+        return stocks;
     },
 }));
