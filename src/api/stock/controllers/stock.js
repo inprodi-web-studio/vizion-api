@@ -1,4 +1,5 @@
 const { STOCK, WAREHOUSE, STOCK_LOCATION, PRODUCT, PRODUCT_VARIATION, PRODUCT_BADGE, PACKAGE } = require('../../../constants/models');
+const { pop } = require('../../../constants/regimes');
 const { BadRequestError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
@@ -41,6 +42,11 @@ const stockFields = {
         },
         position : {
             fields : ["uuid", "xPosition", "yPosition", "rotation", "partitions"],
+            populate : {
+                shelf : {
+                    fields : ["uuid", "name", "xPositions", "yPositions"],
+                },
+            }
         },
     },
 };
