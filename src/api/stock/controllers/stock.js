@@ -7,10 +7,10 @@ const product = require('../../product/controllers/product');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const stockFields = {
-    fields : ["uuid", "quantity", "type", "packageQuantity", "positionPartition"],
+    fields : ["uuid", "quantity", "packageQuantity", "positionPartition"],
     populate : {
         product : {
-            fields : ["uuid", "name", "sku"],
+            fields : ["uuid", "name", "sku", "type"],
         },
         badge : {
             fields : ["uuid", "name", "expirationDate"],
