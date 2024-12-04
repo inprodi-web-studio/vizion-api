@@ -45,6 +45,11 @@ const stockFields = {
             populate : {
                 shelf : {
                     fields : ["uuid", "name", "xPositions", "yPositions"],
+                    populate : {
+                        positions : {
+                            fields : ["uuid", "xPosition", "yPosition"],
+                        },
+                    },
                 },
             }
         },
