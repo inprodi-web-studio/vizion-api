@@ -23,16 +23,17 @@ const createReubication = yup.array().of( yup.object().shape({
     product : yup.string().uuid().required(),
     badge : yup.string().uuid().nullable(),
     variation : yup.string().uuid().nullable(),
-    location : yup.string().uuid().required(),
     package : yup.string().uuid().nullable(),
     quantity : yup.number().min(0).required(),
     origin : yup.object().shape({
+        location : yup.string().uuid().required(),
         shelf : yup.string().uuid(),
         xPosition : yup.number(),
         yPosition : yup.number(),
         partition : yup.number(),
     }).strict().required(),
     destination : yup.object().shape({
+        location : yup.string().uuid().required(),
         shelf : yup.string().uuid(),
         xPosition : yup.number(),
         yPosition : yup.number(),

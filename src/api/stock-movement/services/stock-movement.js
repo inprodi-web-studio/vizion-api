@@ -51,10 +51,24 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 if ( newBadge ) {
                     createdBadges.push( newBadge );
                 }
+
+                if (data[i].location) {
+                    const { id : stockLocationId } = await findOneByUuid( data[i].location, STOCK_LOCATION, {}, false );
     
-                const { id : stockLocationId } = await findOneByUuid( data[i].location, STOCK_LOCATION, {}, false );
+                    data[i].location = stockLocationId;
+                }
+
+                if (data[i].origin?.location) {
+                    const { id : stockLocationId } = await findOneByUuid( data[i].origin.location, STOCK_LOCATION, {}, false );
     
-                data[i].location = stockLocationId;
+                    data[i].origin.location = stockLocationId;
+                }
+
+                if (data[i].destination?.location) {
+                    const { id : stockLocationId } = await findOneByUuid( data[i].destination.location, STOCK_LOCATION, {}, false );
+    
+                    data[i].destination.location = stockLocationId;
+                }
 
                 if ( data[i].shelf ) {
                     const { id : shelfId } = await findOneByUuid( data[i].shelf, SHELF );
@@ -205,6 +219,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 // Adjust stock from origin
                 await strapi.service(STOCK_MOVEMENT).createOrUpdateStock({
                     ...data[i],
+                    location : data[i].origin?.location,
                     shelf : data[i].origin?.shelf,
                     xPosition : data[i].origin?.xPosition,
                     yPosition : data[i].origin?.yPosition,
@@ -215,6 +230,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 // Adjust stock to destination
                 await strapi.service(STOCK_MOVEMENT).createOrUpdateStock({
                     ...data[i],
+                    location : data[i].destination?.location,
                     shelf : data[i].destination?.shelf,
                     xPosition : data[i].destination?.xPosition,
                     yPosition : data[i].destination?.yPosition,
