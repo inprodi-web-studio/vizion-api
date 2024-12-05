@@ -291,14 +291,16 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
 
         for (const item of sale.items) {
             strapi.entityService.create( STOCK_DISPATCH, {
-                sale : sale.id,
-                product: item.product.id,
-                quantity : item.quantity,
-                realQuantity : item.quantity,
-                unity : item.unity.id,
-                package : item.package?.id,
-                variation : item.variation?.id,
-                isPicked : false
+                data : {
+                    sale : sale.id,
+                    product: item.product.id,
+                    quantity : item.quantity,
+                    realQuantity : item.quantity,
+                    unity : item.unity?.id,
+                    package : item.package?.id,
+                    variation : item.variation?.id,
+                    isPicked : false
+                }
             })
         }
 
