@@ -435,6 +435,8 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
             if ( package ) {
                 packageQuantity = currentPackageQuantity + quantity;
                 newQuantity = currentQuantity + (quantity * packageRealConversion);
+
+                data.packageQuantity = packageQuantity;
             } else {
                 newQuantity = currentQuantity + quantity;
             }
@@ -475,8 +477,6 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
             xPosition,
             yPosition,
         } = data;
-
-        console.log([quantity, type, comments ?? "", packageQuantity ?? null, partition ?? null]);
 
         const [ insertStockMovementResult ] = await strapi.db.connection.raw(`
             INSERT INTO stock_movements ( uuid, quantity, type, comments, package_quantity, position_partition )
