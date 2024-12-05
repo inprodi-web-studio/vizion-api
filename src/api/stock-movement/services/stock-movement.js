@@ -437,6 +437,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 newQuantity = currentQuantity + (quantity * packageRealConversion);
 
                 data.packageQuantity = packageQuantity;
+                data.quantity = quantity * packageRealConversion;
             } else {
                 newQuantity = currentQuantity + quantity;
             }
