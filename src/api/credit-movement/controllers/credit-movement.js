@@ -34,7 +34,9 @@ module.exports = createCoreController(CREDIT_MOVEMENT, ({ strapi }) => ({
         const customer = await findOneByUuid( uuid, CUSTOMER );
 
         const movements = await findMany( CREDIT_MOVEMENT, creditMovementsFields, {
-            customer : customer.id,
+            sale : {
+                customer : customer.id,
+            },
         }, false );
 
         return movements;
