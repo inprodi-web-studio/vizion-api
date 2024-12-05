@@ -296,13 +296,13 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 spl.product_id = ?
                 AND sll.stock_location_id = ?
                 AND u.id = ?
-                AND ((? IS NULL AND pb.id IS NULL) OR pb.id = ?)
-                AND ((? IS NULL AND pv.id IS NULL) OR pv.id = ?)
-                AND ((? IS NULL AND p.id IS NULL) OR p.id = ?)
-                AND ((? IS NULL AND sh.id IS NULL) OR sh.id = ?)
-                AND ((? IS NULL AND shpos.x_position IS NULL) OR shpos.x_position = ?)
-                AND ((? IS NULL AND shpos.y_position IS NULL) OR shpos.y_position = ?)
-                AND ((? IS NULL AND s.position_partition IS NULL) OR s.position_partition = ?)
+                AND ( ? IS NULL OR pb.id = ? )
+                AND ( ? IS NULL OR pv.id = ? )
+                AND ( ? IS NULL OR p.id = ? )
+                AND ( ? IS NULL OR sh.id = ? )
+                AND ( ? IS NULL OR shpos.x_position = ? )
+                AND ( ? IS NULL OR shpos.y_position = ? )
+                AND ( ? IS NULL OR s.position_partition = ? )
             FOR UPDATE;
         `, [
             product,
