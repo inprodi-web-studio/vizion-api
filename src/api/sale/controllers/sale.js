@@ -56,6 +56,15 @@ const saleFields = {
                         },
                     },
                 },
+                unity : {
+                    fields : ["uuid"],
+                },
+                package : {
+                    fields : ["uuid"],
+                },
+                variation : {
+                    fields : ["uuid"],
+                },
                 discount : true,
             },
         },
