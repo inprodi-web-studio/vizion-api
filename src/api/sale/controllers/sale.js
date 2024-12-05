@@ -46,7 +46,7 @@ const saleFields = {
             fields : ["uuid", "name"],
         },
         items : {
-            fields : ["quantity", "price", "iva"],
+            fields : ["quantity", "realQuantity", "price", "iva"],
             populate : {
                 product : {
                     fields : ["uuid", "name", "sku", "description"],
@@ -126,11 +126,13 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
                 isAuthorized : preference.config.needsAuthorization ? false : true,
                 ...data,
             },
-        });
+        }, saleFields);
 
 
         if (!preference.config.needsAuthorization) {
             await strapi.service(SALE).handleCreditSale( data, newSale );
+
+            await strapi.service(SALE).createDispatchesItems( newSale );
         }
 
         await strapi.service(SALE).updateCustomerMeta(data);
@@ -179,10 +181,11 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
                 isAuthorized : true,
                 authorizedAt : new Date(),
             },
-        });
+        }, saleFields);
 
         await strapi.service(SALE).handleCreditSale({customer : sale.customer.id, customerCredit : sale.customer.credit, paymentScheme : sale.paymentScheme}, sale);
         await strapi.service(SALE).updateCustomerMeta({ customer : sale.customer.id, date : sale.date });
+        await strapi.service(SALE).createDispatchesItems( updatedSale );
 
         return updatedSale;
     },

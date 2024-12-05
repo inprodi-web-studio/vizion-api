@@ -1,8 +1,9 @@
 const dayjs = require("dayjs");
-const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE, CREDIT_MOVEMENT } = require("../../../constants/models");
+const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE, CREDIT_MOVEMENT, STOCK_DISPATCH } = require("../../../constants/models");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
+const product = require("../../product/controllers/product");
 
 const { createCoreService } = require("@strapi/strapi").factories;
 
@@ -281,6 +282,27 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         }
 
         await strapi.service(SALE).updateLineCreditUsage(customer, customerCredit);
+    },
+
+    async createDispatchesItems(sale) {
+        const ctx = strapi.requestContext.get();
+
+        let promises = [];
+
+        for (const item of sale.items) {
+            strapi.entityService.create( STOCK_DISPATCH, {
+                sale : sale.id,
+                product: item.product.id,
+                quantity : item.quantity,
+                realQuantity : item.quantity,
+                unity : item.unity.id,
+                package : item.package?.id,
+                variation : item.variation?.id,
+                isPicked : false
+            })
+        }
+
+        await Promise.all(promises);
     },
 
     async updateLineCreditUsage(customerId, customerCredit) {

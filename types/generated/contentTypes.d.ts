@@ -2379,6 +2379,64 @@ export interface ApiStockStock extends Schema.CollectionType {
   };
 }
 
+export interface ApiStockDispatchStockDispatch extends Schema.CollectionType {
+  collectionName: 'stock_dispatches';
+  info: {
+    singularName: 'stock-dispatch';
+    pluralName: 'stock-dispatches';
+    displayName: 'Stock Dispatch';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    sale: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'oneToOne',
+      'api::sale.sale'
+    >;
+    product: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'oneToOne',
+      'api::product.product'
+    >;
+    quantity: Attribute.Decimal;
+    realQuantity: Attribute.Decimal;
+    unity: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'oneToOne',
+      'api::unity.unity'
+    >;
+    package: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'oneToOne',
+      'api::package.package'
+    >;
+    variation: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'oneToOne',
+      'api::product-variation.product-variation'
+    >;
+    isPicked: Attribute.Boolean;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiStockLocationStockLocation extends Schema.CollectionType {
   collectionName: 'stock_locations';
   info: {
@@ -2879,6 +2937,7 @@ declare module '@strapi/types' {
       'api::shelf.shelf': ApiShelfShelf;
       'api::shelf-position.shelf-position': ApiShelfPositionShelfPosition;
       'api::stock.stock': ApiStockStock;
+      'api::stock-dispatch.stock-dispatch': ApiStockDispatchStockDispatch;
       'api::stock-location.stock-location': ApiStockLocationStockLocation;
       'api::stock-movement.stock-movement': ApiStockMovementStockMovement;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;

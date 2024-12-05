@@ -22,6 +22,7 @@ module.exports = {
     PRICE_LIST          : "api::price-list.price-list",
     PREFERENCE          : "api::preference.preference",
     PRODUCT_BADGE       : "api::product-badge.product-badge",
+    STOCK_DISPATCH      : "api::stock-dispatch.stock-dispatch",
     CONTACT_GROUP       : "api::contact-group.contact-group",
     SHELF_POSITION      : "api::shelf-position.shelf-position",
     STOCK_MOVEMENT      : "api::stock-movement.stock-movement",

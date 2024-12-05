@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "stock_dispatches",
+  "info": {
+    "singularName": "stock-dispatch",
+    "pluralName": "stock-dispatches",
+    "displayName": "Stock Dispatch",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "sale": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sale.sale"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product"
+    },
+    "quantity": {
+      "type": "decimal"
+    },
+    "realQuantity": {
+      "type": "decimal"
+    },
+    "unity": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::unity.unity"
+    },
+    "package": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::package.package"
+    },
+    "variation": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product-variation.product-variation"
+    },
+    "isPicked": {
+      "type": "boolean"
+    }
+  }
+}
