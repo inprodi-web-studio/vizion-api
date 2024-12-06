@@ -480,9 +480,9 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
         } = data;
 
         const [ insertStockMovementResult ] = await strapi.db.connection.raw(`
-            INSERT INTO stock_movements ( uuid, quantity, type, comments, package_quantity, position_partition )
-            VALUES( UUID(), ?, ?, ?, ?, ? )
-        `, [quantity, type, comments ?? "", packageQuantity ?? null, partition ?? null ]);
+            INSERT INTO stock_movements ( uuid, quantity, type, comments, package_quantity, position_partition, created_at )
+            VALUES( UUID(), ?, ?, ?, ?, ?, ? )
+        `, [quantity, type, comments ?? "", packageQuantity ?? null, partition ?? null, new Date()]);
 
         const stockMovementId = insertStockMovementResult.insertId;
 
