@@ -1,7 +1,10 @@
-const { PAYMENT, SALE } = require('../../../constants/models');
+const { default: puppeteer } = require('puppeteer');
+const { PAYMENT, SALE, COMPANY, PREFERENCE } = require('../../../constants/models');
+const { BadRequestError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { validateCreate } = require('../content-types/payment/payment.validation');
+const defaultPayment = require('../../../templates/defaultPayment.template');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
@@ -94,6 +97,84 @@ module.exports = createCoreController(PAYMENT, ({ strapi }) => ({
         await strapi.service(PAYMENT).handleCreditPayment(updatedPayment);
 
         return updatedPayment;
+    },
+
+    async generatePdf(ctx) {
+        const { uuid, paymentUuid } = ctx.params;
+        const { company } = ctx.state;
+
+        await findOneByUuid( uuid, SALE );
+
+        const payment = await findOneByUuid( paymentUuid, PAYMENT, paymentFields );
+
+        try {
+            const browser = await puppeteer.launch({
+                executablePath : process.env.PUPPETEER_EXECUTABLE_PATH,
+                args : [
+                    "--disable-gpu",
+                    "--disable-setuid-sandbox",
+                    "--no-sandbox",
+                    "--no-zygote",
+                ],
+                ignoreDefaultArgs: ["--disable-extensions"],
+            });
+
+            const page = await browser.newPage();
+
+            const companyInfo = await strapi.entityService.findOne( COMPANY, company.id, {
+                fields : ["name", "website"],
+                populate : {
+                    logotype : {
+                        fields : ["url", "name"],
+                    },
+                    fiscalInfo : {
+                        fields : ["legalName", "rfc", "regime"],
+                        populate : {
+                            address : true,
+                        },
+                    },
+                    address : true,
+                },
+            });
+
+            const { config } = await strapi.query(PREFERENCE).findOne({
+                where : {
+                    company : company.id,
+                    app : "crm",
+                    module : "estimates",
+                },
+            });
+
+            const template = defaultPayment( payment, config, companyInfo );
+
+            await page.setContent( template );
+
+            const pdfBuffer = await page.pdf({
+                format : "A6",
+                printBackground : true,
+                margin : {
+                    top : 30,
+                    right : 30,
+                    bottom : 30,
+                    left : 30
+                }
+            });
+
+            await browser.close();
+
+            ctx.response.type = "application/pdf";
+            ctx.response.attachment("tester.pdf");
+            ctx.response.length = "pdfBuffer.length";
+
+            ctx.body = pdfBuffer;
+        } catch (error) {
+            console.error(error);
+
+            throw new BadRequestError("Error while generating pdf", {
+                key : "payment.pdfGeneration",
+                path : ctx.request.path,
+            });
+        }
     },
 
     async delete(ctx) {

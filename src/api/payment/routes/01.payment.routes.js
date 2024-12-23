@@ -17,6 +17,14 @@ module.exports = {
         },
       },
       {
+        method  : "POST",
+        path    : "/sales/:uuid/payments/:paymentUuid/pdf",
+        handler : "payment.generatePdf",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method: "PUT",
         path: "/sales/:uuid/payments/:paymentUuid",
         handler: "payment.update",

@@ -28,7 +28,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
         showContactAddress,
     } = preferences;
 
-    const date = dayjs(version.date).locale("es-mx").format("MMMM DD, YYYY");
+    const date = dayjs(version.date).locale("es-mx").format("DD MMMM, YYYY");
     const dueDate = dayjs(version.dueDate).locale("es-mx").format("MMMM DD, YYYY");
 
     let street, extNumber, intNumber, suburb, cp, city, state, country;
@@ -397,7 +397,7 @@ const defaultEstimate = (data, version, preferences, companyInfo) => {
                         <p class="main-text">${companyInfo.name}</p>
                         ${ (showLegalName && companyInfo.fiscalInfo?.legalName) ? `<p class="info-text" style="margin-top: 4px">${companyInfo.fiscalInfo?.legalName}</p>` : ""}
                         ${ (showRFC && companyInfo.fiscalInfo?.rfc) ? `<p class="info-text" style="margin-top: 4px">${companyInfo.fiscalInfo?.rfc}</p>` : ""}
-                        ${ (showAddress) ? `<p class="info-text" style="margin-top: 4px">${`${ street } ${ extNumber }${ intNumber ? ` ${intNumber}` : "" }<br>${suburb}, ${cp}<br>${city}, ${state}<br>${country}`}</p>` : "" }
+                        ${ (showAddress && street) ? `<p class="info-text" style="margin-top: 4px">${`${ street } ${ extNumber }${ intNumber ? ` ${intNumber}` : "" }<br>${suburb}, ${cp}<br>${city}, ${state}<br>${country}`}</p>` : "" }
                         ${ (showWebsite && companyInfo.website) ? `<p class="info-text" style="margin-top: 8px">${ companyInfo.website }</p>` : "" }
                     </div>
 
