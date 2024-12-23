@@ -150,7 +150,7 @@ module.exports = createCoreController(PAYMENT, ({ strapi }) => ({
             await page.setContent( template );
 
             const pdfBuffer = await page.pdf({
-                format : "A6",
+                format : "A4",
                 printBackground : true,
                 margin : {
                     top : 30,
