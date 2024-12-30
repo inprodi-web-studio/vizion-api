@@ -12,7 +12,7 @@ module.exports = createCoreController( COMPANY, ({ strapi }) => ({
         const { company } = await findOneByUuid( user.uuid, USER, {
             populate : {
                 company : {
-                    fields : ["uuid", "name", "website"],
+                    fields : ["uuid", "name", "website", "primaryColor"],
                     populate : {
                         logotype : {
                             fields : ["url", "name"],
@@ -36,7 +36,7 @@ module.exports = createCoreController( COMPANY, ({ strapi }) => ({
         const { urlParam } = ctx.params;
 
         const company = await findOneByAny( urlParam, COMPANY, "urlParam", {
-            fields : ["uuid"],
+            fields : ["uuid", "primaryColor"],
             populate : {
                 logotype : {
                     fields : ["url", "name"],

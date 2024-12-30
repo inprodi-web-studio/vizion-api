@@ -931,6 +931,7 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
     >;
     urlParam: Attribute.String;
     website: Attribute.String;
+    primaryColor: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

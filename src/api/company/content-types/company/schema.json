@@ -88,6 +88,9 @@
     },
     "website": {
       "type": "string"
+    },
+    "primaryColor": {
+      "type": "string"
     }
   }
 }
