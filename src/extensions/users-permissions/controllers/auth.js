@@ -49,6 +49,13 @@ module.exports = ( plugin ) => {
 
         delete user.password;
 
+        ctx.cookies.set("token", TOKEN, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 30 * 24 * 60 * 60 * 1000
+        });
+
         return {
             token : TOKEN,
             user,
