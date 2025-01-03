@@ -10,6 +10,7 @@ module.exports = async ( policyContext, config, { strapi } ) => {
 
     const user = await findOneByUuid( uuid, USER, {
         populate : {
+            intRole : true,
             company : true,
         },
     });
@@ -28,5 +29,6 @@ module.exports = async ( policyContext, config, { strapi } ) => {
         });
     }
 
+    ctx.state.user    = user;
     ctx.state.company = user.company;
 };

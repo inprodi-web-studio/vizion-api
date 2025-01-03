@@ -781,6 +781,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::user-session.user-session'
     >;
     uuid: Attribute.String & Attribute.Unique;
+    intRole: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'manyToOne',
+      'api::int-role.int-role'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1514,6 +1519,48 @@ export interface ApiInsiderInsider extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::insider.insider',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiIntRoleIntRole extends Schema.CollectionType {
+  collectionName: 'int_roles';
+  info: {
+    singularName: 'int-role';
+    pluralName: 'int-roles';
+    displayName: 'Int Role';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    name: Attribute.String;
+    permissions: Attribute.JSON;
+    company: Attribute.Relation<
+      'api::int-role.int-role',
+      'oneToOne',
+      'api::company.company'
+    >;
+    users: Attribute.Relation<
+      'api::int-role.int-role',
+      'oneToMany',
+      'plugin::users-permissions.user'
+    >;
+    uuid: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::int-role.int-role',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::int-role.int-role',
       'oneToOne',
       'admin::user'
     > &
@@ -2922,6 +2969,7 @@ declare module '@strapi/types' {
       'api::estimate.estimate': ApiEstimateEstimate;
       'api::estimate-stage.estimate-stage': ApiEstimateStageEstimateStage;
       'api::insider.insider': ApiInsiderInsider;
+      'api::int-role.int-role': ApiIntRoleIntRole;
       'api::invitation.invitation': ApiInvitationInvitation;
       'api::lead.lead': ApiLeadLead;
       'api::note.note': ApiNoteNote;

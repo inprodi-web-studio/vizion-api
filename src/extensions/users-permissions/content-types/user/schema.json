@@ -105,6 +105,12 @@
       "type": "string",
       "required": false,
       "unique": true
+    },
+    "intRole": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::int-role.int-role",
+      "inversedBy": "users"
     }
   }
 }

@@ -14,6 +14,7 @@ module.exports = {
     COMPANY             : "api::company.company",
     PRODUCT             : "api::product.product",
     INSIDER             : "api::insider.insider",
+    INT_ROLE            : "api::int-role.int-role",
     ESTIMATE            : "api::estimate.estimate",
     CUSTOMER            : "api::customer.customer",
     DOCUMENT            : "api::document.document",

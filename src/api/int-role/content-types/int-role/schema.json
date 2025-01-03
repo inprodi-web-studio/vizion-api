@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "int_roles",
+  "info": {
+    "singularName": "int-role",
+    "pluralName": "int-roles",
+    "displayName": "Int Role",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "permissions": {
+      "type": "json"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "users": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "intRole"
+    },
+    "uuid": {
+      "type": "string"
+    }
+  }
+}
