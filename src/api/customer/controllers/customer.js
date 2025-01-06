@@ -81,7 +81,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
     async findOne(ctx) {
         const { uuid } = ctx.params;
         
-        const customer = await validateEntityPermission( uuid, CUSTOMER, customerFields );
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
 
         return customer;
     },

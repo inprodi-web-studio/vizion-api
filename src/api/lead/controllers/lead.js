@@ -73,7 +73,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
     async findOne(ctx) {
         const { uuid } = ctx.params;
         
-        const lead = await validateEntityPermission( uuid, LEAD, leadFields );
+        const lead = await findOneByUuid( uuid, LEAD, leadFields );
 
         await strapi.service( LEAD ).getActivityStats( lead );
 
