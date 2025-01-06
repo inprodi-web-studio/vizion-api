@@ -1,7 +1,6 @@
 const { LEAD, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, INSIDER, CUSTOMER, ESTIMATE } = require('../../../constants/models');
 const findMany                 = require('../../../helpers/findMany');
 const { validateCreate, validateCreateDeliveryAddress }       = require('../content-types/lead/lead.validation');
-const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const checkForDuplicates       = require('../../../helpers/checkForDuplicates');
 const { validateKeyUpdate }    = require('../../../helpers/validateKeyUpdate');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
@@ -138,7 +137,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        const lead = await validateEntityPermission( uuid, LEAD, leadFields );
+        const lead = await findOneByUuid( uuid, LEAD, leadFields );
 
         const criteria = [];
 
@@ -189,7 +188,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         await validateKeyUpdate( data );
 
-        const { id, tags } = await validateEntityPermission( uuid, LEAD, leadFields );
+        const { id, tags } = await findOneByUuid( uuid, LEAD, leadFields );
 
         const entityId = await strapi.service( LEAD ).keyFind( data, tags );
 
@@ -206,7 +205,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
     async toggleStatus(ctx) {
         const { uuid } = ctx.params;
 
-        const { id, isActive } = await validateEntityPermission( uuid, LEAD );
+        const { id, isActive } = await findOneByUuid( uuid, LEAD );
 
         const updatedLead = await strapi.entityService.update( LEAD, id, {
             data : {
@@ -315,7 +314,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         const { uuid }   = ctx.params;
         const { search } = ctx.query ?? {};
         
-        const lead = await validateEntityPermission( uuid, LEAD, {
+        const lead = await findOneByUuid( uuid, LEAD, {
             populate : {
                 documents : {
                     fields   : ["uuid"],
@@ -346,7 +345,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
             throw new UnprocessableContentError(["File is required"]);
         }
 
-        const lead = await validateEntityPermission( uuid, LEAD, leadFields );
+        const lead = await findOneByUuid( uuid, LEAD, leadFields );
 
         const newDocument = await strapi.entityService.create( DOCUMENT, {
             data : {
@@ -391,7 +390,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
     async removeFile(ctx) {
         const { uuid, documentUuid } = ctx.params;
 
-        await validateEntityPermission( uuid, LEAD );
+        await findOneByUuid( uuid, LEAD );
 
         const { id, file } = await findOneByUuid( documentUuid, DOCUMENT, {
             populate : {
