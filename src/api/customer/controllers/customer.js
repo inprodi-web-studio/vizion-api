@@ -1,7 +1,6 @@
 const { CUSTOMER, INSIDER, DOCUMENT, TASK, NOTE, CONTACT_INTERACTION, ESTIMATE, LEAD, CUSTOMER_CREDIT } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
 const findMany = require('../../../helpers/findMany');
-const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const { validateCreate, validateCreateDeliveryAddress, validateCreateCreditLine } = require('../content-types/customer/customer.validation');
 const { validateKeyUpdate } = require('../../../helpers/validateKeyUpdate');
 const { UnprocessableContentError, ConflictError, NotFoundError, BadRequestError } = require('../../../helpers/errors');
@@ -137,7 +136,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         }
 
         await checkForDuplicates( CUSTOMER, criteria, customerFields );
-
+        
         await strapi.service( CUSTOMER ).validateParallelData( data );
         await strapi.service( CUSTOMER ).generateAddressData(data);
 
@@ -161,7 +160,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         await validateCreate( data );
 
-       const customer = await validateEntityPermission( uuid, CUSTOMER, customerFields );
+       const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
 
        const criteria = [];
 
@@ -228,7 +227,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         await validateKeyUpdate( data );
 
-        const { id, tags } = await validateEntityPermission( uuid, CUSTOMER, customerFields );
+        const { id, tags } = await findOneByUuid( uuid, CUSTOMER, customerFields );
 
         const entityId = await strapi.service( CUSTOMER ).keyFind( data, tags );
 
@@ -245,7 +244,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
     async toggleStatus(ctx) {
         const { uuid } = ctx.params;
 
-        const { id, isArchived, credit } = await validateEntityPermission( uuid, CUSTOMER, {
+        const { id, isArchived, credit } = await findOneByUuid( uuid, CUSTOMER, {
             populate : {
                 credit : true,
             },
@@ -506,7 +505,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         const { uuid }   = ctx.params;
         const { search } = ctx.query ?? {};
         
-        const customer = await validateEntityPermission( uuid, CUSTOMER, {
+        const customer = await findOneByUuid( uuid, CUSTOMER, {
             populate : {
                 documents : {
                     fields   : ["uuid"],
@@ -537,7 +536,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
             throw new UnprocessableContentError(["File is required"]);
         }
 
-        const customer = await validateEntityPermission( uuid, CUSTOMER, customerFields );
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
 
         const newDocument = await strapi.entityService.create( DOCUMENT, {
             data : {
@@ -582,7 +581,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
     async removeFile(ctx) {
         const { uuid, documentUuid } = ctx.params;
 
-        await validateEntityPermission( uuid, CUSTOMER );
+        await findOneByUuid( uuid, CUSTOMER );
 
         const { id, file } = await findOneByUuid( documentUuid, DOCUMENT, {
             populate : {
