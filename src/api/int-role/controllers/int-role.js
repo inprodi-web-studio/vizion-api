@@ -42,6 +42,8 @@ module.exports = createCoreController( INT_ROLE, ({ strapi }) => ({
             });
         }
 
+        console.log(intRole.permissions);
+
         const permissions = intRole.permissions[app];
 
         if ( !permissions ) {
