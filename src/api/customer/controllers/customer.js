@@ -60,6 +60,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
                 "email",
                 "tradeName",
                 "phone.number",
+                "cellphone.number",
                 "fiscalInfo.rfc",
                 "completeName.name",
                 "fiscalInfo.legalName",

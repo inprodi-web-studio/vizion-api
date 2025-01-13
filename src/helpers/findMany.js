@@ -5,6 +5,8 @@ async function findMany( MODEL, schema, filters, byCompany = true ) {
     const company   = ctx.state.company; 
     const { query } = ctx;
 
+    console.log( query );
+
     const handledFilters = handleSearch( filters );
 
     const items = await strapi.service( MODEL ).find({

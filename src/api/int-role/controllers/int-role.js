@@ -5,7 +5,6 @@ const { createCoreController } = require('@strapi/strapi').factories;
 
 module.exports = createCoreController( INT_ROLE, ({ strapi }) => ({
     async getAppPermissions(ctx) {
-        console.log("app permissions");
         const { app } = ctx.params;
         const user = ctx.state.user;
 
