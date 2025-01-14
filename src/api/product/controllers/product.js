@@ -8,7 +8,7 @@ const { validateCreate, validateSetPricing, validateSetUpsells, validateUpdate }
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const productFields = {
-    fields : ["uuid", "name", "sku", "type", "isDraft", "description", "url", "satCode", "taxType"],
+    fields : ["uuid", "name", "sku", "type", "isDraft", "description", "url", "satCode", "taxType", "createdAt"],
     populate : {
         images : {
             fields : ["url", "name", "size", "mime"],
