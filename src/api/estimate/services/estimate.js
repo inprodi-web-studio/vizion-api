@@ -18,6 +18,20 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         const startOfLastMonth = moment.tz(timeZone).subtract(1, "month").startOf("month").toISOString();
         const endOfLastMonth   = moment.tz(timeZone).subtract(1, "month").endOf("month").toISOString();
 
+        const active = await strapi.query( ESTIMATE ).count({
+            where : {
+                isLost : false,
+                company  : company.id,
+            },
+        });
+
+        const lost = await strapi.query( ESTIMATE ).count({
+            where : {
+                isLost : true,
+                company  : company.id,
+            },
+        });
+
         const estimatesThisMonth = await strapi.query(ESTIMATE).count({
             where : {
                 company  : company.id,
@@ -98,6 +112,8 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
         `);
 
         return {
+            active,
+            lost,
             new : {
                 current : estimatesThisMonth ?? 0,
                 passed  : estimatesLastMonth ?? 0,
@@ -205,6 +221,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
                 LEFT JOIN estimates_sale_links as est_sale ON est.id = est_sale.estimate_id
                 WHERE est_customer.customer_id = ${customer}
+                    AND est.is_lost = false
                     AND est_components.component_type = 'estimate.version'
                     AND ver.is_active = 1
                     AND ver_components.component_type = 'estimate.resume'
@@ -251,6 +268,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
                 JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
                 WHERE est_lead.lead_id = ${ lead }
+                    AND est.is_lost = false
                     AND est_components.component_type = 'estimate.version'
                     AND ver.is_active = 1
                     AND ver_components.component_type = 'estimate.resume'
@@ -280,6 +298,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
             JOIN components_estimate_versions_components AS ver_components ON ver.id = ver_components.entity_id
             JOIN components_estimate_resumes AS res ON ver_components.component_id = res.id
             WHERE est_lead.lead_id = ${ lead }
+                AND est.is_lost = false
                 AND est_components.component_type = 'estimate.version'
                 AND ver.is_active = 1
                 AND ver_components.component_type = 'estimate.resume'

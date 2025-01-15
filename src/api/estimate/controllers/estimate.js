@@ -11,7 +11,7 @@ const dayjs = require("dayjs");
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const estimateFields = {
-    fields : ["uuid", "fol", "closingDate", "createdAt"],
+    fields : ["uuid", "fol", "closingDate", "isLost", "createdAt"],
     populate : {
         responsible : {
             fields : ["uuid", "name", "middleName", "lastName"],
@@ -146,7 +146,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
         return estimate;
     },
 
-    async create(ctx) { 
+    async create(ctx) {
         const { company } = ctx.state;
         const data = ctx.request.body;
 
@@ -317,6 +317,21 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
                 lead : estimate.lead.id,
             });
         }
+
+        return updatedEstimate;
+    },
+
+    async toggleStatus(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id, isLost } = await findOneByUuid( uuid, ESTIMATE );
+
+        const updatedEstimate = await strapi.entityService.update( ESTIMATE, id, {
+            data : {
+                isLost : !isLost,
+            },
+            ...estimateFields
+        });
 
         return updatedEstimate;
     },

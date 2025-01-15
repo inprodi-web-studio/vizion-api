@@ -81,6 +81,14 @@ module.exports = {
         },
       },
       {
+        method  : "PATCH",
+        path    : "/estimates/:uuid/toggle",
+        handler : "estimate.toggleStatus",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "DELETE",
         path    : "/estimates/:uuid",
         handler : "estimate.delete",

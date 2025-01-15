@@ -71,6 +71,10 @@
       "relation": "oneToOne",
       "target": "api::sale.sale",
       "inversedBy": "estimate"
+    },
+    "isLost": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

@@ -1416,6 +1416,7 @@ export interface ApiEstimateEstimate extends Schema.CollectionType {
       'oneToOne',
       'api::sale.sale'
     >;
+    isLost: Attribute.Boolean & Attribute.DefaultTo<false>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
