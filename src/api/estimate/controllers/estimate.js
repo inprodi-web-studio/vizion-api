@@ -11,7 +11,7 @@ const dayjs = require("dayjs");
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const estimateFields = {
-    fields : ["uuid", "fol", "closingDate"],
+    fields : ["uuid", "fol", "closingDate", "createdAt"],
     populate : {
         responsible : {
             fields : ["uuid", "name", "middleName", "lastName"],
