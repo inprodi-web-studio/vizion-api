@@ -1,9 +1,8 @@
 const { INSIDER, LEAD, CUSTOMER } = require('../../../constants/models');
-const checkForDuplicates = require('../../../helpers/checkForDuplicates');
+
 const { ConflictError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const { validateCreate } = require('../content-types/insider/insider.validation');
 
 const { createCoreService } = require('@strapi/strapi').factories;
@@ -26,7 +25,7 @@ module.exports = createCoreService( INSIDER, ({ strapi }) => ({
         const ctx      = strapi.requestContext.get();
         const { uuid } = ctx.params;
 
-        const entity = await validateEntityPermission( uuid, relationDictionary[relation] );
+        const entity = await findOneByUuid( uuid, relationDictionary[relation] );
 
         const filters = {
             [relation] : entity.id
@@ -45,7 +44,7 @@ module.exports = createCoreService( INSIDER, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
 
         let criteria = [];
 
@@ -106,7 +105,7 @@ module.exports = createCoreService( INSIDER, ({ strapi }) => ({
         const ctx             = strapi.requestContext.get();
         const { insiderUuid } = ctx.params;
 
-        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
 
         const insider = await findOneByUuid( insiderUuid, INSIDER );
 
@@ -142,7 +141,7 @@ module.exports = createCoreService( INSIDER, ({ strapi }) => ({
         const ctx      = strapi.requestContext.get();
         const { uuid, insiderUuid } = ctx.params;
 
-        const entity = await validateEntityPermission( uuid, relationDictionary[relation] );
+        const entity = await findOneByUuid( uuid, relationDictionary[relation] );
 
         const insider = await findOneByUuid( insiderUuid, INSIDER );
 
@@ -172,7 +171,7 @@ module.exports = createCoreService( INSIDER, ({ strapi }) => ({
         const ctx      = strapi.requestContext.get();
         const { uuid, insiderUuid } = ctx.params;
 
-        await validateEntityPermission( uuid, relationDictionary[relation] );
+        await findOneByUuid( uuid, relationDictionary[relation] );
 
         const insider = await findOneByUuid( insiderUuid, INSIDER );
 
