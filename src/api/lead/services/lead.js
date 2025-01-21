@@ -17,7 +17,6 @@ const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid       = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
-const validateEntityPermission = require("../../../helpers/validateEntityPermission");
 const { default: axios } = require("axios");
 
 const leadFields = {
@@ -503,35 +502,43 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         }
     },
 
-    async generateAddressData({ mainAddress }) {
-        const {
-            street,
-            extNumber,
-            cp,
-            city,
-            state,
-            country,
-        } = mainAddress ?? {};
-
-        let query = "";
-
-        if ( !street && !extNumber && !cp && !city && !state && country ) {
-            query = country;
-        } else if ( !street && !extNumber && !cp && !city && state && country ) {
-            query = `${ state } ${ country }`;
-        } else if ( !street && !extNumber && !cp && city && state && country ) {
-            query = `${city} ${ state } ${ country }`;
-        } else if ( !street && !extNumber && cp && city && state && country ) {
-            query = `${cp} ${city} ${ state } ${ country }`;
-        } else {
-            query = `${ street ? street : "" } ${ extNumber ? extNumber : "" } ${ cp ? cp : "" } ${ city ? city : "" } ${ state ? state : "" } ${ country ? country : "" }`;
+    async generateAddressData({ mainAddress, address }) {
+        const generateQuery = ({ street, extNumber, cp, city, state, country }) => {
+            if (!street && !extNumber && !cp && !city && !state && country) {
+                return country;
+            } else if (!street && !extNumber && !cp && !city && state && country) {
+                return `${state} ${country}`;
+            } else if (!street && !extNumber && !cp && city && state && country) {
+                return `${city} ${state} ${country}`;
+            } else if (!street && !extNumber && cp && city && state && country) {
+                return `${cp} ${city} ${state} ${country}`;
+            } else {
+                return `${street || ""} ${extNumber || ""} ${cp || ""} ${city || ""} ${state || ""} ${country || ""}`.trim();
+            }
+        };
+    
+        const fetchCoordinates = async (addressData) => {
+            const query = generateQuery(addressData);
+    
+            const URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${process.env.MAPBOX_TOKEN}&proximity=ip&q=${encodeURI(query)}`;
+    
+            try {
+                const { data } = await axios.get(URL);
+                addressData.longitude = data.features?.[0]?.geometry?.coordinates?.[0]?.toString();
+                addressData.latitude = data.features?.[0]?.geometry?.coordinates?.[1]?.toString();
+            } catch (error) {
+                console.error("Error fetching coordinates:", error);
+            }
+        };
+    
+        if (mainAddress) {
+            await fetchCoordinates(mainAddress);
+            return;
         }
-
-        const URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${ process.env.MAPBOX_TOKEN }&proximity=ip&q=${ encodeURI( query ) }`;
-
-        await axios.get( URL ).then( async ({ data }) => {
-            mainAddress.longitude = data.features?.[0]?.geometry?.coordinates?.[0]?.toString();
-            mainAddress.latitude  = data.features?.[0]?.geometry?.coordinates?.[1]?.toString();
-        });
-    },
+    
+        if (address) {
+            await fetchCoordinates(address);
+            return;
+        }
+    }
 }));

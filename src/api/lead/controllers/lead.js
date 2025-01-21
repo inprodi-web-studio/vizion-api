@@ -298,6 +298,8 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
             leadAddresses[index].isMain = false;
         }
 
+        await strapi.service(LEAD).generateAddressData(data);
+
         const updatedLead = await strapi.entityService.update( LEAD, lead.id, {
             data : {
                 deliveryAddresses : [
@@ -309,6 +311,44 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         });
 
         return updatedLead.deliveryAddresses.find( address => address.name === data.name );
+    },
+
+    async updateDeliveryAddress(ctx) {
+        const data = ctx.request.body;
+        const { uuid, addressId } = ctx.params;
+
+        await validateCreateDeliveryAddress(data);
+
+        const lead = await findOneByUuid( uuid, LEAD, leadFields );
+
+        const leadAddresses = lead.deliveryAddresses;
+
+        const conflictingAddress = leadAddresses.find( address => address.name === data.name );
+
+        if ( conflictingAddress ) {
+            throw new ConflictError( "Delivery address with this name already exists", {
+                key : "lead.duplicated_DeliveryAddress",
+                path : ctx.request.path,
+            });
+        }
+
+        if ( data.isMain && leadAddresses.length > 0 ) {
+            const index = leadAddresses.findIndex( address => address.isMain );
+            leadAddresses[index].isMain = false;
+        }
+
+        const desiredIndex = leadAddresses.findIndex( address => address.id == addressId );
+
+        leadAddresses[ desiredIndex ] = data;
+
+        const updatedCustomer = await strapi.entityService.update( CUSTOMER, lead.id, {
+            data : {
+                deliveryAddresses : leadAddresses,
+            },
+            ...leadFields
+        });
+
+        return updatedCustomer.deliveryAddresses.find( address => address.name === data.name );
     },
 
     async getFiles(ctx) {
