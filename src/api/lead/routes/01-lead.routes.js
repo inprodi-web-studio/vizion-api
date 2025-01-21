@@ -186,6 +186,14 @@ module.exports = {
       },
       {
         method  : "PATCH",
+        path    : "/delivery-addresses/leads/:uuid/:insiderUuid",
+        handler : "lead.setPrimaryDeliveryAddress",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PATCH",
         path    : "/contacts/leads/:uuid",
         handler : "lead.keyUpdate",
         config : {
