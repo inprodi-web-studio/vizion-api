@@ -524,20 +524,31 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
     
             try {
                 const { data } = await axios.get(URL);
-                addressData.longitude = data.features?.[0]?.geometry?.coordinates?.[0]?.toString();
-                addressData.latitude = data.features?.[0]?.geometry?.coordinates?.[1]?.toString();
+
+                return {
+                    longitude: data.features?.[0]?.geometry?.coordinates?.[0]?.toString(),
+                    latitude: data.features?.[0]?.geometry?.coordinates?.[1]?.toString(),
+                }
             } catch (error) {
                 console.error("Error fetching coordinates:", error);
             }
         };
     
         if (mainAddress) {
-            await fetchCoordinates(mainAddress);
+            const coordinates = await fetchCoordinates(mainAddress);
+
+            mainAddress.longitude = coordinates.longitude;
+            mainAddress.latitude  = coordinates.latitude;
+            
             return;
         }
     
         if (address) {
-            await fetchCoordinates(address);
+            const coordinates = await fetchCoordinates(address);
+
+            address.longitude = coordinates.longitude;
+            address.latitude  = coordinates.latitude;
+
             return;
         }
     }
