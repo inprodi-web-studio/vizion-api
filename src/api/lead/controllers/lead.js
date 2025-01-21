@@ -4,7 +4,7 @@ const { validateCreate, validateCreateDeliveryAddress }       = require('../cont
 const checkForDuplicates       = require('../../../helpers/checkForDuplicates');
 const { validateKeyUpdate }    = require('../../../helpers/validateKeyUpdate');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const { UnprocessableContentError, ConflictError } = require('../../../helpers/errors');
+const { UnprocessableContentError, ConflictError, NotFoundError } = require('../../../helpers/errors');
 const dayjs = require('dayjs');
 
 const { createCoreController } = require('@strapi/strapi').factories;
@@ -341,14 +341,40 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         leadAddresses[ desiredIndex ] = data;
 
-        const updatedCustomer = await strapi.entityService.update( CUSTOMER, lead.id, {
+        const updatedLead = await strapi.entityService.update( LEAD, lead.id, {
             data : {
                 deliveryAddresses : leadAddresses,
             },
             ...leadFields
         });
 
-        return updatedCustomer.deliveryAddresses.find( address => address.name === data.name );
+        return updatedLead.deliveryAddresses.find( address => address.name === data.name );
+    },
+
+    async deleteDeliveryAddress(ctx) {
+        const { uuid, addressId } = ctx.params;
+
+        const lead = await findOneByUuid( uuid, LEAD, leadFields );
+
+        const leadAddresses = lead.deliveryAddresses;
+
+        const desiredAddress = leadAddresses.find( address => address.id == addressId );
+
+        if ( !desiredAddress ) {
+            throw new NotFoundError( "Delivery address not found", {
+                key : "lead.notFound_DeliveryAddress",
+                path : ctx.request.path,
+            });
+        }
+
+        const updatedLead = await strapi.entityService.update( LEAD, lead.id, {
+            data : {
+                deliveryAddresses : leadAddresses.filter( address => address.id != addressId ),
+            },
+            ...leadFields
+        });
+
+        return updatedLead.deliveryAddresses;
     },
 
     async getFiles(ctx) {

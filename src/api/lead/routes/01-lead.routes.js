@@ -146,6 +146,14 @@ module.exports = {
       },
       {
         method  : "PUT",
+        path    : "/delivery-addresses/leads/:uuid/:addressId",
+        handler : "lead.updateDeliveryAddress",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PUT",
         path    : "/tasks/leads/:uuid/:taskUuid",
         handler : "lead.updateTask",
         config : {
@@ -196,6 +204,14 @@ module.exports = {
         method  : "DELETE",
         path    : "/insiders/leads/:uuid/:insiderUuid",
         handler : "lead.deleteInsider",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "DELETE",
+        path    : "/delivery-addresses/leads/:uuid/:addressId",
+        handler : "lead.deleteDeliveryAddress",
         config : {
           policies : ["global::userContext"],
         },
