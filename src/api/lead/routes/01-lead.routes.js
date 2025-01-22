@@ -186,7 +186,7 @@ module.exports = {
       },
       {
         method  : "PATCH",
-        path    : "/delivery-addresses/leads/:uuid/:insiderUuid",
+        path    : "/delivery-addresses/leads/:uuid/:addressId",
         handler : "lead.setPrimaryDeliveryAddress",
         config : {
           policies : ["global::userContext"],
