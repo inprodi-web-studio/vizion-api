@@ -186,6 +186,14 @@ module.exports = {
       },
       {
         method  : "PATCH",
+        path    : "/insiders/customers/:uuid/:insiderUuid",
+        handler : "customer.setPrimaryInsider",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PATCH",
         path    : "/credit-lines/customers/:uuid",
         handler : "customer.toggleCreditLine",
         config : {

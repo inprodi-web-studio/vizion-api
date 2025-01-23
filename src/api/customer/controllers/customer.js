@@ -295,6 +295,12 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         return updatedInsider;
     },
 
+    async setPrimaryInsider(ctx) {
+        const updatedInsider = await strapi.service( INSIDER ).setPrimary( "customer" );
+
+        return updatedInsider;
+    },
+
     async deleteInsider(ctx) {
         const deletedInsider = await strapi.service( INSIDER ).deleteEntityInsider( "customer" );
 
