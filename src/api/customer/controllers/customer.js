@@ -382,6 +382,30 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         return updatedCustomer.deliveryAddresses.find( address => address.name === data.name );
     },
 
+    async setPrimaryDeliveryAddress(ctx) {
+        const { uuid, addressId } = ctx.params;
+
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
+
+        const customerAddresses = customer.deliveryAddresses;
+
+        const index = customerAddresses.findIndex( address => address.isMain );
+        customerAddresses[index].isMain = false;
+
+        const desiredIndex = customerAddresses.findIndex( address => address.id == addressId );
+
+        customerAddresses[ desiredIndex ].isMain = true;
+
+        const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+            data : {
+                deliveryAddresses : customerAddresses,
+            },
+            ...customerFields
+        });
+
+        return updatedCustomer.deliveryAddresses.find( address => address.id == addressId );
+    },
+
     async deleteDeliveryAddress(ctx) {
         const { uuid, addressId } = ctx.params;
 

@@ -75,14 +75,14 @@ module.exports = createCoreService( INSIDER, ({ strapi }) => ({
             },
         });
 
-        if ( conflictingInsider?.email === email ) {
+        if ( conflictingInsider?.email === email && email ) {
             throw new ConflictError( "Insider with email duplicated", {
                 key : "insider.duplicated_Email",
                 path : ctx.request.path,
             });
         }
 
-        if ( conflictingInsider?.phone?.number === phone?.number ) {
+        if ( conflictingInsider?.phone?.number === phone?.number && phone?.number ) {
             throw new ConflictError( "Insider with phone duplicated", {
                 key : "insider.duplicated_Phone",
                 path : ctx.request.path,

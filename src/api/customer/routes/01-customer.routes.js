@@ -194,6 +194,14 @@ module.exports = {
       },
       {
         method  : "PATCH",
+        path    : "/delivery-addresses/customers/:uuid/:addressId",
+        handler : "customer.setPrimaryDeliveryAddress",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PATCH",
         path    : "/credit-lines/customers/:uuid",
         handler : "customer.toggleCreditLine",
         config : {
