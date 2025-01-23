@@ -138,7 +138,7 @@ module.exports = {
       },
       {
         method  : "PUT",
-        path    : "delivery-addresses/customers/:uuid/:addressId",
+        path    : "/delivery-addresses/customers/:uuid/:addressId",
         handler : "customer.updateDeliveryAddress",
         config : {
           policies : ["global::userContext"],
