@@ -354,7 +354,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         const customerAddresses = customer.deliveryAddresses;
 
-        const conflictingAddress = customerAddresses.find( address => address.name === data.name );
+        const conflictingAddress = customerAddresses.find( address => address.name === data.name && address.id != addressId );
 
         if ( conflictingAddress ) {
             throw new ConflictError( "Delivery address with this name already exists", {
