@@ -1279,6 +1279,8 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
       'oneToMany',
       'api::customer-credit.customer-credit'
     >;
+    saleConditions: Attribute.Component<'customer.sale-conditions'>;
+    preferences: Attribute.Component<'customer.preferences'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

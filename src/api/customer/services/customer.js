@@ -131,6 +131,26 @@ module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
                 entityId = value;
             break;
 
+            case "saleConditions.expirationLimit":
+                entityId = value;
+            break;
+
+            case "saleConditions.badgePolicy":
+                entityId = value;
+            break;
+
+            case "preferences.paymentForm":
+                entityId = value;
+            break;
+
+            case "preferences.paymentMethod":
+                entityId = value;
+            break;
+
+            case "preferences.cfdiUse":
+                entityId = value;
+            break;
+
             default:
                 throw new BadRequestError( `The key ${key} is not supported in key update`, {
                     key  : "customer.unkownKey",

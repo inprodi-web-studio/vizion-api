@@ -21,6 +21,8 @@ const customerFields = {
                 address : true,
             }
         },
+        saleConditions : true,
+        preferences    : true,
         customerMeta : true,
         credit       : true,
         group        : true,
@@ -228,18 +230,34 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         await validateKeyUpdate( data );
 
-        const { id, tags } = await findOneByUuid( uuid, CUSTOMER, customerFields );
+        const customer = await findOneByUuid( uuid, CUSTOMER, customerFields );
 
-        const entityId = await strapi.service( CUSTOMER ).keyFind( data, tags );
+        const entityId = await strapi.service( CUSTOMER ).keyFind( data, customer.tags );
 
-        const updatedCustomer = await strapi.entityService.update( CUSTOMER, id, {
-            data : {
-                [data.key] : entityId,
-            },
-            ...customerFields
-        });
+        const dataSplit = data.key.split(".");
 
-        return updatedCustomer;
+        if (dataSplit.length > 1) {
+            const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+                data : {
+                    [dataSplit[0]] : {
+                        ...customer[dataSplit[0]],
+                        [dataSplit[1]] : entityId
+                    }
+                },
+                ...customerFields
+            });
+
+            return updatedCustomer;
+        } else {
+            const updatedCustomer = await strapi.entityService.update( CUSTOMER, customer.id, {
+                data : {
+                    [data.key] : entityId,
+                },
+                ...customerFields
+            });
+    
+            return updatedCustomer;
+        }
     },
 
     async toggleStatus(ctx) {

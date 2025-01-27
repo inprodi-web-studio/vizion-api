@@ -164,6 +164,18 @@
       "relation": "oneToMany",
       "target": "api::customer-credit.customer-credit",
       "mappedBy": "customer"
+    },
+    "saleConditions": {
+      "displayName": "Sale Conditions",
+      "type": "component",
+      "repeatable": false,
+      "component": "customer.sale-conditions"
+    },
+    "preferences": {
+      "displayName": "Preferences",
+      "type": "component",
+      "repeatable": false,
+      "component": "customer.preferences"
     }
   }
 }

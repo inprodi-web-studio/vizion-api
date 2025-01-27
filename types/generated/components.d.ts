@@ -84,6 +84,29 @@ export interface CustomerCustomerMeta extends Schema.Component {
   };
 }
 
+export interface CustomerPreferences extends Schema.Component {
+  collectionName: 'components_customer_preferences';
+  info: {
+    displayName: 'Preferences';
+  };
+  attributes: {
+    paymentForm: Attribute.String;
+    paymentMethod: Attribute.String;
+    cfdiUse: Attribute.String;
+  };
+}
+
+export interface CustomerSaleConditions extends Schema.Component {
+  collectionName: 'components_customer_sale_conditions';
+  info: {
+    displayName: 'Sale Conditions';
+  };
+  attributes: {
+    expirationLimit: Attribute.Integer;
+    badgePolicy: Attribute.String;
+  };
+}
+
 export interface EstimateDiscount extends Schema.Component {
   collectionName: 'components_estimate_discounts';
   info: {
@@ -316,6 +339,8 @@ declare module '@strapi/types' {
       'contact.phone': ContactPhone;
       'customer.credit': CustomerCredit;
       'customer.customer-meta': CustomerCustomerMeta;
+      'customer.preferences': CustomerPreferences;
+      'customer.sale-conditions': CustomerSaleConditions;
       'estimate.discount': EstimateDiscount;
       'estimate.estimate-item': EstimateEstimateItem;
       'estimate.resume': EstimateResume;

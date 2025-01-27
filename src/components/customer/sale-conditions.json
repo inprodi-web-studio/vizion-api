@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_customer_sale_conditions",
+  "info": {
+    "displayName": "Sale Conditions"
+  },
+  "options": {},
+  "attributes": {
+    "expirationLimit": {
+      "type": "integer"
+    },
+    "badgePolicy": {
+      "type": "string"
+    }
+  }
+}

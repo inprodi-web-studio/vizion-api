@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_customer_preferences",
+  "info": {
+    "displayName": "Preferences"
+  },
+  "options": {},
+  "attributes": {
+    "paymentForm": {
+      "type": "string"
+    },
+    "paymentMethod": {
+      "type": "string"
+    },
+    "cfdiUse": {
+      "type": "string"
+    }
+  }
+}
