@@ -4,7 +4,7 @@ const { createCoreService } = require('@strapi/strapi').factories;
 
 const moment = require("moment-timezone");
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const { BadRequestError } = require('../../../helpers/errors');
+const { BadRequestError, NotFoundError } = require('../../../helpers/errors');
 const axios = require('axios');
 
 module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
@@ -103,6 +103,21 @@ module.exports = createCoreService( CUSTOMER, ({ strapi }) => ({
                     entityId = sourceId;
                 } else {
                     entityId = null;
+                }
+            break;
+
+            case "priceList":
+                if ( value ) {
+                    const { id : priceListId } = await findOneByUuid( value, PRICE_LIST );
+
+                    if ( !priceListId ) {
+                        throw new NotFoundError( "Price list not found", {
+                            key : "customer.notFound_PriceList",
+                            path : ctx.request.path,
+                        });
+                    }
+                    
+                    entityId = priceListId;
                 }
             break;
 
