@@ -69,7 +69,7 @@ const estimateFields = {
                     fields : ["uuid", "name"],
                 },
                 items : {
-                    fields : ["quantity", "price", "iva", "realQuantity"],
+                    fields : ["quantity", "price", "iva", "realQuantity", "comment"],
                     populate : {
                         product : {
                             fields : ["uuid", "name", "sku", "description"],
