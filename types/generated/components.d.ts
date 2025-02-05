@@ -150,6 +150,7 @@ export interface EstimateEstimateItem extends Schema.Component {
       'oneToOne',
       'api::product-variation.product-variation'
     >;
+    comment: Attribute.String;
   };
 }
 

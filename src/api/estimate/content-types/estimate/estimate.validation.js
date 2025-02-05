@@ -20,6 +20,7 @@ const createSchema = yup.object().shape({
         iva : yup.string().required(),
         package : yup.string().uuid().nullable(),
         variation : yup.string().uuid().nullable(),
+        comment : yup.string().nullable(),
         discount : yup.object().shape({
             percent : yup.number().required(),
             amount : yup.number().required(),
