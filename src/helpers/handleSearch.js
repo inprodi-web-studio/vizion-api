@@ -1,5 +1,6 @@
 const handleSearch = ( filters ) => {
     const ctx           = strapi.requestContext.get();
+    const { query }     = ctx;
     const filtersToUser = {...filters};
 
     const formattedFilters = {
@@ -81,6 +82,12 @@ const handleSearch = ( filters ) => {
     delete filtersToUser.$search;
 
     formattedFilters.$and.push( filtersToUser );
+
+    if (query.filters?.$and) {
+        query.filters?.$and.forEach(filter => {
+            formattedFilters.$and.push(filter);
+        })
+    }
 
     return formattedFilters;
 };
