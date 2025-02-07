@@ -77,6 +77,12 @@ const estimateFields = {
                                 images : {
                                     fields : ["url"],
                                 },
+                                variations : {
+                                    count : true,
+                                },
+                                packages : {
+                                    count : true,
+                                },
                             },
                         },
                         discount : true,
