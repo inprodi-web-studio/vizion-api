@@ -77,6 +77,9 @@ const estimateFields = {
                                 images : {
                                     fields : ["url"],
                                 },
+                                unity : {
+                                    fields : ["uuid", "name", "satCode", "abbreviation"],
+                                },
                                 variations : {
                                     count : true,
                                 },
