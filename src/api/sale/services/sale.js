@@ -1,5 +1,5 @@
 const dayjs = require("dayjs");
-const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE, CREDIT_MOVEMENT, STOCK_DISPATCH } = require("../../../constants/models");
+const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE, CREDIT_MOVEMENT, STOCK_DISPATCH, PACKAGE, PRODUCT_VARIATION } = require("../../../constants/models");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
