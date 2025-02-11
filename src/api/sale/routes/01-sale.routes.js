@@ -42,6 +42,14 @@ module.exports = {
       },
       {
         method  : "PATCH",
+        path    : "/sales/:uuid/cancell",
+        handler : "sale.cancell",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PATCH",
         path    : "/sales/:uuid/authorize",
         handler : "sale.authorize",
         config : {

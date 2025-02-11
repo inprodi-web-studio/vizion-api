@@ -15,6 +15,9 @@ const createSchema = yup.object().shape({
         quantity : yup.number().required(),
         price : yup.number().required(),
         iva : yup.string().required(),
+        package : yup.string().uuid().nullable(),
+        variation : yup.string().uuid().nullable(),
+        comment : yup.string().nullable(),
         discount : yup.object().shape({
             percent : yup.number().required(),
             amount : yup.number().required(),

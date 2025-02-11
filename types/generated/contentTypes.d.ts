@@ -2266,6 +2266,8 @@ export interface ApiSaleSale extends Schema.CollectionType {
       'oneToMany',
       'api::package.package'
     >;
+    isCancelled: Attribute.Boolean & Attribute.DefaultTo<false>;
+    cancelledAt: Attribute.DateTime;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &

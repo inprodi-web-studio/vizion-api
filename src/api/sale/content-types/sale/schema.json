@@ -103,6 +103,13 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::package.package"
+    },
+    "isCancelled": {
+      "type": "boolean",
+      "default": false
+    },
+    "cancelledAt": {
+      "type": "datetime"
     }
   }
 }

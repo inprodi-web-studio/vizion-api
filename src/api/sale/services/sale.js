@@ -18,6 +18,20 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const startOfLastMonth = moment.tz(timeZone).subtract(1, "month").startOf("month").toISOString();
         const endOfLastMonth   = moment.tz(timeZone).subtract(1, "month").endOf("month").toISOString();
 
+        const active = await strapi.query( SALE ).count({
+            where : {
+                isCancelled : false,
+                company  : company.id,
+            },
+        });
+
+        const cancelled = await strapi.query( SALE ).count({
+            where : {
+                isCancelled : true,
+                company  : company.id,
+            },
+        });
+
         const salesThisMonth = await strapi.query(SALE).count({
             where : {
                 company  : company.id,
@@ -95,6 +109,8 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const totalPaid = totalPaymentsAmount[0][0].totalSum ?? 0;
 
         return {
+            active,
+            cancelled,
             new : {
                 current : salesThisMonth,
                 passed  : salesLastMonth,
@@ -130,8 +146,28 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         for ( let i = 0; i < data.items.length; i++ ) {
             const item = data.items[i];
 
-            const { id : productId } = await findOneByUuid( item.product, PRODUCT );
+            const { id : productId, unity } = await findOneByUuid( item.product, PRODUCT, {
+                populate : {
+                    unity : {
+                        fields : ["id"],
+                    },
+                },
+            });
+
             data.items[i].product = productId;
+
+            if (item.package) {
+                const { id : packageId, realConversion } = await findOneByUuid( item.package, PACKAGE );
+                data.items[i].package = packageId;
+                data.items[i].realQuantity = realConversion * item.quantity;
+            }
+
+            if (item.variation) {
+                const { id : variationId } = await findOneByUuid( item.variation, PRODUCT_VARIATION );
+                data.items[i].variation = variationId;
+            }
+
+            data.items[i].unity = unity.id;
         }
 
         if ( data.deliveryAddress ) {

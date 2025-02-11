@@ -132,6 +132,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             data : {
                 fol,
                 company : company.id,
+                isCancelled : false,
                 isAuthorized : preference.config.needsAuthorization ? false : true,
                 ...data,
             },
@@ -199,6 +200,33 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         await strapi.service(SALE).updateCustomerMeta({ customer : sale.customer.id, date : sale.date });
         await strapi.service(SALE).createDispatchesItems( updatedSale );
         
+        return updatedSale;
+    },
+
+    async cancell(ctx) {
+        const { uuid } = ctx.params;
+
+        const sale = await findOneByUuid( uuid, SALE, {
+            fields : ["date", "paymentScheme"],
+            populate : {
+                customer : {
+                    populate : {
+                        credit : true,
+                    },
+                },
+            },
+        });
+
+        const updatedSale = await strapi.entityService.update( SALE, sale.id, {
+            data : {
+                isCancelled : true,
+                cancelledAt : new Date(),
+            },
+            ...saleFields
+        });
+
+        await strapi.service(SALE).handleCreditSale({customer : sale.customer.id, customerCredit : sale.customer.credit, paymentScheme : sale.paymentScheme}, sale);
+
         return updatedSale;
     },
 
