@@ -7,7 +7,7 @@ const { validateCreate } = require("../content-types/sale/sale.validation");
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const saleFields = {
-    fields : ["uuid", "fol", "deliveryDate", "date", "paymentScheme", "subject", "comments", "terms", "isAuthorized", "authorizedAt"],
+    fields : ["uuid", "fol", "deliveryDate", "deliveryTime", "date", "paymentScheme", "subject", "comments", "terms", "isAuthorized", "authorizedAt"],
     populate : {
         responsible : {
             fields : ["uuid", "name", "middleName", "lastName"],
@@ -46,7 +46,7 @@ const saleFields = {
             fields : ["uuid", "name"],
         },
         items : {
-            fields : ["quantity", "realQuantity", "price", "iva"],
+            fields : ["quantity", "price", "iva", "realQuantity", "comment"],
             populate : {
                 product : {
                     fields : ["uuid", "name", "sku", "description"],
@@ -54,18 +54,40 @@ const saleFields = {
                         images : {
                             fields : ["url"],
                         },
+                        unity : {
+                            fields : ["uuid", "name", "satCode", "abbreviation"],
+                        },
+                        variations : {
+                            count : true,
+                        },
+                        packages : {
+                            count : true,
+                        },
+                    },
+                },
+                discount : true,
+                package : {
+                    fields : ["uuid", "conversionRate", "realConversion"],
+                    populate : {
+                        unity : true,
                     },
                 },
                 unity : {
-                    fields : ["uuid"],
-                },
-                package : {
-                    fields : ["uuid"],
+                    fields : ["uuid", "name", "abbreviation"],
                 },
                 variation : {
-                    fields : ["uuid"],
+                    fields : ["uuid", "sku"],
+                    populate : {
+                        values : {
+                            fields : ["uuid", "name"],
+                            populate : {
+                                attribute : {
+                                    fields : ["uuid", "name"],
+                                },
+                            },
+                        },
+                    },
                 },
-                discount : true,
             },
         },
         resume : {
