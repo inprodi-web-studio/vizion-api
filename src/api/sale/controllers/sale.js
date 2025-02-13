@@ -101,7 +101,7 @@ const saleFields = {
             populate : {
                 saleMeta : true,
                 versions : {
-                    fields : ["subject", "fol"]
+                    fields : ["subject", "fol", "isActive"]
                 },
             },
         },

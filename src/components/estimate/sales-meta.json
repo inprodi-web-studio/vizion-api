@@ -7,7 +7,7 @@
   "options": {},
   "attributes": {
     "closingDate": {
-      "type": "date"
+      "type": "datetime"
     },
     "daysToClose": {
       "type": "integer"

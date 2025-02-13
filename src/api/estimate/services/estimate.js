@@ -373,7 +373,7 @@ module.exports = createCoreService( ESTIMATE, ({ strapi }) => ({
                 versions,
                 stage : lastStage.id,
                 saleMeta : {
-                    closingDate   : dayjs().format("YYYY-MM-DD"),
+                    closingDate   : dayjs().toISOString(),
                     daysToClose   : dayjs().diff( dayjs( version.date ), "day"),
                     closedVersion : Number( version.fol ),
                     closedTotal   : version.resume.total,

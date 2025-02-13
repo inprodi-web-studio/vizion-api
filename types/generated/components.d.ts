@@ -176,7 +176,7 @@ export interface EstimateSalesMeta extends Schema.Component {
     description: '';
   };
   attributes: {
-    closingDate: Attribute.Date;
+    closingDate: Attribute.DateTime;
     daysToClose: Attribute.Integer;
     closedVersion: Attribute.Integer;
     closedTotal: Attribute.Decimal;
