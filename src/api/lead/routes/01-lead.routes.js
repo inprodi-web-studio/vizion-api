@@ -26,6 +26,14 @@ module.exports = {
       },
       {
         method  : "GET",
+        path    : "/contacts/leads/:uuid/resume",
+        handler : "lead.getResume",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "GET",
         path    : "/insiders/leads/:uuid",
         handler : "lead.getInsiders",
         config : {

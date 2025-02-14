@@ -80,6 +80,33 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         return lead;
     },
 
+    async getResume(ctx) {
+        const { uuid } = ctx.params;
+        const { company } = ctx.state;
+
+        const lead = await findOneByUuid( uuid, LEAD, {
+            fields : ["createdAt", "potential"]
+        });
+
+        const averageToConvert = await strapi.db.connection.raw(`
+            SELECT
+                AVG(lead_metas.days_to_convert) AS averageToConvert
+            FROM
+                customers AS customer
+                JOIN customers_company_links AS customer_company ON customer.id = customer_company.customer_id
+                JOIN customers_components AS customer_comps ON customer.id = customer_comps.entity_id
+                JOIN components_lead_lead_metas AS lead_metas ON customer_comps.component_id = lead_metas.id
+            WHERE
+                customer_company.company_id = ${company.id}
+                AND customer_comps.field = 'leadMeta';
+        `);
+
+        return {
+            lead,
+            averageToConvert : averageToConvert[0][0].averageToConvert ?? 0
+        };
+    },
+
     async create(ctx) {
         const { company } = ctx.state;
         const data = ctx.request.body;
