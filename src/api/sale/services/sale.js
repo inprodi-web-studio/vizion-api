@@ -21,6 +21,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         const active = await strapi.query( SALE ).count({
             where : {
                 isCancelled : false,
+                isAuthorized : true,
                 company  : company.id,
             },
         });
@@ -30,6 +31,14 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
                 isCancelled : true,
                 company  : company.id,
             },
+        });
+
+        const pending = await strapi.query( SALE ).count({
+            where : {
+                isCancelled : false,
+                isAuthorized : false,
+                company  : company.id,
+            }
         });
 
         const salesThisMonth = await strapi.query(SALE).count({
@@ -111,6 +120,7 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         return {
             active,
             cancelled,
+            pending,
             new : {
                 current : salesThisMonth,
                 passed  : salesLastMonth,
