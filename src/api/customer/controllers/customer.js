@@ -557,7 +557,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         const customer = await findOneByUuid( uuid, CUSTOMER, {
             populate : {
                 documents : {
-                    fields   : ["uuid"],
+                    fields   : ["uuid", "name"],
                     populate : {
                         user : {
                             fields   : ["name, middleName, lastName"],
