@@ -12,14 +12,14 @@
   },
   "pluginOptions": {},
   "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
     "uuid": {
       "type": "string",
       "unique": true,
       "required": false
-    },
-    "name": {
-      "type": "string",
-      "required": true
     },
     "isActive": {
       "type": "boolean",

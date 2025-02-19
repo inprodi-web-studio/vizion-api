@@ -897,8 +897,8 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
     draftAndPublish: false;
   };
   attributes: {
-    uuid: Attribute.String & Attribute.Unique;
     name: Attribute.String & Attribute.Required;
+    uuid: Attribute.String & Attribute.Unique;
     isActive: Attribute.Boolean &
       Attribute.Required &
       Attribute.DefaultTo<true>;

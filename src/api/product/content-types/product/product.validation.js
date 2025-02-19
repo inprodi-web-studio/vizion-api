@@ -73,7 +73,7 @@ const updateSchema = yup.object().shape({
         note         : yup.string().nullable(),
     }).strict().nullable(),
     purchaseInfo : yup.object().shape({
-        price : yup.number().required(),
+        price : yup.number().nullable(),
         iva   : yup.string().nullable(),
         unity : yup.string().nullable(),
         note  : yup.string().nullable(),
