@@ -101,9 +101,12 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
                 AND customer_comps.field = 'leadMeta';
         `);
 
+        const estimatesData = await strapi.service( LEAD ).getEstimatesChartData( uuid );
+
         return {
             lead,
-            averageToConvert : averageToConvert[0][0].averageToConvert ?? 0
+            averageToConvert : averageToConvert[0][0].averageToConvert ?? 0,
+            estimatesData
         };
     },
 

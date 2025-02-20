@@ -398,6 +398,76 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         }
     },
 
+    async getEstimatesChartData(uuid) {
+        const chartData = await strapi.db.connection.raw(`
+            WITH lead_estimates AS (
+                SELECT
+                    e.id AS estimate_id
+                FROM
+                    estimates e
+                    JOIN estimates_lead_links ell ON e.id = ell.estimate_id
+                    JOIN leads l ON ell.lead_id = l.id
+                WHERE
+                    l.uuid = '${ uuid }'
+            ),
+            filtered_versions AS (
+                SELECT
+                    id AS version_id,
+                    date
+                FROM
+                    components_estimate_versions
+                WHERE
+                    is_active = 1
+            ),
+            filtered_components AS (
+                SELECT
+                    ec.entity_id AS estimate_id,
+                    fv.version_id,
+                    -- Tomamos el ID de la versión activa
+                    cer.total,
+                    fv.date
+                FROM
+                    estimates_components ec
+                    JOIN filtered_versions fv ON ec.component_id = fv.version_id -- Aquí aseguramos que el component_id de estimates_components lleve a la versión correcta
+                    JOIN components_estimate_versions_components cec ON fv.version_id = cec.entity_id -- Relacionamos con la versión de estimate
+                    JOIN components_estimate_resumes cer ON cec.component_id = cer.id -- Aseguramos que resume sea el correcto
+                WHERE
+                    ec.field = 'versions'
+                    AND cec.field = 'resume'
+            )
+            SELECT
+                fc.date AS date, COALESCE(SUM(fc.total), 0) AS sumatory
+            FROM
+                filtered_components fc
+                JOIN lead_estimates le ON fc.estimate_id = le.estimate_id
+            WHERE
+                fc.date BETWEEN CURDATE() - INTERVAL 1 YEAR
+                AND CURDATE()
+            GROUP BY
+                fc.date
+            ORDER BY
+                fc.date DESC;
+        `);
+
+        const dataArray = chartData[0];
+        const resultObject = {};
+
+        const today = new Date();
+        const startDate = new Date();
+        startDate.setDate(today.getDate() - 365);
+      
+        for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
+          const dateStr = d.toISOString().split('T')[0];
+          resultObject[dateStr] = 0;
+        }
+      
+        dataArray.forEach(item => {
+          resultObject[item.date] = item.sumatory;
+        });
+      
+        return resultObject;
+    },
+
     async prepareLeadData(uuid, data = {}) {
         return await findOneByUuid( uuid, LEAD, {
             fields : [ ...leadFields.fields ],
