@@ -589,6 +589,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
 
         const newDocument = await strapi.entityService.create( DOCUMENT, {
             data : {
+                name : file.name,
                 user : user.id,
             },
         });
