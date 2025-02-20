@@ -628,6 +628,23 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         return updatedCustomer;
     },
 
+    async updateFileName(ctx) {
+        const data = ctx.request.body;
+        const { uuid, documentUuid } = ctx.params;
+
+        await findOneByUuid( uuid, CUSTOMER );
+
+        const { id } = await findOneByUuid( documentUuid, DOCUMENT);
+
+        const updatedDocument = await strapi.entityService.update( DOCUMENT, id, {
+            data : {
+                name : data.name
+            },
+        });
+
+        return updatedDocument;
+    },
+
     async removeFile(ctx) {
         const { uuid, documentUuid } = ctx.params;
 

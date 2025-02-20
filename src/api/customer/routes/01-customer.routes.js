@@ -170,6 +170,14 @@ module.exports = {
       },
       {
         method  : "PUT",
+        path    : "/files/customers/:uuid/:documentUuid",
+        handler : "customer.updateFileName",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PUT",
         path    : "/notes/customers/:uuid/:noteUuid",
         handler : "customer.updateNote",
         config : {
