@@ -470,6 +470,7 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         const newDocument = await strapi.entityService.create( DOCUMENT, {
             data : {
+                name : file.name,
                 user : user.id,
             },
         });
@@ -506,6 +507,23 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
         });
 
         return updatedLead;
+    },
+    
+    async updateFileName(ctx) {
+        const data = ctx.request.body;
+        const { uuid, documentUuid } = ctx.params;
+
+        await findOneByUuid( uuid, LEAD );
+
+        const { id } = await findOneByUuid( documentUuid, DOCUMENT);
+
+        const updatedDocument = await strapi.entityService.update( DOCUMENT, id, {
+            data : {
+                name : data.name
+            },
+        });
+
+        return updatedDocument;
     },
 
     async removeFile(ctx) {
