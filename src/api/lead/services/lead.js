@@ -468,6 +468,84 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         return resultObject;
     },
 
+    async getProductsOfInterest(uuid) {
+        const products = await strapi.db.connection.raw(`
+            WITH lead_estimates AS (
+                -- Obtiene las cotizaciones asociadas al lead especificado
+                SELECT
+                    e.id AS estimate_id
+                FROM
+                    estimates e
+                    JOIN estimates_lead_links ell ON e.id = ell.estimate_id
+                    JOIN leads l ON ell.lead_id = l.id
+                WHERE
+                    l.uuid = '${ uuid }'
+            ),
+            filtered_versions AS (
+                -- Obtiene solo las versiones activas de cotización
+                SELECT
+                    id AS version_id
+                FROM
+                    components_estimate_versions
+                WHERE
+                    is_active = 1
+            ),
+            filtered_items AS (
+                -- Filtra los items dentro de estimates_components relacionados a una versión activa
+                SELECT
+                    ec.entity_id AS estimate_id,
+                    fv.version_id,
+                    ceei.id AS estimate_item_id,
+                    ceei.quantity,
+                    ceei.price,
+                    ceei.iva
+                FROM
+                    estimates_components ec
+                    JOIN filtered_versions fv ON ec.component_id = fv.version_id -- Vincula estimates_components con la versión activa
+                    JOIN components_estimate_versions_components cec ON fv.version_id = cec.entity_id -- Vincula con componentes de la versión
+                    JOIN components_estimate_estimate_items ceei ON cec.component_id = ceei.id -- Vincula con los estimate_items
+                WHERE
+                    ec.field = 'versions'
+                    AND cec.field = 'items'
+            ),
+            products_linked AS (
+                -- Vincula los productos con los estimate_items
+                SELECT
+                    fi.estimate_id,
+                    fi.estimate_item_id,
+                    fi.quantity,
+                    fi.price,
+                    fi.iva,
+                    pl.product_id
+                FROM
+                    filtered_items fi
+                    JOIN components_estimate_estimate_items_product_links pl ON fi.estimate_item_id = pl.estimate_item_id
+            )
+            SELECT
+                p.id AS id,
+                p.uuid AS uuid,
+                p.name AS name,
+                p.sku AS sku,
+                SUM(pl.quantity) AS totalQuantity -- Sumamos la cantidad de cada producto
+            FROM
+                products_linked pl
+                JOIN products p ON pl.product_id = p.id
+                JOIN lead_estimates le ON pl.estimate_id = le.estimate_id
+            GROUP BY
+                p.id,
+                p.uuid,
+                p.name,
+                p.sku
+            ORDER BY
+                totalQuantity DESC -- Ordenamos por la cantidad total de productos cotizados
+            LIMIT 15;  -- Nos aseguramos de traer solo 15 productos únicos
+        `);
+
+        const dataArray = products[0];
+      
+        return dataArray;
+    },
+
     async prepareLeadData(uuid, data = {}) {
         return await findOneByUuid( uuid, LEAD, {
             fields : [ ...leadFields.fields ],

@@ -103,10 +103,13 @@ module.exports = createCoreController( LEAD, ({ strapi }) => ({
 
         const estimatesData = await strapi.service( LEAD ).getEstimatesChartData( uuid );
 
+        const productsOfInterest = await strapi.service( LEAD ).getProductsOfInterest( uuid );
+
         return {
             lead,
             averageToConvert : averageToConvert[0][0].averageToConvert ?? 0,
-            estimatesData
+            estimatesData,
+            productsOfInterest
         };
     },
 
