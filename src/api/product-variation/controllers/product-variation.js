@@ -131,6 +131,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                         value : true,
                     },    
                 },
+                stockInfo : true,
             },
         });
 
@@ -149,23 +150,31 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
         const updatedVariation = await strapi.entityService.update( PRODUCT_VARIATION, variation.id, {
             data : {
                 ...data,
-                saleInfo : {
-                    ...data.saleInfo,
-                    ...( (!variation.saleInfo?.priceConfig?.type && data.saleInfo?.price ) ? ({
-                        priceConfig : {
-                            type : "fixed",
-                            config : null,
-                        }
-                    }) : ({
-                        priceConfig : variation.saleInfo?.priceConfig
-                    })),
-                },
-                purchaseInfo : {
-                    ...data.purchaseInfo,
-                },
-                stockInfo : {
-                    ...data.stockInfo,
-                },
+                ...( data.saleInfo && {
+                    saleInfo : {
+                        ...data.saleInfo,
+                        ...( (!variation.saleInfo?.priceConfig?.type && data.saleInfo?.price ) ? ({
+                            priceConfig : {
+                                type : "fixed",
+                                config : null,
+                            }
+                        }) : ({
+                            priceConfig : variation.saleInfo?.priceConfig
+                        })),
+                    },
+                }),
+                ...( data.purchaseInfo && {
+                    purchaseInfo : {
+                        ...data.purchaseInfo,
+                    },
+                }),
+                ...( data.stockInfo && {
+                    stockInfo : {
+                        ...data.stockInfo,
+                        hasBatches : product.stockInfo?.hasBatches || false,
+                        isPerishable : product.stockInfo?.isPerishable || false,
+                    },
+                }),
                 product : product.id,
             },
         });
