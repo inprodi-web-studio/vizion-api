@@ -11,13 +11,10 @@ const tagFields = {
 
 module.exports = createCoreController( TAG, ({ strapi }) => ({
     async find(ctx) {
-        const entity = await strapi.service( TAG ).getEntity();
-
         const filters = {
             $search : [
                 "name",
             ],
-            entity,
         };
 
         const tags = await findMany( TAG, tagFields, filters );

@@ -2,7 +2,7 @@ module.exports = {
     routes : [
       {
         method  : "GET",
-        path    : "/contacts/tags",
+        path    : "/tags",
         handler : "tag.find",
         config : {
           policies : ["global::userContext"],
