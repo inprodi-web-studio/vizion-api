@@ -12,6 +12,11 @@ const warehouseFields = {
         address : true,
         locations : {
             fields : ["uuid", "name", "identifier"],
+            populate : {
+                shelves : {
+                    fields : ["uuid", "name", "xPositions", "yPositions"],
+                }
+            },
         },
     },
 };
