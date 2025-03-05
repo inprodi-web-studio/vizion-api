@@ -45,7 +45,12 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
             };
         }
 
-        const packages = await findMany( PACKAGE, packageFields, filters );
+        const packages = await findMany( PACKAGE, packageFields, {
+            ...filters,
+            $search : [
+                "unity.name",
+            ],
+        });
 
         return packages;
     },
