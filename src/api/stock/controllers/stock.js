@@ -12,6 +12,11 @@ const stockFields = {
     populate : {
         product : {
             fields : ["uuid", "name", "sku", "type"],
+            populate : {
+                images : {
+                    fields : ["url"],
+                },
+            },
         },
         badge : {
             fields : ["uuid", "name", "expirationDate"],
