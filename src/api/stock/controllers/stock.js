@@ -1,58 +1,55 @@
 const { STOCK, WAREHOUSE, STOCK_LOCATION, PRODUCT, PRODUCT_VARIATION, PRODUCT_BADGE, PACKAGE } = require('../../../constants/models');
-const { pop } = require('../../../constants/regimes');
 const { BadRequestError } = require('../../../helpers/errors');
-const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const product = require('../../product/controllers/product');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const stockFields = {
-    fields : ["uuid", "quantity", "packageQuantity", "positionPartition"],
+    select : ["uuid", "quantity", "packageQuantity", "positionPartition"],
     populate : {
         product : {
-            fields : ["uuid", "name", "sku", "type"],
+            select : ["uuid", "name", "sku", "type"],
             populate : {
                 images : {
-                    fields : ["url"],
+                    select : ["url"],
                 },
             },
         },
         badge : {
-            fields : ["uuid", "name", "expirationDate"],
+            select : ["uuid", "name", "expirationDate"],
         },
         variation : {
-            fields : ["uuid", "name", "sku"],
+            select : ["uuid", "name", "sku"],
             populate : {
                 values : {
-                    fields : ["uuid", "name"],
+                    select : ["uuid", "name"],
                     populate : {
                         attribute : {
-                            fields : ["uuid", "name"],
+                            select : ["uuid", "name"],
                         },
                     },
                 }
             },
         },
         unity : {
-            fields : ["uuid", "name", "abbreviation"],
+            select : ["uuid", "name", "abbreviation"],
         },
         package : {
-            fields : ["uuid", "conversionRate", "realConversion"],
+            select : ["uuid", "conversionRate", "realConversion"],
             populate : {
                 unity : {
-                    fields : ["uuid", "name", "abbreviation"],
+                    select : ["uuid", "name", "abbreviation"],
                 }
             },
         },
         position : {
-            fields : ["uuid", "xPosition", "yPosition", "rotation", "partitions"],
+            select : ["uuid", "xPosition", "yPosition", "rotation", "partitions"],
             populate : {
                 shelf : {
-                    fields : ["uuid", "name", "xPositions", "yPositions"],
+                    select : ["uuid", "name", "xPositions", "yPositions"],
                     populate : {
                         positions : {
-                            fields : ["uuid", "xPosition", "yPosition"],
+                            select : ["uuid", "xPosition", "yPosition"],
                         },
                     },
                 },
@@ -219,10 +216,13 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
         if (package) {
             const { id : packageId } = await findOneByUuid( package, PACKAGE );
 
-            const stocks = await findMany( STOCK, stockFields, {
-                package : packageId,
-                location : location.id,
-            }, false );
+            const stocks = await strapi.query( STOCK ).findMany({
+                where : {
+                    package : packageId,
+                    location : location.id,
+                },
+                ...stockFields,
+            });
 
             return stocks;
         }
@@ -230,10 +230,13 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
         if (badge) {
             const { id : badgeId } = await findOneByUuid( badge, PRODUCT_BADGE );
 
-            const stocks = await findMany( STOCK, stockFields, {
-                badge : badgeId,
-                location : location.id,
-            }, false );
+            const stocks = await strapi.query( STOCK ).findMany({
+                where : {
+                    badge : badgeId,
+                    location : location.id,
+                },
+                ...stockFields,
+            });
 
             return stocks;
         }
@@ -241,10 +244,13 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
         if (variation) {
             const { id : variationId } = await findOneByUuid( variation, PRODUCT_VARIATION );
 
-            const stocks = await findMany( STOCK, stockFields, {
-                variation : variationId,
-                location : location.id,
-            }, false );
+            const stocks = await strapi.query( STOCK ).findMany({
+                where : {
+                    variation : variationId,
+                    location : location.id,
+                },
+                ...stockFields,
+            });
 
             return stocks;
         }
@@ -252,17 +258,23 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
         if (product) {
             const { id : productId } = await findOneByUuid( product, PRODUCT );
 
-            const stocks = await findMany( STOCK, stockFields, {
-                product : productId,
-                location : location.id,
-            }, false );
+            const stocks = await strapi.query( STOCK ).findMany({
+                where : {
+                    product : productId,
+                    location : location.id,
+                },
+                ...stockFields,
+            });
 
             return stocks;
         }
 
-        const stocks = await findMany( STOCK, stockFields, {
-            location : location.id,
-        }, false );
+        const stocks = await strapi.query( STOCK ).findMany({
+            where : {
+                location : location.id,
+            },
+            ...stockFields,
+        });
 
         return stocks;
     },
