@@ -60,15 +60,14 @@ const stockFields = {
 
 module.exports = createCoreController(STOCK, ({ strapi }) => ({
     async find(ctx) {
-        const {uuid, locationUuid} = ctx.params;
+        const { uuid, locationUuid } = ctx.params;
         const { search, pagination } = ctx.query;
-
+    
         const { page, pageSize } = pagination ?? {};
-
-        await findOneByUuid( uuid, WAREHOUSE );
-
-        const location = await findOneByUuid( locationUuid, STOCK_LOCATION );
-
+    
+        await findOneByUuid(uuid, WAREHOUSE);
+        const location = await findOneByUuid(locationUuid, STOCK_LOCATION);
+    
         try {
             const [countResult] = await strapi.db.connection.raw(`
                 SELECT COUNT(DISTINCT p.id) as total
@@ -81,13 +80,13 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                     sl.id = ?
                     AND ( ? IS NULL OR ? = '' OR p.name LIKE ? )
             `, [location.id, search ?? null, search ?? null, `%${search}%`]);
-
-            const current  = page ?? 1;
-            const limit    = pageSize ?? 30;
-            const total    = parseInt( countResult[0].total );
-            const offset   = (current - 1) * limit;
-
-            const [ result ] = await strapi.db.connection.raw(`
+    
+            const current = page ?? 1;
+            const limit = pageSize ?? 30;
+            const total = parseInt(countResult[0].total);
+            const offset = (current - 1) * limit;
+    
+            const [result] = await strapi.db.connection.raw(`
                 SELECT
                     JSON_OBJECT(
                         'uuid', p.uuid,
@@ -128,7 +127,8 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                                 'name', pv.name,
                                 'sku', pv.sku,
                                 'values', vv.variation_values
-                            ), NULL)
+                            ), NULL),
+                            'reservations', COALESCE(sr_data.reservations, JSON_ARRAY())
                         )
                     ) AS stocks
                 FROM
@@ -171,35 +171,48 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                         GROUP BY
                             pv.uuid
                     ) AS vv ON pv.uuid = vv.variation_uuid
+                    LEFT JOIN (
+                        SELECT
+                            srsl.stock_id,
+                            JSON_ARRAYAGG(
+                                JSON_OBJECT(
+                                    'uuid', sr.uuid,
+                                    'quantity', sr.quantity
+                                )
+                            ) AS reservations
+                        FROM
+                            stock_reservations_stock_links AS srsl
+                            JOIN stock_reservations AS sr ON srsl.stock_reservation_id = sr.id
+                        GROUP BY srsl.stock_id
+                    ) AS sr_data ON s.id = sr_data.stock_id
                 WHERE
                     sl.id = ?
                     AND ( ? IS NULL OR ? = '' OR p.name LIKE ? )
                 GROUP BY
-                    p.id
+                    p.id, s.id
                 ORDER BY
                     p.name ASC
                 LIMIT ? OFFSET ?;
             `, [location.id, search ?? null, search ?? null, `%${search}%`, limit, offset]);
-
-            const formatData = result.map( row => ({
-                product : JSON.parse( row.product ),
-                stocks : JSON.parse( row.stocks )
+    
+            const formatData = result.map(row => ({
+                product: JSON.parse(row.product),
+                stocks: JSON.parse(row.stocks)
             }));
-
-            const parsedData = await strapi.service(STOCK).formatStockData( formatData );
-
+    
+            const parsedData = await strapi.service(STOCK).formatStockData(formatData);
+    
             return {
-                results : parsedData,
-                pagination : {
-                    page : parseInt( page ),
-                    pageSize : limit,
+                results: parsedData,
+                pagination: {
+                    page: parseInt(page),
+                    pageSize: limit,
                     pageCount: Math.ceil(total / limit),
                     total,
                 },
             };
         } catch (e) {
             console.log(e);
-
             throw new BadRequestError("Error while getting stock", {
                 key: "stock.sqlError",
                 path: ctx.request.url,

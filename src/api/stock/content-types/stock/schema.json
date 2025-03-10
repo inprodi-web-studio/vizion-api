@@ -63,7 +63,7 @@
     "positionPartition": {
       "type": "integer"
     },
-    "reservation": {
+    "reservations": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::stock-reservation.stock-reservation",

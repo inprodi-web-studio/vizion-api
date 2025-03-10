@@ -25,7 +25,10 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::stock.stock",
-      "inversedBy": "reservation"
+      "inversedBy": "reservations"
+    },
+    "quantity": {
+      "type": "decimal"
     }
   }
 }

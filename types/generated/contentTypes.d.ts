@@ -2422,7 +2422,7 @@ export interface ApiStockStock extends Schema.CollectionType {
       'api::shelf-position.shelf-position'
     >;
     positionPartition: Attribute.Integer;
-    reservation: Attribute.Relation<
+    reservations: Attribute.Relation<
       'api::stock.stock',
       'oneToMany',
       'api::stock-reservation.stock-reservation'
@@ -2650,6 +2650,7 @@ export interface ApiStockReservationStockReservation
       'manyToOne',
       'api::stock.stock'
     >;
+    quantity: Attribute.Decimal;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
