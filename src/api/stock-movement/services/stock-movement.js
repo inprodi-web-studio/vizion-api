@@ -453,12 +453,26 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 });
             }
 
-            // Actualiza la cantidad de stock
-            await strapi.db.connection.raw(`
-                UPDATE stocks
-                SET quantity = ?, package_quantity = ?, position_partition = ?
-                WHERE id = ?;
-            `, [newQuantity, packageQuantity, partition ?? null, stockId]);
+            if (newQuantity === 0) {
+                // Eliminar stock si la cantidad es 0
+                await strapi.db.connection.raw(`DELETE FROM stocks_product_links WHERE stock_id = ?;`, [stockId]);
+                await strapi.db.connection.raw(`DELETE FROM stocks_location_links WHERE stock_id = ?;`, [stockId]);
+                await strapi.db.connection.raw(`DELETE FROM stocks_unity_links WHERE stock_id = ?;`, [stockId]);
+                await strapi.db.connection.raw(`DELETE FROM stocks_badge_links WHERE stock_id = ?;`, [stockId]);
+                await strapi.db.connection.raw(`DELETE FROM stocks_variation_links WHERE stock_id = ?;`, [stockId]);
+                await strapi.db.connection.raw(`DELETE FROM stocks_package_links WHERE stock_id = ?;`, [stockId]);
+                await strapi.db.connection.raw(`DELETE FROM stocks_position_links WHERE stock_id = ?;`, [stockId]);
+    
+                await strapi.db.connection.raw(`DELETE FROM stocks WHERE id = ?;`, [stockId]);
+    
+            } else {
+                // Actualizar cantidad del stock
+                await strapi.db.connection.raw(`
+                    UPDATE stocks
+                    SET quantity = ?, package_quantity = ?, position_partition = ?
+                    WHERE id = ?;
+                `, [newQuantity, packageQuantity, partition ?? null, stockId]);
+            }
 
             await strapi.service( STOCK_MOVEMENT ).registerStockMovement(data, type);
         } catch (e) {
