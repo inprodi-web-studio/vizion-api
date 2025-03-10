@@ -86,7 +86,7 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
             const total = parseInt(countResult[0].total);
             const offset = (current - 1) * limit;
     
-            const [result] = await strapi.db.connection.raw(`
+            const [ result ] = await strapi.db.connection.raw(`
                 SELECT
                     JSON_OBJECT(
                         'uuid', p.uuid,
@@ -128,7 +128,19 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                                 'sku', pv.sku,
                                 'values', vv.variation_values
                             ), NULL),
-                            'reservations', COALESCE(sr_data.reservations, JSON_ARRAY())
+                            'reservations', (
+                                SELECT IFNULL(
+                                    JSON_ARRAYAGG(
+                                        JSON_OBJECT(
+                                            'uuid', sr.uuid,
+                                            'quantity', sr.quantity
+                                        )
+                                    ), JSON_ARRAY()
+                                )
+                                FROM stock_reservations_stock_links AS srsl
+                                JOIN stock_reservations AS sr ON srsl.stock_reservation_id = sr.id
+                                WHERE srsl.stock_id = s.id
+                            )
                         )
                     ) AS stocks
                 FROM
@@ -171,25 +183,11 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                         GROUP BY
                             pv.uuid
                     ) AS vv ON pv.uuid = vv.variation_uuid
-                    LEFT JOIN (
-                        SELECT
-                            srsl.stock_id,
-                            JSON_ARRAYAGG(
-                                JSON_OBJECT(
-                                    'uuid', sr.uuid,
-                                    'quantity', sr.quantity
-                                )
-                            ) AS reservations
-                        FROM
-                            stock_reservations_stock_links AS srsl
-                            JOIN stock_reservations AS sr ON srsl.stock_reservation_id = sr.id
-                        GROUP BY srsl.stock_id
-                    ) AS sr_data ON s.id = sr_data.stock_id
                 WHERE
                     sl.id = ?
                     AND ( ? IS NULL OR ? = '' OR p.name LIKE ? )
                 GROUP BY
-                    p.id, s.id
+                    p.id
                 ORDER BY
                     p.name ASC
                 LIMIT ? OFFSET ?;
