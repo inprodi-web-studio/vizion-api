@@ -110,6 +110,12 @@
     },
     "cancelledAt": {
       "type": "datetime"
+    },
+    "reservations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock-reservation.stock-reservation",
+      "mappedBy": "sale"
     }
   }
 }

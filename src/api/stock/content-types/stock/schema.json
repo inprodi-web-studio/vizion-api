@@ -62,6 +62,12 @@
     },
     "positionPartition": {
       "type": "integer"
+    },
+    "reservation": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock-reservation.stock-reservation",
+      "mappedBy": "stock"
     }
   }
 }

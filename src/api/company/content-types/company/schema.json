@@ -91,6 +91,9 @@
     },
     "primaryColor": {
       "type": "string"
+    },
+    "applications": {
+      "type": "json"
     }
   }
 }

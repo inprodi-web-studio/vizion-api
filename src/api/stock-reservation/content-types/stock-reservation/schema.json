@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "stock_reservations",
+  "info": {
+    "singularName": "stock-reservation",
+    "pluralName": "stock-reservations",
+    "displayName": "Stock Reservation",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "sale": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sale.sale",
+      "inversedBy": "reservations"
+    },
+    "stock": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::stock.stock",
+      "inversedBy": "reservation"
+    }
+  }
+}
