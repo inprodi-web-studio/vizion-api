@@ -14,7 +14,7 @@ const userFields = {
             fields : ["id", "name"],
         },
         company : {
-            fields : ["uuid", "name", "isActive", "primaryColor", "completedOnboarding", "urlParam"],
+            fields : ["uuid", "name", "isActive", "primaryColor", "completedOnboarding", "urlParam", "applications"],
             populate : {
                 logotype : {
                     fields : ["url"],
