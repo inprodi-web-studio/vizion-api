@@ -298,7 +298,10 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
                 AND u.id = ?
                 AND ( ? IS NULL OR pb.id = ? )
                 AND ( ? IS NULL OR pv.id = ? )
-                AND ( ? IS NULL OR p.id = ? )
+                AND (
+                    ? IS NULL AND p.id IS NULL 
+                    OR ? IS NOT NULL AND p.id = ?
+                )
                 AND ( ? IS NULL OR sh.id = ? )
                 AND ( ? IS NULL OR shpos.x_position = ? )
                 AND ( ? IS NULL OR shpos.y_position = ? )
@@ -312,6 +315,7 @@ module.exports = createCoreService(STOCK_MOVEMENT, ({ strapi }) => ({
             badge ?? null, 
             variation ?? null, 
             variation ?? null,
+            package ?? null,
             package ?? null,
             package ?? null,
             shelf ?? null,
