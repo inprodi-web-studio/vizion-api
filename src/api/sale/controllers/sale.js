@@ -1,5 +1,5 @@
 const { auth } = require("strapi-provider-upload-do");
-const { SALE, PREFERENCE } = require("../../../constants/models");
+const { SALE, PREFERENCE, STOCK_RESERVATION } = require("../../../constants/models");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { validateCreate } = require("../content-types/sale/sale.validation");
@@ -63,6 +63,8 @@ const saleFields = {
                         packages : {
                             count : true,
                         },
+                        stockInfo : true,
+                        saleInfo : true
                     },
                 },
                 discount : true,
@@ -166,6 +168,10 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
             await strapi.service(SALE).handleCreditSale( data, newSale );
 
             await strapi.service(SALE).createDispatchesItems( newSale );
+
+            if (company.applications.includes("inventories")) {
+                await strapi.service( STOCK_RESERVATION ).registerReservations( newSale.items );
+            }
         }
 
         await strapi.service(SALE).updateCustomerMeta(data);
@@ -196,6 +202,7 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
     },
 
     async authorize(ctx) {
+        const {company} = ctx.state;
         const { uuid } = ctx.params;
 
         const sale = await findOneByUuid( uuid, SALE, {
@@ -220,7 +227,11 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         
         await strapi.service(SALE).handleCreditSale({customer : sale.customer.id, customerCredit : sale.customer.credit, paymentScheme : sale.paymentScheme}, sale);
         await strapi.service(SALE).updateCustomerMeta({ customer : sale.customer.id, date : sale.date });
-        await strapi.service(SALE).createDispatchesItems( updatedSale );
+
+        if (company.applications.includes("inventories")) {
+            await strapi.service( STOCK_RESERVATION ).registerReservations( updatedSale.items, updatedSale.id );
+            // await strapi.service(SALE).createDispatchesItems( updatedSale );
+        }
         
         return updatedSale;
     },

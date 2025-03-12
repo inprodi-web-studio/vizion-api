@@ -2534,6 +2534,7 @@ export interface ApiStockLocationStockLocation extends Schema.CollectionType {
       'oneToMany',
       'api::shelf.shelf'
     >;
+    reservationOrder: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

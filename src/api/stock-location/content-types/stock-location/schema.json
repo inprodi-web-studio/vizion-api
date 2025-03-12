@@ -44,6 +44,9 @@
       "relation": "oneToMany",
       "target": "api::shelf.shelf",
       "mappedBy": "location"
+    },
+    "reservationOrder": {
+      "type": "integer"
     }
   }
 }

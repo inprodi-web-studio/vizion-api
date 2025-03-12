@@ -34,6 +34,7 @@ module.exports = {
     CREDIT_MOVEMENT     : "api::credit-movement.credit-movement",
     CUSTOMER_CREDIT     : "api::customer-credit.customer-credit",
     PRODUCT_CATEGORY    : "api::product-category.product-category",
+    STOCK_RESERVATION   : "api::stock-reservation.stock-reservation",
     ADJUSTMENT_MOTIVE   : "api::adjustment-motive.adjustment-motive",
     PRODUCT_ATTRIBUTE   : "api::product-attribute.product-attribute",
     PRODUCT_VARIATION   : "api::product-variation.product-variation",

@@ -331,8 +331,6 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
     },
 
     async createDispatchesItems(sale) {
-        const ctx = strapi.requestContext.get();
-
         let promises = [];
 
         for (const item of sale.items) {
