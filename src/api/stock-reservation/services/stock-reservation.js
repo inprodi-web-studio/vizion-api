@@ -4,7 +4,7 @@ const { BadRequestError } = require('../../../helpers/errors');
 const { createCoreService } = require('@strapi/strapi').factories;
 
 module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
-    async registerReservations(items, saleId) {
+    async registerReservations(items, saleId, releaseId) {
         const ctx = strapi.requestContext.get();
         const stockItems = items.filter( i => i.product?.stockInfo?.id );
 
@@ -13,7 +13,7 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
 
             for (let i = 0; i < stockItems.length; i++) {
                 const item = stockItems[i];
-                await strapi.service( STOCK_RESERVATION ).distributeReservation(item, saleId);
+                await strapi.service( STOCK_RESERVATION ).distributeReservation(item, saleId, releaseId);
             }
 
             await strapi.db.connection.raw('COMMIT;');
@@ -34,7 +34,7 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
         }
     },
 
-    async distributeReservation(item, saleId) {
+    async distributeReservation(item, saleId, releaseId) {
         const ctx = strapi.requestContext.get();
 
         try {
@@ -79,7 +79,8 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
                 CASE WHEN ? IS NOT NULL AND p.uuid = ? THEN 0 ELSE 1 END,
                 l.reservation_order ASC,
                 CASE WHEN pb.expiration_date IS NULL THEN 1 ELSE 0 END,
-                pb.expiration_date ASC;
+                pb.expiration_date ASC
+              FOR UPDATE;
           `, [
             item.product.id,
             (item.variation ? item.variation.id : null),
@@ -127,11 +128,11 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
               INSERT INTO stock_reservations_stock_links (stock_reservation_id, stock_id)
               VALUES (?, ?);
             `, [reservationId, reservation.stock_id]);
-      
+
             await strapi.db.connection.raw(`
-              INSERT INTO stock_reservations_sale_links (stock_reservation_id, sale_id)
+              INSERT INTO stock_releases_reservations_links (stock_release_id, stock_reservation_id)
               VALUES (?, ?);
-            `, [reservationId, saleId]);
+            `, [releaseId, reservationId]);
           }
       
         } catch (e) {

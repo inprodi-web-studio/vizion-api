@@ -2270,11 +2270,6 @@ export interface ApiSaleSale extends Schema.CollectionType {
     >;
     isCancelled: Attribute.Boolean & Attribute.DefaultTo<false>;
     cancelledAt: Attribute.DateTime;
-    reservations: Attribute.Relation<
-      'api::sale.sale',
-      'oneToMany',
-      'api::stock-reservation.stock-reservation'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &
@@ -2627,6 +2622,70 @@ export interface ApiStockMovementStockMovement extends Schema.CollectionType {
   };
 }
 
+export interface ApiStockReleaseStockRelease extends Schema.CollectionType {
+  collectionName: 'stock_releases';
+  info: {
+    singularName: 'stock-release';
+    pluralName: 'stock-releases';
+    displayName: 'Stock Release';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    product: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToOne',
+      'api::product.product'
+    >;
+    quantity: Attribute.Decimal;
+    realQuantity: Attribute.Decimal;
+    unity: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToOne',
+      'api::unity.unity'
+    >;
+    package: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToOne',
+      'api::package.package'
+    >;
+    variation: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToOne',
+      'api::product-variation.product-variation'
+    >;
+    sale: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToOne',
+      'api::sale.sale'
+    >;
+    releaseDate: Attribute.Date;
+    reservations: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToMany',
+      'api::stock-reservation.stock-reservation'
+    >;
+    isComplete: Attribute.Boolean;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiStockReservationStockReservation
   extends Schema.CollectionType {
   collectionName: 'stock_reservations';
@@ -2641,11 +2700,6 @@ export interface ApiStockReservationStockReservation
   };
   attributes: {
     uuid: Attribute.String;
-    sale: Attribute.Relation<
-      'api::stock-reservation.stock-reservation',
-      'manyToOne',
-      'api::sale.sale'
-    >;
     stock: Attribute.Relation<
       'api::stock-reservation.stock-reservation',
       'manyToOne',
@@ -3049,6 +3103,7 @@ declare module '@strapi/types' {
       'api::stock-dispatch.stock-dispatch': ApiStockDispatchStockDispatch;
       'api::stock-location.stock-location': ApiStockLocationStockLocation;
       'api::stock-movement.stock-movement': ApiStockMovementStockMovement;
+      'api::stock-release.stock-release': ApiStockReleaseStockRelease;
       'api::stock-reservation.stock-reservation': ApiStockReservationStockReservation;
       'api::suscription-payment.suscription-payment': ApiSuscriptionPaymentSuscriptionPayment;
       'api::suscription-plan.suscription-plan': ApiSuscriptionPlanSuscriptionPlan;

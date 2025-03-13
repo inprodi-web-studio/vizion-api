@@ -1,5 +1,5 @@
 const { auth } = require("strapi-provider-upload-do");
-const { SALE, PREFERENCE, STOCK_RESERVATION } = require("../../../constants/models");
+const { SALE, PREFERENCE, STOCK_RESERVATION, STOCK_RELEASE } = require("../../../constants/models");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { validateCreate } = require("../content-types/sale/sale.validation");
@@ -166,11 +166,10 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         if (!preference.config.needsAuthorization) {
             await strapi.service(SALE).handleCreditSale( data, newSale );
-
-            await strapi.service(SALE).createDispatchesItems( newSale );
-
+ 
             if (company.applications.includes("inventories")) {
-                await strapi.service( STOCK_RESERVATION ).registerReservations( newSale.items );
+                await strapi.service( STOCK_RELEASE ).createStockReleases( newSale );
+                // await strapi.service( STOCK_RESERVATION ).registerReservations( newSale.items );
             }
         }
 
@@ -229,7 +228,8 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
         await strapi.service(SALE).updateCustomerMeta({ customer : sale.customer.id, date : sale.date });
 
         if (company.applications.includes("inventories")) {
-            await strapi.service( STOCK_RESERVATION ).registerReservations( updatedSale.items, updatedSale.id );
+            await strapi.service( STOCK_RELEASE ).createStockReleases( updatedSale );
+            // await strapi.service( STOCK_RESERVATION ).registerReservations( updatedSale.items, updatedSale.id );
             // await strapi.service(SALE).createDispatchesItems( updatedSale );
         }
         
