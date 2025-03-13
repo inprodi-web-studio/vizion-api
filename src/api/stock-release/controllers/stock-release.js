@@ -6,7 +6,7 @@ const stock = require('../../stock/controllers/stock');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const releaseFields = {
-    fields : ["uuid", "quantity", "realQuantity", "releaseDate", "isComplete"],
+    fields : ["uuid", "quantity", "realQuantity", "releaseDate", "isCompleted"],
     populate : {
         product : {
             select : ["uuid", "name", "sku", "type"],

@@ -54,7 +54,7 @@
       "relation": "oneToMany",
       "target": "api::stock-reservation.stock-reservation"
     },
-    "isComplete": {
+    "isCompleted": {
       "type": "boolean"
     }
   }

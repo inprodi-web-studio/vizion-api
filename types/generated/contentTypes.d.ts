@@ -2668,7 +2668,7 @@ export interface ApiStockReleaseStockRelease extends Schema.CollectionType {
       'oneToMany',
       'api::stock-reservation.stock-reservation'
     >;
-    isComplete: Attribute.Boolean;
+    isCompleted: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
