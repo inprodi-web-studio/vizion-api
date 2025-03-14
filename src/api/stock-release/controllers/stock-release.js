@@ -47,15 +47,18 @@ const releaseFields = {
 
 module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
     async find(ctx) {
+        const company = ctx.state.company;
+
         const filters = {
             $search : [
                 "product.name",
                 "product.sku",
                 "variation.sku",
-            ]
+            ],
+            company : company.id,
         };
 
-        const releases = await findMany( STOCK_RELEASE, releaseFields, filters );
+        const releases = await findMany( STOCK_RELEASE, releaseFields, filters, false );
 
         return releases;
     },
