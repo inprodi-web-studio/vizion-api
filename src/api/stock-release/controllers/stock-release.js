@@ -58,7 +58,9 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
                 "product.sku",
                 "variation.sku",
             ],
-            company : company.id,
+            sale : {
+                company : company.id
+            },
         };
 
         const releases = await findMany( STOCK_RELEASE, releaseFields, filters, false );
