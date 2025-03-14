@@ -42,6 +42,9 @@ const releaseFields = {
         sale : {
             fields : ["uuid", "fol", "subject"],
         },
+        reservations : {
+            fields : ["uuid", "quantity"],
+        },
     },
 };
 
