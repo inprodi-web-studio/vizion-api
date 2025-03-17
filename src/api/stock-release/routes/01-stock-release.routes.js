@@ -9,6 +9,14 @@ module.exports = {
         },
       },
       {
+        method  : "GET",
+        path    : "/stock-releases/:uuid",
+        handler : "stock-release.findOne",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/stock-releases/:uuid/reserve",
         handler : "stock-release.reserveStock",

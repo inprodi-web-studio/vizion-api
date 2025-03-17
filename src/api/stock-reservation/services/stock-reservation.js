@@ -110,9 +110,15 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
           }
 
           if (remainingQuantity > 0) {
+            const reservedSoFar = totalToReserve - remainingQuantity;
+
             throw new BadRequestError("There is not enough stock", {
-              path: ctx.request.url,
-              key: "stock-reservation.notEnoughStock",
+              path : ctx.request.url,
+              key : "stock-reservation.notEnoughStock",
+              params : {
+                reserved: reservedSoFar,
+                pending: remainingQuantity
+              }
             });
           }
       

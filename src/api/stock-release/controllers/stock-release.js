@@ -70,6 +70,14 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
         return releases;
     },
 
+    async findOne(ctx) {
+        const { uuid } = ctx.params;
+
+        const release = await findOneByUuid( uuid, STOCK_RELEASE, releaseFields );
+
+        return release;
+    },
+
     async reserveStock(ctx) {
         const { uuid } = ctx.params;
         const data = ctx.request.body;
