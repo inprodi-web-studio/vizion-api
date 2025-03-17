@@ -18,6 +18,7 @@ const formatError = ( error ) => {
       path       : error.path,
       message    : error.message,
       key        : error.key,
+      params     : error.params
     },
   };
 };
