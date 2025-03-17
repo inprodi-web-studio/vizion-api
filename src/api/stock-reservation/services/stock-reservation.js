@@ -4,7 +4,7 @@ const { BadRequestError } = require('../../../helpers/errors');
 const { createCoreService } = require('@strapi/strapi').factories;
 
 module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
-    async registerReservations(items, saleId, releaseId) {
+    async registerReservations(items, releaseId) {
         const ctx = strapi.requestContext.get();
         const stockItems = items.filter( i => i.product?.stockInfo?.id );
 
@@ -13,7 +13,7 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
 
             for (let i = 0; i < stockItems.length; i++) {
                 const item = stockItems[i];
-                await strapi.service( STOCK_RESERVATION ).distributeReservation(item, saleId, releaseId);
+                await strapi.service( STOCK_RESERVATION ).distributeReservation(item, releaseId);
             }
 
             await strapi.db.connection.raw('COMMIT;');
@@ -34,13 +34,13 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
         }
     },
 
-    async distributeReservation(item, saleId, releaseId) {
+    async distributeReservation(item, releaseId) {
         const ctx = strapi.requestContext.get();
 
         try {
           const totalToReserve = item.package 
           ? item.quantity * item.realQuantity
-          : item.quantity;
+          : item.toReserve;
 
           const [stocks] = await strapi.db.connection.raw(`
             SELECT

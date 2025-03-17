@@ -15,6 +15,7 @@ class BadRequestError extends Error {
     this.message = message;
     this.path    = details.path;
     this.key     = details.key;
+    this.params  = details.params;
   }
 }
 

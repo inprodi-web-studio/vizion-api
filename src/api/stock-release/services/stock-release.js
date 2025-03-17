@@ -6,10 +6,12 @@ const { createCoreService } = require('@strapi/strapi').factories;
 
 module.exports = createCoreService( STOCK_RELEASE, ({ strapi }) => ({
     async createStockReleases({items, id, deliveryDate}) {
+        const stockItems = items.filter( i => i.product?.stockInfo?.id );
+
         let promises = [];
 
-        for ( let i = 0; i < items.length; i++ ) {
-            const item = items[i];
+        for ( let i = 0; i < items.stockItems; i++ ) {
+            const item = stockItems[i];
             const releaseDate = dayjs( deliveryDate ).subtract( 1, "day" ).format("YYYY-MM-DD");
 
             promises.push( strapi.entityService.create( STOCK_RELEASE, {
