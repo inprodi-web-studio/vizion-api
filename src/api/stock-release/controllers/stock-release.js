@@ -46,6 +46,38 @@ const releaseFields = {
         },
         reservations : {
             fields : ["uuid", "quantity"],
+            populate : {
+                stock : {
+                    fields : ["uuid", "quantity", "packageQuantity", "positionPartition"],
+                    populate : {
+                        location : {
+                            fields : ["uuid", "name"]
+                        },
+                        badge : {
+                            fields : ["uuid", "name", "expirationDate"]
+                        },
+                        unity : {
+                            fields : ["uuid", "name", "abbreviation"]
+                        },
+                        package : {
+                            fields : ["uuid", "conversionRate", "realConversion"],
+                            populate : {
+                                unity : {
+                                    fields : ["uuid", "name", "abbreviation"]
+                                }
+                            },
+                        },
+                        position : {
+                            fields : ["uuid", "xPosition", "yPosition"],
+                            populate : {
+                                shelf : {
+                                    fields : ["uuid", "name"]
+                                }
+                            },
+                        },
+                    },
+                }
+            },
         },
     },
 };
