@@ -100,23 +100,6 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
 
         await strapi.service( STOCK_RESERVATION ).registerReservations([release], release.id);
 
-        const newRelease = await findOneByUuid( uuid, STOCK_RELEASE, releaseFields );
-
-        const newTotalReserved = newRelease.reservations.reduce((acc, r) => {
-            return acc + r.quantity;
-        }, 0);
-
-        if ( newTotalReserved === release.quantity ) {
-            const updatedRelease = await strapi.entityService.update( STOCK_RELEASE, release.id, {
-                data : {
-                    isCompleted : true,
-                },
-                ...releaseFields
-            });
-
-            return updatedRelease;
-        }
-
-        return newRelease;
+        return release;
     },
 }));
