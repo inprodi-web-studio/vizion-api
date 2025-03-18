@@ -206,7 +206,7 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
         const newDispatch = await strapi.entityService.create( STOCK_DISPATCH, {
             data : {
                 product : release.product.id,
-                variation : release.variation.id,
+                variation : release.variation?.id,
                 sale : release.sale.id,
                 unity : release.unity.id,
                 package : release.package?.id,
