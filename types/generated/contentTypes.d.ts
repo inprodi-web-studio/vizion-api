@@ -2479,7 +2479,11 @@ export interface ApiStockDispatchStockDispatch extends Schema.CollectionType {
       'oneToOne',
       'api::product-variation.product-variation'
     >;
-    isPicked: Attribute.Boolean;
+    reservations: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'manyToMany',
+      'api::stock-reservation.stock-reservation'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2669,6 +2673,11 @@ export interface ApiStockReleaseStockRelease extends Schema.CollectionType {
       'api::stock-reservation.stock-reservation'
     >;
     isCompleted: Attribute.Boolean;
+    dispatches: Attribute.Relation<
+      'api::stock-release.stock-release',
+      'oneToMany',
+      'api::stock-dispatch.stock-dispatch'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -2706,6 +2715,11 @@ export interface ApiStockReservationStockReservation
       'api::stock.stock'
     >;
     quantity: Attribute.Decimal;
+    dispatches: Attribute.Relation<
+      'api::stock-reservation.stock-reservation',
+      'manyToMany',
+      'api::stock-dispatch.stock-dispatch'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

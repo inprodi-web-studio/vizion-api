@@ -56,6 +56,11 @@
     },
     "isCompleted": {
       "type": "boolean"
+    },
+    "dispatches": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock-dispatch.stock-dispatch"
     }
   }
 }

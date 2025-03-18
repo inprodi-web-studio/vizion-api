@@ -24,5 +24,13 @@ module.exports = {
           policies : ["global::userContext"],
         },
       },
+      {
+        method  : "POST",
+        path    : "/stock-releases/:uuid/release",
+        handler : "stock-release.releaseStock",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
     ],
 }

@@ -23,6 +23,12 @@
     },
     "quantity": {
       "type": "decimal"
+    },
+    "dispatches": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::stock-dispatch.stock-dispatch",
+      "inversedBy": "reservations"
     }
   }
 }

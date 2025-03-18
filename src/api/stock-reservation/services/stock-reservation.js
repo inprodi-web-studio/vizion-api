@@ -140,7 +140,6 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
               VALUES (?, ?);
             `, [releaseId, reservationId]);
           }
-      
         } catch (e) {
           throw e;
         }

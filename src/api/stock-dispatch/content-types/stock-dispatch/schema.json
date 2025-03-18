@@ -46,8 +46,11 @@
       "relation": "oneToOne",
       "target": "api::product-variation.product-variation"
     },
-    "isPicked": {
-      "type": "boolean"
+    "reservations": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::stock-reservation.stock-reservation",
+      "mappedBy": "dispatches"
     }
   }
 }
