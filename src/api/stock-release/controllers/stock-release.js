@@ -214,13 +214,16 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
                 quantity : data.quantity,
                 realQuantity : data.quantity
             },
-        })
+        });
+
+        const isCompleted = totalReleased + data.quantity === release.quantity;
 
         const updatedRelease = await strapi.entityService.update( STOCK_RELEASE, release.id, {
             data : {
                 dispatches : {
                     connect : [newDispatch.id],
                 },
+                isCompleted,
             },
             ...releaseFields
         });
