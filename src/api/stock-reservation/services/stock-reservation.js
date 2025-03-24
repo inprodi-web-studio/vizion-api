@@ -38,10 +38,6 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
         const ctx = strapi.requestContext.get();
 
         try {
-          const totalToReserve = item.package 
-          ? item.quantity * item.realQuantity
-          : item.toReserve;
-
           const [stocks] = await strapi.db.connection.raw(`
             SELECT
                 spl.stock_id,
@@ -89,7 +85,7 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
             (item.package ? item.package.uuid : null)
           ]);
       
-          let remainingQuantity = totalToReserve;
+          let remainingQuantity = item.toReserve;
           const reservationsToCreate = [];
           
           for (const stock of stocks) {
@@ -110,7 +106,7 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
           }
 
           if (remainingQuantity > 0) {
-            const reservedSoFar = totalToReserve - remainingQuantity;
+            const reservedSoFar = item.toReserve - remainingQuantity;
 
             throw new BadRequestError("There is not enough stock", {
               path : ctx.request.url,

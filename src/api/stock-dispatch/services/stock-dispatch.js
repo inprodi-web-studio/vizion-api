@@ -8,9 +8,14 @@ module.exports = createCoreService( STOCK_DISPATCH, ({ strapi }) => ({
         const reservations = [];
       
         for (const reservation of release.reservations) {
-          const dispatched = reservation.dispatches.reduce((acc, d) => acc + d.quantity, 0);
+          const dispatched = reservation.dispatches.reduce((acc, d) => {
+            const quantity = d.package ? d.realQuantity : d.quantity;
+            
+            return acc + quantity;
+          }, 0);
+
           const available = reservation.quantity - dispatched;
-      
+
           if (available > 0) {
             const allocate = Math.min(available, remaining);
 

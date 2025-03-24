@@ -2452,33 +2452,7 @@ export interface ApiStockDispatchStockDispatch extends Schema.CollectionType {
   };
   attributes: {
     uuid: Attribute.String;
-    sale: Attribute.Relation<
-      'api::stock-dispatch.stock-dispatch',
-      'oneToOne',
-      'api::sale.sale'
-    >;
-    product: Attribute.Relation<
-      'api::stock-dispatch.stock-dispatch',
-      'oneToOne',
-      'api::product.product'
-    >;
     quantity: Attribute.Decimal;
-    realQuantity: Attribute.Decimal;
-    unity: Attribute.Relation<
-      'api::stock-dispatch.stock-dispatch',
-      'oneToOne',
-      'api::unity.unity'
-    >;
-    package: Attribute.Relation<
-      'api::stock-dispatch.stock-dispatch',
-      'oneToOne',
-      'api::package.package'
-    >;
-    variation: Attribute.Relation<
-      'api::stock-dispatch.stock-dispatch',
-      'oneToOne',
-      'api::product-variation.product-variation'
-    >;
     reservations: Attribute.Relation<
       'api::stock-dispatch.stock-dispatch',
       'manyToMany',

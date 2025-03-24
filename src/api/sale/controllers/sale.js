@@ -169,7 +169,6 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
  
             if (company.applications.includes("inventories")) {
                 await strapi.service( STOCK_RELEASE ).createStockReleases( newSale );
-                // await strapi.service( STOCK_RESERVATION ).registerReservations( newSale.items );
             }
         }
 
@@ -229,8 +228,6 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
 
         if (company.applications.includes("inventories")) {
             await strapi.service( STOCK_RELEASE ).createStockReleases( updatedSale );
-            // await strapi.service( STOCK_RESERVATION ).registerReservations( updatedSale.items, updatedSale.id );
-            // await strapi.service(SALE).createDispatchesItems( updatedSale );
         }
         
         return updatedSale;

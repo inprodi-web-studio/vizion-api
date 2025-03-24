@@ -15,36 +15,8 @@
     "uuid": {
       "type": "string"
     },
-    "sale": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::sale.sale"
-    },
-    "product": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::product.product"
-    },
     "quantity": {
       "type": "decimal"
-    },
-    "realQuantity": {
-      "type": "decimal"
-    },
-    "unity": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::unity.unity"
-    },
-    "package": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::package.package"
-    },
-    "variation": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::product-variation.product-variation"
     },
     "reservations": {
       "type": "relation",

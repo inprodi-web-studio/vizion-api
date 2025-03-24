@@ -78,24 +78,13 @@ const releaseFields = {
                     },
                 },
                 dispatches : {
-                    fields : ["uuid", "quantity", "realQuantity"],
+                    fields : ["uuid", "quantity"],
                 },
             },
         },
         dispatches : {
-            fields : ["uuid", "quantity", "realQuantity"],
+            fields : ["uuid", "quantity"],
             populate : {
-                unity : {
-                    fields : ["uuid", "name", "abbreviation"]
-                },
-                package : {
-                    fields : ["uuid", "conversionRate", "realConversion"],
-                    populate : {
-                        unity : {
-                            fields : ["uuid", "name", "abbreviation"]
-                        }
-                    },
-                },
                 reservations : {
                     fields : ["uuid", "quantity"],
                 },
@@ -151,7 +140,9 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
             return acc + r.quantity;
         }, 0);
 
-        if ( totalReserved + data.quantity > release.quantity ) {
+        const quantity = release.package ? release.realQuantity : release.quantity;
+
+        if ( totalReserved + data.quantity > quantity ) {
             throw new BadRequestError( "Cannot reserve more stock than the reserved quantity", {
                 key : "stock-reservation.quantityExceeded",
                 path : ctx.request.url,
@@ -184,13 +175,16 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
             return acc + d.quantity;
         }, 0);
 
-        if ( totalReleased + data.quantity > release.quantity ) {
+        const quantity = release.package ? release.realQuantity : release.quantity;
+
+        if ( totalReleased + data.quantity > quantity ) {
             throw new BadRequestError( "Cannot release more stock than the released quantity", {
                 key : "stock-release.quantityExceeded",
                 path : ctx.request.url,
             });
         }
 
+        
         let { reservations, remaining } = await strapi.service(STOCK_DISPATCH).calculateReservationDistribution(release, data.quantity);
 
         if (remaining > 0) {
@@ -205,14 +199,8 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
 
         const newDispatch = await strapi.entityService.create( STOCK_DISPATCH, {
             data : {
-                product : release.product.id,
-                variation : release.variation?.id,
-                sale : release.sale.id,
-                unity : release.unity.id,
-                package : release.package?.id,
                 reservations : reservations,
-                quantity : data.quantity,
-                realQuantity : data.quantity
+                quantity : data.quantity
             },
         });
 

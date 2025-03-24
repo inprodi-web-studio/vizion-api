@@ -10,7 +10,7 @@ module.exports = createCoreService( STOCK_RELEASE, ({ strapi }) => ({
 
         let promises = [];
 
-        for ( let i = 0; i < items.stockItems; i++ ) {
+        for ( let i = 0; i < stockItems.length; i++ ) {
             const item = stockItems[i];
             const releaseDate = dayjs( deliveryDate ).subtract( 1, "day" ).format("YYYY-MM-DD");
 
@@ -20,7 +20,7 @@ module.exports = createCoreService( STOCK_RELEASE, ({ strapi }) => ({
                     quantity : item.quantity,
                     product : item.product.id,
                     package : item.package?.id,
-                    realQuantity : item.quantity,
+                    realQuantity : item.realQuantity,
                     variation : item.variation?.id,
                     sale : id,
                     releaseDate,
