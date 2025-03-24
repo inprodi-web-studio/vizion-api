@@ -9,6 +9,7 @@ const createSchema = yup.object().shape({
     unity       : yup.string().uuid().required(),
     sku         : yup.string().nullable(),
     category    : yup.string().uuid().nullable(),
+    brand       : yup.string().uuid().nullable(),
     dimensions  : yup.object().shape({
         weight : yup.number().nullable(),
         long   : yup.number().nullable(),

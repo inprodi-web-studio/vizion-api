@@ -885,6 +885,37 @@ export interface ApiAttributeValueAttributeValue extends Schema.CollectionType {
   };
 }
 
+export interface ApiBrandBrand extends Schema.CollectionType {
+  collectionName: 'brands';
+  info: {
+    singularName: 'brand';
+    pluralName: 'brands';
+    displayName: 'Brand';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    image: Attribute.Media;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::brand.brand',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::brand.brand',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiCompanyCompany extends Schema.CollectionType {
   collectionName: 'companies';
   info: {
@@ -1994,6 +2025,11 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'oneToMany',
       'api::package.package'
     >;
+    brand: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'api::adjustment-motive.adjustment-motive'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -3065,6 +3101,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'api::adjustment-motive.adjustment-motive': ApiAdjustmentMotiveAdjustmentMotive;
       'api::attribute-value.attribute-value': ApiAttributeValueAttributeValue;
+      'api::brand.brand': ApiBrandBrand;
       'api::company.company': ApiCompanyCompany;
       'api::company-niche.company-niche': ApiCompanyNicheCompanyNiche;
       'api::contact-group.contact-group': ApiContactGroupContactGroup;

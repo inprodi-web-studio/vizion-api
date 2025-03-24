@@ -7,6 +7,7 @@ module.exports = {
     ROLE                : "plugin::users-permissions.role",
     SALE                : "api::sale.sale",
     UNITY               : "api::unity.unity",
+    BRAND               : "api::brand.brand",
     STOCK               : "api::stock.stock",
     SHELF               : "api::shelf.shelf",
     PACKAGE             : "api::package.package",

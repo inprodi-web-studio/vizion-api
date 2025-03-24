@@ -1,4 +1,4 @@
-const { PRODUCT, PRODUCT_CATEGORY, USER, TAG, PRODUCT_ATTRIBUTE, ATTRIBUTE_VALUE, UNITY } = require("../../../constants/models");
+const { PRODUCT, PRODUCT_CATEGORY, USER, TAG, PRODUCT_ATTRIBUTE, ATTRIBUTE_VALUE, UNITY, BRAND } = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
@@ -14,6 +14,12 @@ module.exports = createCoreService( PRODUCT, ({ strapi }) => ({
             const { id : categoryId } = await findOneByUuid( data.category, PRODUCT_CATEGORY );
 
             data.category = categoryId;
+        }
+
+        if ( data.brand ) {
+            const { id : brandId } = await findOneByUuid( data.brand, BRAND );
+
+            data.brand = brandId;
         }
 
         if ( data.stockInfo?.alertTo ) {
