@@ -1775,6 +1775,7 @@ export interface ApiPackagePackage extends Schema.CollectionType {
       'manyToOne',
       'api::product-variation.product-variation'
     >;
+    type: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
