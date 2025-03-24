@@ -60,7 +60,8 @@
     "dispatches": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::stock-dispatch.stock-dispatch"
+      "target": "api::stock-dispatch.stock-dispatch",
+      "mappedBy": "release"
     }
   }
 }

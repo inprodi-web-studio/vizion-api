@@ -23,6 +23,12 @@
       "relation": "manyToMany",
       "target": "api::stock-reservation.stock-reservation",
       "mappedBy": "dispatches"
+    },
+    "release": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::stock-release.stock-release",
+      "inversedBy": "dispatches"
     }
   }
 }

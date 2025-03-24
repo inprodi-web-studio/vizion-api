@@ -2458,6 +2458,11 @@ export interface ApiStockDispatchStockDispatch extends Schema.CollectionType {
       'manyToMany',
       'api::stock-reservation.stock-reservation'
     >;
+    release: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'manyToOne',
+      'api::stock-release.stock-release'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
