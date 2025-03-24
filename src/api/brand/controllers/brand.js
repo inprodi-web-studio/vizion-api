@@ -1,9 +1,27 @@
-'use strict';
-
-/**
- * brand controller
- */
+const { BRAND } = require('../../../constants/models');
+const findMany = require('../../../helpers/findMany');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
-module.exports = createCoreController('api::brand.brand');
+const brandFields = {
+    fields : ["uuid", "name"],
+    populate : {
+        image : {
+            fields : ["url"],
+        },
+    }
+};
+
+module.exports = createCoreController(BRAND, ({ strapi }) => ({
+    async find(ctx) {
+        const filters = {
+            $search : [
+                "name",
+            ],
+        };
+
+        const categories = await findMany( BRAND, brandFields, filters );
+
+        return categories;
+    },
+}));

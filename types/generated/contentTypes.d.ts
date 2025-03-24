@@ -891,6 +891,7 @@ export interface ApiBrandBrand extends Schema.CollectionType {
     singularName: 'brand';
     pluralName: 'brands';
     displayName: 'Brand';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -899,6 +900,11 @@ export interface ApiBrandBrand extends Schema.CollectionType {
     uuid: Attribute.String;
     name: Attribute.String;
     image: Attribute.Media;
+    company: Attribute.Relation<
+      'api::brand.brand',
+      'oneToOne',
+      'api::company.company'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
