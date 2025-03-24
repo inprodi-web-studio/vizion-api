@@ -26,6 +26,7 @@ module.exports = createCoreService(STOCK, ({ strapi }) => ({
             product: item.product,
             variation: {
                 uuid: variationUuid,
+                sku : variationStock.variation.sku,
                 values : variationStock.variation.values,
                 stocks: [],
             },
