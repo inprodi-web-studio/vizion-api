@@ -1398,6 +1398,7 @@ export interface ApiDispatchDispatch extends Schema.CollectionType {
       'oneToMany',
       'api::stock-dispatch.stock-dispatch'
     >;
+    isCancelled: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

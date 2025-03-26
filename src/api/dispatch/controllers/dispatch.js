@@ -6,7 +6,7 @@ const findMany = require('../../../helpers/findMany');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const dispatchFields = {
-    fields : ["uuid", "fol", "startDate", "endDate"],
+    fields : ["uuid", "fol", "startDate", "endDate", "isCancelled"],
     populate : {
         stockDispatches : true
     },
@@ -14,8 +14,6 @@ const dispatchFields = {
 
 module.exports = createCoreController( DISPATCH, ({ strapi }) => ({
     async find(ctx) {
-        const company = ctx.state.company;
-
         const filters = {
             $search : [
                 "fol"
