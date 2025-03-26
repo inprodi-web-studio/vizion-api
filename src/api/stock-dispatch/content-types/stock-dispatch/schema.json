@@ -29,6 +29,14 @@
       "relation": "manyToOne",
       "target": "api::stock-release.stock-release",
       "inversedBy": "dispatches"
+    },
+    "stocks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock.stock"
+    },
+    "isCompleted": {
+      "type": "boolean"
     }
   }
 }

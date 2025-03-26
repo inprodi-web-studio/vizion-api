@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pickings",
+  "info": {
+    "singularName": "picking",
+    "pluralName": "pickings",
+    "displayName": "Picking"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    }
+  }
+}

@@ -330,27 +330,6 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
         await strapi.service(SALE).updateLineCreditUsage(customer, customerCredit);
     },
 
-    async createDispatchesItems(sale) {
-        let promises = [];
-
-        for (const item of sale.items) {
-            strapi.entityService.create( STOCK_DISPATCH, {
-                data : {
-                    sale : sale.id,
-                    product: item.product.id,
-                    quantity : item.quantity,
-                    realQuantity : item.quantity,
-                    unity : item.unity?.id,
-                    package : item.package?.id,
-                    variation : item.variation?.id,
-                    isPicked : false
-                }
-            })
-        }
-
-        await Promise.all(promises);
-    },
-
     async updateLineCreditUsage(customerId, customerCredit) {
         const used = await strapi.db.connection.raw(`
             SELECT

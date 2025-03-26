@@ -41,6 +41,7 @@ const {
   STOCK_DISPATCH,
   STOCK_RESERVATION,
   STOCK_RELEASE,
+  DISPATCH,
 } = require("./constants/models");
 
 module.exports = {
@@ -64,6 +65,7 @@ module.exports = {
         COMPANY,
         PAYMENT,
         CUSTOMER,
+        DISPATCH,
         DOCUMENT,
         INT_ROLE,
         ESTIMATE,

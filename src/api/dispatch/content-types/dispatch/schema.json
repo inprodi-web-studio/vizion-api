@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "dispatches",
+  "info": {
+    "singularName": "dispatch",
+    "pluralName": "dispatches",
+    "displayName": "Dispatch",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "fol": {
+      "type": "integer"
+    },
+    "startDate": {
+      "type": "datetime"
+    },
+    "endDate": {
+      "type": "datetime"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "stockDispatches": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::stock-dispatch.stock-dispatch"
+    }
+  }
+}

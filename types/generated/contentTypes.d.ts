@@ -1372,6 +1372,49 @@ export interface ApiCustomerCreditCustomerCredit extends Schema.CollectionType {
   };
 }
 
+export interface ApiDispatchDispatch extends Schema.CollectionType {
+  collectionName: 'dispatches';
+  info: {
+    singularName: 'dispatch';
+    pluralName: 'dispatches';
+    displayName: 'Dispatch';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    fol: Attribute.Integer;
+    startDate: Attribute.DateTime;
+    endDate: Attribute.DateTime;
+    company: Attribute.Relation<
+      'api::dispatch.dispatch',
+      'oneToOne',
+      'api::company.company'
+    >;
+    stockDispatches: Attribute.Relation<
+      'api::dispatch.dispatch',
+      'oneToMany',
+      'api::stock-dispatch.stock-dispatch'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::dispatch.dispatch',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::dispatch.dispatch',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiDocumentDocument extends Schema.CollectionType {
   collectionName: 'documents';
   info: {
@@ -1871,6 +1914,35 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::payment.payment',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPickingPicking extends Schema.CollectionType {
+  collectionName: 'pickings';
+  info: {
+    singularName: 'picking';
+    pluralName: 'pickings';
+    displayName: 'Picking';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::picking.picking',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::picking.picking',
       'oneToOne',
       'admin::user'
     > &
@@ -2506,6 +2578,12 @@ export interface ApiStockDispatchStockDispatch extends Schema.CollectionType {
       'manyToOne',
       'api::stock-release.stock-release'
     >;
+    stocks: Attribute.Relation<
+      'api::stock-dispatch.stock-dispatch',
+      'oneToMany',
+      'api::stock.stock'
+    >;
+    isCompleted: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -3116,6 +3194,7 @@ declare module '@strapi/types' {
       'api::credit-movement.credit-movement': ApiCreditMovementCreditMovement;
       'api::customer.customer': ApiCustomerCustomer;
       'api::customer-credit.customer-credit': ApiCustomerCreditCustomerCredit;
+      'api::dispatch.dispatch': ApiDispatchDispatch;
       'api::document.document': ApiDocumentDocument;
       'api::estimate.estimate': ApiEstimateEstimate;
       'api::estimate-stage.estimate-stage': ApiEstimateStageEstimateStage;
@@ -3126,6 +3205,7 @@ declare module '@strapi/types' {
       'api::note.note': ApiNoteNote;
       'api::package.package': ApiPackagePackage;
       'api::payment.payment': ApiPaymentPayment;
+      'api::picking.picking': ApiPickingPicking;
       'api::preference.preference': ApiPreferencePreference;
       'api::price-list.price-list': ApiPriceListPriceList;
       'api::product.product': ApiProductProduct;

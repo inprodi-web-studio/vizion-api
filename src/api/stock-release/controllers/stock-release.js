@@ -200,7 +200,8 @@ module.exports = createCoreController( STOCK_RELEASE, ({ strapi }) => ({
         const newDispatch = await strapi.entityService.create( STOCK_DISPATCH, {
             data : {
                 reservations : reservations,
-                quantity : data.quantity
+                quantity : data.quantity,
+                isCompleted : false
             },
         });
 
