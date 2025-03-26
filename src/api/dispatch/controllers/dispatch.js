@@ -2,6 +2,7 @@ const dayjs = require('dayjs');
 const { DISPATCH, STOCK_DISPATCH } = require('../../../constants/models');
 const { BadRequestError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
+const findOneByUuid = require('../../../helpers/findOneByUuid');
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
@@ -23,6 +24,14 @@ module.exports = createCoreController( DISPATCH, ({ strapi }) => ({
         const dispatches = await findMany( DISPATCH, dispatchFields, filters );
 
         return dispatches;
+    },
+
+    async findOne(ctx) {
+        const { uuid } = ctx.params;
+
+        const dispatch = await findOneByUuid( uuid, DISPATCH, dispatchFields );
+
+        return dispatch;
     },
 
     async create(ctx) {

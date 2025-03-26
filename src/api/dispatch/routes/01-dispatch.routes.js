@@ -9,6 +9,14 @@ module.exports = {
         },
       },
       {
+        method  : "GET",
+        path    : "/dispatches/:uuid",
+        handler : "dispatch.findOne",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/dispatches",
         handler : "dispatch.create",
