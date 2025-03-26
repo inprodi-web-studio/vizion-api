@@ -9,7 +9,71 @@ const { createCoreController } = require('@strapi/strapi').factories;
 const dispatchFields = {
     fields : ["uuid", "fol", "startDate", "endDate", "isCancelled"],
     populate : {
-        stockDispatches : true
+        stockDispatches : {
+            fields : ["uuid", "quantity", "isCompleted"],
+            populate : {
+                release : {
+                    fields : ["uuid"],
+                    populate : {
+                        product : {
+                            fields : ["uuid", "name", "sku", "type"],
+                            populate : {
+                                images : {
+                                    fields : ["url", "name", "size", "mime"],
+                                },
+                            },
+                        },
+                        unity : {
+                            fields : ["uuid", "name", "abbreviation"],
+                        },
+                        package : {
+                            fields : ["uuid", "conversionRate", "realConversion"],
+                            unity : {
+                                fields : ["uuid", "name", "abbreviation"],
+                            },
+                        },
+                        variation : {
+                            fields : ["uuid", "name", "sku"],
+                            populate : {
+                                image : {
+                                    fields : ["url"],
+                                },
+                                values : {
+                                    fields : ["uuid", "name"],
+                                    populate : {
+                                        attribute : true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                reservations : {
+                    fields : ["uuid", "quantity"],
+                    populate : {
+                        stock : {
+                            fields : ["uuid", "quantity", "positionPartition", "packageQuantity"],
+                            populate : {
+                                location : {
+                                    fields : ["uuid", "name"],
+                                },
+                                badge : {
+                                    fields : ["uuid", "name", "expirationDate"],
+                                },
+                                position : {
+                                    fields : ["uuid", "xPosition", "yPosition"],
+                                    populate : {
+                                        shelf : {
+                                            fields : ["uuid", "name"],
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        }
     },
 };
 
