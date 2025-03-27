@@ -147,6 +147,7 @@ module.exports = createCoreController( DISPATCH, ({ strapi }) => ({
                 company : company.id,
                 startDate : dayjs().toISOString(),
                 stockDispatches : stockDispatches.map( dispatch => dispatch.id ),
+                isCancelled : false
             },
         }, dispatchFields );
 

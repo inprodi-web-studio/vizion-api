@@ -15,6 +15,9 @@ const warehouseFields = {
             populate : {
                 shelves : {
                     fields : ["uuid", "name", "xPositions", "yPositions"],
+                    populate : {
+                        positions : true,
+                    },
                 }
             },
         },

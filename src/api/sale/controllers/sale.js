@@ -7,7 +7,7 @@ const { validateCreate } = require("../content-types/sale/sale.validation");
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const saleFields = {
-    fields : ["uuid", "fol", "deliveryDate", "deliveryTime", "date", "paymentScheme", "subject", "comments", "terms", "isAuthorized", "authorizedAt"],
+    fields : ["uuid", "fol", "deliveryDate", "deliveryTime", "date", "paymentScheme", "subject", "comments", "terms", "isAuthorized", "authorizedAt", "createdAt"],
     populate : {
         responsible : {
             fields : ["uuid", "name", "middleName", "lastName"],
