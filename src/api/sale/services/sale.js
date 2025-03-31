@@ -1,5 +1,5 @@
 const dayjs = require("dayjs");
-const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE, CREDIT_MOVEMENT, STOCK_DISPATCH, PACKAGE, PRODUCT_VARIATION } = require("../../../constants/models");
+const { SALE, USER, CUSTOMER, PRICE_LIST, PRODUCT, ESTIMATE, CREDIT_MOVEMENT, STOCK_DISPATCH, PACKAGE, PRODUCT_VARIATION, WAREHOUSE } = require("../../../constants/models");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
@@ -152,6 +152,12 @@ module.exports = createCoreService(SALE, ({ strapi }) => ({
 
         const { id : priceListId } = await findOneByUuid( data.priceList, PRICE_LIST );
         data.priceList = priceListId;
+
+        if ( data.warehouse ) {
+            const { id : warehouseId } = await findOneByUuid( data.warehouse, WAREHOUSE );
+
+            data.warehouse = warehouseId;
+        }
 
         for ( let i = 0; i < data.items.length; i++ ) {
             const item = data.items[i];

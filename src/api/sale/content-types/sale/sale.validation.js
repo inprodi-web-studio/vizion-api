@@ -9,6 +9,7 @@ const createSchema = yup.object().shape({
     responsible : yup.string().uuid().required(),
     paymentScheme : yup.string().oneOf(["anticipated", "on-deliver", "on-advance", "deferred", "credit"]).required(),
     priceList : yup.string().uuid().required(),
+    warehouse : yup.string().uuid().nullable(),
     subject : yup.string().required(),
     items : yup.array().of( yup.object().shape({
         product : yup.string().uuid().required(),
