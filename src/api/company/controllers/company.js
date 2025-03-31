@@ -12,7 +12,7 @@ module.exports = createCoreController( COMPANY, ({ strapi }) => ({
         const { company } = await findOneByUuid( user.uuid, USER, {
             populate : {
                 company : {
-                    fields : ["uuid", "name", "website", "primaryColor"],
+                    fields : ["uuid", "name", "website", "primaryColor", "applications"],
                     populate : {
                         logotype : {
                             fields : ["url", "name"],

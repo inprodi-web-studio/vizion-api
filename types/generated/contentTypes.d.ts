@@ -2386,6 +2386,11 @@ export interface ApiSaleSale extends Schema.CollectionType {
     >;
     isCancelled: Attribute.Boolean & Attribute.DefaultTo<false>;
     cancelledAt: Attribute.DateTime;
+    warehouse: Attribute.Relation<
+      'api::sale.sale',
+      'oneToOne',
+      'api::warehouse.warehouse'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &

@@ -110,6 +110,11 @@
     },
     "cancelledAt": {
       "type": "datetime"
+    },
+    "warehouse": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::warehouse.warehouse"
     }
   }
 }
