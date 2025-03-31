@@ -55,6 +55,7 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
             JOIN stocks AS s ON s.id = spl.stock_id
             JOIN stocks_location_links AS sll ON sll.stock_id = s.id
             JOIN stock_locations AS l ON sll.stock_location_id = l.id
+            JOIN stock_locations_warehouse_links AS slw ON l.id = slw.stock_location_id
             LEFT JOIN stocks_package_links AS spacl ON s.id = spacl.stock_id
             LEFT JOIN packages AS p ON spacl.package_id = p.id
             LEFT JOIN stocks_badge_links AS sbl ON s.id = sbl.stock_id
@@ -71,7 +72,7 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
             ) reserved ON reserved.stock_id = s.id
             WHERE spl.product_id = ?
               AND ( ? IS NULL OR pv.id = ? )
-              AND l.warehouse_id = ?
+              AND slw.warehouse_id = ?
             ORDER BY
                 CASE WHEN ? IS NOT NULL AND p.uuid = ? THEN 0 ELSE 1 END,
                 l.reservation_order ASC,

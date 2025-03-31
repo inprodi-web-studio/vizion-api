@@ -43,6 +43,11 @@ const releaseFields = {
         },
         sale : {
             fields : ["uuid", "fol", "subject"],
+            populate : {
+                warehouse : {
+                    fields : ["uuid", "layout"],
+                },
+            },
         },
         reservations : {
             fields : ["uuid", "quantity"],
