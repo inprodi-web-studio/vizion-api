@@ -64,6 +64,11 @@ const dispatchFields = {
                             populate : {
                                 location : {
                                     fields : ["uuid", "name"],
+                                    populate : {
+                                        warehouse : {
+                                            fields : ["uuid", "layout"],
+                                        },
+                                    },
                                 },
                                 badge : {
                                     fields : ["uuid", "name", "expirationDate"],
