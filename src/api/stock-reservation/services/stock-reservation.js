@@ -71,16 +71,18 @@ module.exports = createCoreService(STOCK_RESERVATION, ({ strapi }) => ({
             ) reserved ON reserved.stock_id = s.id
             WHERE spl.product_id = ?
               AND ( ? IS NULL OR pv.id = ? )
+              AND l.warehouse_id = ?
             ORDER BY
                 CASE WHEN ? IS NOT NULL AND p.uuid = ? THEN 0 ELSE 1 END,
                 l.reservation_order ASC,
                 CASE WHEN pb.expiration_date IS NULL THEN 1 ELSE 0 END,
                 pb.expiration_date ASC
-              FOR UPDATE;
+            FOR UPDATE;
           `, [
             item.product.id,
             (item.variation ? item.variation.id : null),
             (item.variation ? item.variation.id : null),
+            item.sale.warehouse.id,
             (item.package ? item.package.uuid : null),
             (item.package ? item.package.uuid : null)
           ]);

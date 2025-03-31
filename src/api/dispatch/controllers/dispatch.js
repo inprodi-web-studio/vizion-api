@@ -15,6 +15,14 @@ const dispatchFields = {
                 release : {
                     fields : ["uuid"],
                     populate : {
+                        sale : {
+                            fields : ["uuid", "fol"],
+                            populate : {
+                                warehouse : {
+                                    fields : ["uuid", "layout"],
+                                },
+                            },
+                        },
                         product : {
                             fields : ["uuid", "name", "sku", "type"],
                             populate : {
