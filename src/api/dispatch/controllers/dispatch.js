@@ -113,6 +113,14 @@ module.exports = createCoreController( DISPATCH, ({ strapi }) => ({
 
     async create(ctx) {
         const company = ctx.state.company;
+        const data = ctx.request.body;
+
+        if ( !data?.warehouse ) {
+            throw new BadRequestError("Missing warehouse", {
+                key : "dispatch.missingWarehouse",
+                path : ctx.request.path,
+            });
+        }
 
         const lastDispatch = await strapi.entityService.findMany( DISPATCH, {
             filters : {
@@ -145,6 +153,13 @@ module.exports = createCoreController( DISPATCH, ({ strapi }) => ({
                         isCompleted : false
                     },
                 ],
+                release : {
+                    sale : {
+                        warehouse : {
+                            uuid : data.warehouse
+                        }
+                    }
+                },
             },
         });
 
