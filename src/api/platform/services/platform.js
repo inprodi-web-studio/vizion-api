@@ -14,7 +14,7 @@ module.exports = createCoreService( PLATFORM, ({ strapi }) => ({
                 warehouse : warehouse.id,
                 ...( method === "PUT" && ({
                     uuid : {
-                        $not: ctx.params.locationUuid
+                        $not: ctx.params.platformUuid
                     },
                 }))
             },
