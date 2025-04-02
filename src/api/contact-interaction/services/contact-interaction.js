@@ -1,7 +1,6 @@
 const { CONTACT_INTERACTION, LEAD, CUSTOMER } = require('../../../constants/models');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const { validateCreate } = require('../content-types/contact-interaction/contact-interaction.validation');
 
 const { createCoreService } = require('@strapi/strapi').factories;
@@ -25,7 +24,7 @@ module.exports = createCoreService(CONTACT_INTERACTION, ({ strapi }) => ({
         const ctx      = strapi.requestContext.get();
         const { uuid } = ctx.params;
 
-        const entity = await validateEntityPermission( uuid, relationDictionary[relation] );
+        const entity = await findOneByUuid( uuid, relationDictionary[relation] );
 
         const filters = {
             $search : [
@@ -46,7 +45,7 @@ module.exports = createCoreService(CONTACT_INTERACTION, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
 
         const newInteraction = await strapi.entityService.create( CONTACT_INTERACTION, {
             data : {
@@ -65,7 +64,7 @@ module.exports = createCoreService(CONTACT_INTERACTION, ({ strapi }) => ({
         const ctx = strapi.requestContext.get();
         const { uuid, interactionUuid } = ctx.params;
 
-        await validateEntityPermission( uuid, relationDictionary[relation] );
+        await findOneByUuid( uuid, relationDictionary[relation] );
         const interaction = await findOneByUuid( interactionUuid, CONTACT_INTERACTION );
 
         const deletedInteraction = await strapi.entityService.delete( CONTACT_INTERACTION, interaction.id, interactionFields );

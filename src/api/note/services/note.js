@@ -1,7 +1,6 @@
 const { NOTE, LEAD, USER, CUSTOMER } = require('../../../constants/models');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const { validateCreate } = require('../content-types/note/note.validation');
 
 const { createCoreService } = require('@strapi/strapi').factories;
@@ -25,7 +24,7 @@ module.exports = createCoreService( NOTE, ({ strapi }) => ({
         const ctx      = strapi.requestContext.get();
         const { uuid } = ctx.params;
 
-        const entity = await validateEntityPermission( uuid, relationDictionary[relation] );
+        const entity = await findOneByUuid( uuid, relationDictionary[relation] );
 
         const filters = {
             $search : [
@@ -47,7 +46,7 @@ module.exports = createCoreService( NOTE, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
 
         const newNote = await strapi.entityService.create( NOTE, {
             data : {
@@ -66,7 +65,7 @@ module.exports = createCoreService( NOTE, ({ strapi }) => ({
         const ctx          = strapi.requestContext.get();
         const { noteUuid } = ctx.params;
 
-        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
         const note = await findOneByUuid( noteUuid, NOTE );
 
         const updatedNote = await strapi.entityService.update( NOTE, note.id, {
@@ -84,7 +83,7 @@ module.exports = createCoreService( NOTE, ({ strapi }) => ({
         const ctx = strapi.requestContext.get();
         const { uuid, noteUuid } = ctx.params;
 
-        await validateEntityPermission( uuid, relationDictionary[relation] );
+        await findOneByUuid( uuid, relationDictionary[relation] );
         const note = await findOneByUuid( noteUuid, NOTE );
 
         const deletedNote = await strapi.entityService.delete( NOTE, note.id, noteFields );

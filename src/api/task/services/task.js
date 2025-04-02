@@ -1,7 +1,6 @@
 const { TASK, LEAD, USER, CUSTOMER } = require('../../../constants/models');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
-const validateEntityPermission = require('../../../helpers/validateEntityPermission');
 const { validateCreate } = require('../content-types/task/task.validation');
 
 const { createCoreService } = require('@strapi/strapi').factories;
@@ -28,7 +27,7 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
         const ctx      = strapi.requestContext.get();
         const { uuid } = ctx.params;
 
-        const entity = await validateEntityPermission( uuid, relationDictionary[relation] );
+        const entity = await findOneByUuid( uuid, relationDictionary[relation] );
 
         const filters = {
             $search : [
@@ -49,7 +48,7 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
 
         const responsible = await findOneByUuid( data.responsible, USER );
 
@@ -73,7 +72,7 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
         const ctx          = strapi.requestContext.get();
         const { taskUuid } = ctx.params;
 
-        const entity = await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+        const entity = await findOneByUuid( data.entity, relationDictionary[data.relation] );
 
         const responsible = await findOneByUuid( data.responsible, USER );
 
@@ -96,7 +95,7 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
         const ctx = strapi.requestContext.get();
         const { taskUuid } = ctx.params;
 
-        await validateEntityPermission( data.entity, relationDictionary[data.relation] );
+        await findOneByUuid( data.entity, relationDictionary[data.relation] );
 
         const task = await findOneByUuid( taskUuid, TASK );
 
@@ -115,7 +114,7 @@ module.exports = createCoreService( TASK, ({ strapi }) => ({
         const ctx = strapi.requestContext.get();
         const { uuid, taskUuid } = ctx.params;
 
-        await validateEntityPermission( uuid, relationDictionary[relation] );
+        await findOneByUuid( uuid, relationDictionary[relation] );
         const task = await findOneByUuid( taskUuid, TASK );
 
         const deletedTask = await strapi.entityService.delete( TASK, task.id, taskFields );
