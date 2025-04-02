@@ -1951,6 +1951,44 @@ export interface ApiPickingPicking extends Schema.CollectionType {
   };
 }
 
+export interface ApiPlatformPlatform extends Schema.CollectionType {
+  collectionName: 'platforms';
+  info: {
+    singularName: 'platform';
+    pluralName: 'platforms';
+    displayName: 'Platform';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    allowEntrances: Attribute.Boolean;
+    allowExits: Attribute.Boolean;
+    warehouse: Attribute.Relation<
+      'api::platform.platform',
+      'oneToOne',
+      'api::warehouse.warehouse'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::platform.platform',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::platform.platform',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiPreferencePreference extends Schema.CollectionType {
   collectionName: 'preferences';
   info: {
@@ -3212,6 +3250,7 @@ declare module '@strapi/types' {
       'api::package.package': ApiPackagePackage;
       'api::payment.payment': ApiPaymentPayment;
       'api::picking.picking': ApiPickingPicking;
+      'api::platform.platform': ApiPlatformPlatform;
       'api::preference.preference': ApiPreferencePreference;
       'api::price-list.price-list': ApiPriceListPriceList;
       'api::product.product': ApiProductProduct;

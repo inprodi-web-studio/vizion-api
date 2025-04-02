@@ -17,6 +17,14 @@ module.exports = {
         },
       },
       {
+        method  : "PATCH",
+        path    : "/dispatches/:uuid/conclude",
+        handler : "dispatch.conclude",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/dispatches",
         handler : "dispatch.create",

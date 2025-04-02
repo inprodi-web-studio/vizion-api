@@ -37,15 +37,15 @@ module.exports = createCoreService(WAREHOUSE, ({ strapi }) => ({
     },
 
     async sanitizeLayout({ layout }) {
-        const completedNodes = layout.filter( i => i.data?.uuid );
+        const validNodes = layout.filter( i => i.data?.uuid || i.type === "divider" );
 
-        for ( let i = 0; i < completedNodes.length; i++ ) {
-            const node = completedNodes[i];
+        for ( let i = 0; i < validNodes.length; i++ ) {
+            const node = validNodes[i];
 
             node.selected = false;
         }
 
-        return completedNodes;
+        return validNodes;
     },
 
     async deleteParallelData(id) {

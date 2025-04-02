@@ -181,4 +181,7 @@ module.exports = createCoreController( DISPATCH, ({ strapi }) => ({
 
         return newDispatch;
     },
+    async conclude(ctx) {
+
+    },
 }));

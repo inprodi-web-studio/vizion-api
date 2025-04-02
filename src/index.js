@@ -42,6 +42,7 @@ const {
   STOCK_RESERVATION,
   STOCK_RELEASE,
   DISPATCH,
+  PLATFORM,
 } = require("./constants/models");
 
 module.exports = {
@@ -64,6 +65,7 @@ module.exports = {
         INSIDER,
         COMPANY,
         PAYMENT,
+        PLATFORM,
         CUSTOMER,
         DISPATCH,
         DOCUMENT,
