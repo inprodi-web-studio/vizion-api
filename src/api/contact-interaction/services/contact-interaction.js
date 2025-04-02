@@ -10,6 +10,11 @@ const interactionFields = {
     populate : {
         user : {
             fields : ["uuid", "name", "middleName", "lastName"],
+            populate : {
+                image : {
+                    fields : ["url"],
+                },
+            },
         }
     },
 };

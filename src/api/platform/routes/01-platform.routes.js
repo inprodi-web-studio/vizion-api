@@ -18,7 +18,7 @@ module.exports = {
       },
       {
         method: "PUT",
-        path: "/warehouses/:uuid/platforms/:locationUuid",
+        path: "/warehouses/:uuid/platforms/:platformUuid",
         handler: "platform.update",
         config: {
           policies: ["global::userContext"],
@@ -26,7 +26,7 @@ module.exports = {
       },
       {
         method: "DELETE",
-        path: "/warehouses/:uuid/platforms/:locationUuid",
+        path: "/warehouses/:uuid/platforms/:platformUuid",
         handler: "platform.delete",
         config: {
           policies: ["global::userContext"],
