@@ -514,7 +514,7 @@ module.exports = createCoreService(LEAD, ({ strapi }) => ({
             dataMap[dateStr] = total;
         });
 
-        return dataMap;
+        return Object.entries(dataMap);
     },
 
     async getProductsOfInterest(uuid) {
