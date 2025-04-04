@@ -14,41 +14,41 @@ const {
 } = require("../../../constants/models");
 
 const { BadRequestError } = require("../../../helpers/errors");
-const findOneByUuid       = require("../../../helpers/findOneByUuid");
+const findOneByUuid = require("../../../helpers/findOneByUuid");
 
 const moment = require("moment-timezone");
 const { default: axios } = require("axios");
 
 const leadFields = {
-    fields   : ["uuid", "tradeName", "finalName", "email", "website", "rating", "isActive", "value", "potential", "createdAt"],
-    populate : {
-        completeName : true,
-        phone        : true,
-        cellphone    : true,
-        mainAddress  : true,
-        fiscalInfo   : true,
-        group        : true,
-        source       : true,
-        tags         : true,
-        insiders     : {
-            fields : ["uuid", "email", "isPrimary", "job"],
-            populate : {
-                completeName : true,
-                phone        : true,
+    fields: ["uuid", "tradeName", "finalName", "email", "website", "rating", "isActive", "value", "potential", "createdAt"],
+    populate: {
+        completeName: true,
+        phone: true,
+        cellphone: true,
+        mainAddress: true,
+        fiscalInfo: true,
+        group: true,
+        source: true,
+        tags: true,
+        insiders: {
+            fields: ["uuid", "email", "isPrimary", "job"],
+            populate: {
+                completeName: true,
+                phone: true,
             },
         },
-        responsible  : {
-            fields : ["uuid", "name", "middleName", "lastName"],
-            populate : {
-                image : {
-                    fields : ["url"],
+        responsible: {
+            fields: ["uuid", "name", "middleName", "lastName"],
+            populate: {
+                image: {
+                    fields: ["url"],
                 },
             },
         },
-        deliveryAddresses : {
-            fields : ["name", "references", "isMain"],
-            populate : {
-                address : true,
+        deliveryAddresses: {
+            fields: ["name", "references", "isMain"],
+            populate: {
+                address: true,
             },
         },
     },
@@ -56,139 +56,139 @@ const leadFields = {
 
 const { createCoreService } = require("@strapi/strapi").factories;
 
-module.exports = createCoreService( LEAD, ({ strapi }) => ({
+module.exports = createCoreService(LEAD, ({ strapi }) => ({
     async getStats() {
-        const ctx         = strapi.requestContext.get();
+        const ctx = strapi.requestContext.get();
         const { company } = ctx.state;
 
-        const active = await strapi.query( LEAD ).count({
-            where : {
-                isActive : true,
-                company  : company.id,
+        const active = await strapi.query(LEAD).count({
+            where: {
+                isActive: true,
+                company: company.id,
             },
         });
 
-        const inactive = await strapi.query( LEAD ).count({
-            where : {
-                isActive : false,
-                company  : company.id,
+        const inactive = await strapi.query(LEAD).count({
+            where: {
+                isActive: false,
+                company: company.id,
             },
         });
 
-        const timeZone         = "America/Mexico_City";
-        const startOfMonth     = moment.tz( timeZone ).startOf("month").toISOString();
-        const endOfMonth       = moment.tz(timeZone).endOf("month").toISOString();
+        const timeZone = "America/Mexico_City";
+        const startOfMonth = moment.tz(timeZone).startOf("month").toISOString();
+        const endOfMonth = moment.tz(timeZone).endOf("month").toISOString();
         const startOfLastMonth = moment.tz(timeZone).subtract(1, "month").startOf("month").toISOString();
-        const endOfLastMonth   = moment.tz(timeZone).subtract(1, "month").endOf("month").toISOString();
+        const endOfLastMonth = moment.tz(timeZone).subtract(1, "month").endOf("month").toISOString();
 
-        const leadsThisMonth = await strapi.query( LEAD ).count({
-            where : {
-                company  : company.id,
-                createdAt : {
-                    $gte : startOfMonth,
-                    $lte : endOfMonth,
+        const leadsThisMonth = await strapi.query(LEAD).count({
+            where: {
+                company: company.id,
+                createdAt: {
+                    $gte: startOfMonth,
+                    $lte: endOfMonth,
                 },
             },
         });
 
-        const leadsLastMonth = await strapi.query( LEAD ).count({
-            where : {
-                company  : company.id,
-                createdAt : {
-                    $gte : startOfLastMonth,
-                    $lte : endOfLastMonth,
+        const leadsLastMonth = await strapi.query(LEAD).count({
+            where: {
+                company: company.id,
+                createdAt: {
+                    $gte: startOfLastMonth,
+                    $lte: endOfLastMonth,
                 },
             },
         });
 
-        const convertedButCreatedThisMonth = await strapi.query( CUSTOMER ).count({
-            where : {
-                company  : company.id,
-                leadMeta : {
-                    daysToConvert : {
-                        $notNull : true,
+        const convertedButCreatedThisMonth = await strapi.query(CUSTOMER).count({
+            where: {
+                company: company.id,
+                leadMeta: {
+                    daysToConvert: {
+                        $notNull: true,
                     },
-                    leadCreatedAt : {
-                        $gte : startOfMonth,
-                        $lte : endOfMonth,
-                    },
-                },
-            },
-        });
-
-        const convertedButCreatedLastMonth = await strapi.query( CUSTOMER ).count({
-            where : {
-                company  : company.id,
-                leadMeta : {
-                    daysToConvert : {
-                        $notNull : true,
-                    },
-                    leadCreatedAt : {
-                        $gte : startOfLastMonth,
-                        $lte : endOfLastMonth,
+                    leadCreatedAt: {
+                        $gte: startOfMonth,
+                        $lte: endOfMonth,
                     },
                 },
             },
         });
 
-        const leadsConvertedThisMonth = await strapi.query( CUSTOMER ).count({
-            where : {
-                company  : company.id,
-                leadMeta : {
-                    daysToConvert : {
-                        $notNull : true,
+        const convertedButCreatedLastMonth = await strapi.query(CUSTOMER).count({
+            where: {
+                company: company.id,
+                leadMeta: {
+                    daysToConvert: {
+                        $notNull: true,
                     },
-                },
-                createdAt : {
-                    $gte : startOfMonth,
-                    $lte : endOfMonth,
+                    leadCreatedAt: {
+                        $gte: startOfLastMonth,
+                        $lte: endOfLastMonth,
+                    },
                 },
             },
         });
 
-        const leadsConvertedLastMonth = await strapi.query( CUSTOMER ).count({
-            where : {
-                company  : company.id,
-                leadMeta : {
-                    daysToConvert : {
-                        $notNull : true,
+        const leadsConvertedThisMonth = await strapi.query(CUSTOMER).count({
+            where: {
+                company: company.id,
+                leadMeta: {
+                    daysToConvert: {
+                        $notNull: true,
                     },
                 },
-                createdAt : {
-                    $gte : startOfLastMonth,
-                    $lte : endOfLastMonth,
+                createdAt: {
+                    $gte: startOfMonth,
+                    $lte: endOfMonth,
                 },
             },
         });
 
-        const activitiesThisMonth = await strapi.query( CONTACT_INTERACTION ).count({
-            where : {
-                company : company.id,
-                $or : [
+        const leadsConvertedLastMonth = await strapi.query(CUSTOMER).count({
+            where: {
+                company: company.id,
+                leadMeta: {
+                    daysToConvert: {
+                        $notNull: true,
+                    },
+                },
+                createdAt: {
+                    $gte: startOfLastMonth,
+                    $lte: endOfLastMonth,
+                },
+            },
+        });
+
+        const activitiesThisMonth = await strapi.query(CONTACT_INTERACTION).count({
+            where: {
+                company: company.id,
+                $or: [
                     {
-                        $and : [
+                        $and: [
                             {
-                                lead : {
-                                    id : {
-                                        $notNull : true,
+                                lead: {
+                                    id: {
+                                        $notNull: true,
                                     },
                                 },
                             },
                             {
-                                createdAt : {
-                                    $gte : startOfMonth,
-                                    $lte : endOfMonth,
+                                createdAt: {
+                                    $gte: startOfMonth,
+                                    $lte: endOfMonth,
                                 },
                             },
                         ],
                     },
                     {
-                        $and : [
+                        $and: [
                             {
-                                customer : {
-                                    leadMeta : {
-                                        daysToConvert : {
-                                            $notNull : true,
+                                customer: {
+                                    leadMeta: {
+                                        daysToConvert: {
+                                            $notNull: true,
                                         },
                                     },
                                 },
@@ -205,12 +205,12 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
             },
         });
 
-        const activitiesLastMonth = await strapi.query( CONTACT_INTERACTION ).count({
-            where : {
-                company  : company.id,
-                createdAt : {
-                    $gte : startOfLastMonth,
-                    $lte : endOfLastMonth,
+        const activitiesLastMonth = await strapi.query(CONTACT_INTERACTION).count({
+            where: {
+                company: company.id,
+                createdAt: {
+                    $gte: startOfLastMonth,
+                    $lte: endOfLastMonth,
                 },
             },
         });
@@ -227,23 +227,23 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         return {
             active,
             inactive,
-            new : {
-                current : leadsThisMonth + convertedButCreatedThisMonth,
-                passed  : leadsLastMonth + convertedButCreatedLastMonth,
+            new: {
+                current: leadsThisMonth + convertedButCreatedThisMonth,
+                passed: leadsLastMonth + convertedButCreatedLastMonth,
             },
-            converted : {
-                current : leadsConvertedThisMonth,
-                passed  : leadsConvertedLastMonth,
+            converted: {
+                current: leadsConvertedThisMonth,
+                passed: leadsConvertedLastMonth,
             },
-            activities : {
-                current : activitiesThisMonth,
-                passed  : activitiesLastMonth,
+            activities: {
+                current: activitiesThisMonth,
+                passed: activitiesLastMonth,
             },
-            value : {
-                current : 0,
-                passed  : 0,
+            value: {
+                current: 0,
+                passed: 0,
             },
-            totalValue : totalValue[0][0].totalValue ?? 0,
+            totalValue: totalValue[0][0].totalValue ?? 0,
         };
     },
 
@@ -252,66 +252,66 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
 
         let entityId;
 
-        switch ( key ) {
+        switch (key) {
             case "responsible":
-                if ( value ) {
-                    const { id : responsibleId } = await findOneByUuid( value, USER );
-                    
+                if (value) {
+                    const { id: responsibleId } = await findOneByUuid(value, USER);
+
                     entityId = responsibleId;
                 } else {
                     entityId = null;
                 }
-            break;
+                break;
 
             case "group":
-                if ( value ) {
-                    const { id : groupId } = await findOneByUuid( value, CONTACT_GROUP );
-                    
+                if (value) {
+                    const { id: groupId } = await findOneByUuid(value, CONTACT_GROUP);
+
                     entityId = groupId;
                 } else {
                     entityId = null;
                 }
-            break;
+                break;
 
             case "source":
-                if ( value ) {
-                    const { id : sourceId } = await findOneByUuid( value, CONTACT_SOURCE );
-                    
+                if (value) {
+                    const { id: sourceId } = await findOneByUuid(value, CONTACT_SOURCE);
+
                     entityId = sourceId;
                 } else {
                     entityId = null;
                 }
-            break;
+                break;
 
             case "tags":
-                const { id : tagId, uuid, entity } = await findOneByUuid( value, TAG );
+                const { id: tagId, uuid, entity } = await findOneByUuid(value, TAG);
 
-                if ( entity !== "contact" ) {
-                    throw new BadRequestError( `The tag ${value} is not a contact tag`, {
-                        key  : "lead.invalidTag",
-                        path : ctx.request.url,
+                if (entity !== "contact") {
+                    throw new BadRequestError(`The tag ${value} is not a contact tag`, {
+                        key: "lead.invalidTag",
+                        path: ctx.request.url,
                     });
                 }
 
-                const index = tags.findIndex( t => t.uuid === uuid );
+                const index = tags.findIndex(t => t.uuid === uuid);
 
-                if ( index === -1 ) {
-                    tags.push( tagId );
+                if (index === -1) {
+                    tags.push(tagId);
                 } else {
-                    tags.splice( index, 1 );
+                    tags.splice(index, 1);
                 }
 
                 entityId = tags;
-            break;
+                break;
 
             case "rating":
                 entityId = value;
-            break;
+                break;
 
             default:
-                throw new BadRequestError( `The key ${key} is not supported in key update`, {
-                    key  : "lead.unkownKey",
-                    path : ctx.request.url,
+                throw new BadRequestError(`The key ${key} is not supported in key update`, {
+                    key: "lead.unkownKey",
+                    path: ctx.request.url,
                 });
         }
 
@@ -321,33 +321,33 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
     async validateParallelData(data) {
         const ctx = strapi.requestContext.get();
 
-        if ( data.responsible ) {
-            const { id : responsibleId } = await findOneByUuid( data.responsible, USER );
+        if (data.responsible) {
+            const { id: responsibleId } = await findOneByUuid(data.responsible, USER);
 
             data.responsible = responsibleId;
         }
 
-        if ( data.group ) {
-            const { id : groupId } = await findOneByUuid( data.group, CONTACT_GROUP );
+        if (data.group) {
+            const { id: groupId } = await findOneByUuid(data.group, CONTACT_GROUP);
 
             data.group = groupId;
         }
 
-        if ( data.source ) {
-            const { id : sourceId } = await findOneByUuid( data.source, CONTACT_SOURCE );
+        if (data.source) {
+            const { id: sourceId } = await findOneByUuid(data.source, CONTACT_SOURCE);
 
             data.source = sourceId;
         }
 
-        if ( data.tags ) {
-            for ( let i = 0; i < data.tags.length; i++ ) {
+        if (data.tags) {
+            for (let i = 0; i < data.tags.length; i++) {
                 const tag = data.tags[i];
-                const { id : tagId, uuid, entity } = await findOneByUuid( tag, TAG );
+                const { id: tagId, uuid, entity } = await findOneByUuid(tag, TAG);
 
-                if ( entity !== "contact" ) {
-                    throw new BadRequestError( `The tag with uuid ${ uuid } is not a contact tag`, {
-                        key  : "lead.invalidTag",
-                        path : ctx.request.url,
+                if (entity !== "contact") {
+                    throw new BadRequestError(`The tag with uuid ${uuid} is not a contact tag`, {
+                        key: "lead.invalidTag",
+                        path: ctx.request.url,
                     });
                 }
 
@@ -356,43 +356,43 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         }
     },
 
-    async getActivityStats( lead ) {
+    async getActivityStats(lead) {
         const timeZone = "America/Mexico_City";
-        const date     = moment.tz( timeZone ).startOf("week").add(1, "days");
-        
-        const weekDays = [ date.toISOString() ];
+        const date = moment.tz(timeZone).startOf("week").add(1, "days");
+
+        const weekDays = [date.toISOString()];
 
         date.add(1, "days");
 
-        while ( date.day() !== 0 ) {
-            weekDays.push( date.toISOString() );
+        while (date.day() !== 0) {
+            weekDays.push(date.toISOString());
             date.add(1, "days");
         }
 
-        weekDays.push( date.toISOString() );
+        weekDays.push(date.toISOString());
 
-        const data  = [];
+        const data = [];
         let hasData = false;
-        
-        for ( let i = 0; i < weekDays.length - 1; i++ ) {
+
+        for (let i = 0; i < weekDays.length - 1; i++) {
             const day = weekDays[i];
 
-            const activities = await strapi.query( CONTACT_INTERACTION ).count({
-                where : {
-                    createdAt : {
-                        $gte : day,
-                        $lt  : weekDays[ i + 1 ],
+            const activities = await strapi.query(CONTACT_INTERACTION).count({
+                where: {
+                    createdAt: {
+                        $gte: day,
+                        $lt: weekDays[i + 1],
                     },
-                    lead : lead.id,
+                    lead: lead.id,
                 },
             });
 
-            if ( activities > 0 ) hasData = true; 
+            if (activities > 0) hasData = true;
 
             data.push([i, activities]);
         }
 
-        if ( hasData ) {
+        if (hasData) {
             lead.stats = {};
             lead.stats.activities = data;
         }
@@ -408,7 +408,7 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                     JOIN estimates_lead_links ell ON e.id = ell.estimate_id
                     JOIN leads l ON ell.lead_id = l.id
                 WHERE
-                    l.uuid = '${ uuid }'
+                    l.uuid = '${uuid}'
             ),
             filtered_versions AS (
                 SELECT
@@ -455,17 +455,66 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         const today = new Date();
         const startDate = new Date();
         startDate.setDate(today.getDate() - 365);
-      
+
         for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
-          const dateStr = d.toISOString().split('T')[0];
-          resultObject[dateStr] = 0;
+            const dateStr = d.toISOString().split('T')[0];
+            resultObject[dateStr] = 0;
         }
-      
+
         dataArray.forEach(item => {
-          resultObject[item.date] = item.sumatory;
+            resultObject[item.date] = item.sumatory;
         });
-      
+
         return resultObject;
+    },
+
+    async getInteractionsCalendarData(uuid) {
+        const result = await strapi.db.connection.raw(`
+          WITH lead_target AS (
+            SELECT id FROM leads WHERE uuid = '${uuid}'
+          ),
+          interactions_for_lead AS (
+            SELECT
+              DATE(ci.created_at) AS date,
+              COUNT(*) AS total
+            FROM
+              contact_interactions ci
+              JOIN contact_interactions_lead_links link ON ci.id = link.contact_interaction_id
+              JOIN lead_target lt ON link.lead_id = lt.id
+            WHERE
+              ci.created_at >= CURDATE() - INTERVAL 6 MONTH
+            GROUP BY
+              DATE(ci.created_at)
+          )
+          SELECT
+            date,
+            total
+          FROM
+            interactions_for_lead
+          ORDER BY
+            date ASC;
+        `);
+
+        const rows = result[0];
+
+        const today = new Date();
+        const startDate = new Date();
+        startDate.setMonth(today.getMonth() - 5);
+        startDate.setDate(1);
+
+        const dataMap = {};
+
+        for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
+            const dateStr = d.toISOString().split('T')[0];
+            dataMap[dateStr] = 0;
+        }
+
+        rows.forEach(({ date, total }) => {
+            const dateStr = new Date(date).toISOString().split('T')[0];
+            dataMap[dateStr] = total;
+        });
+
+        return dataMap;
     },
 
     async getProductsOfInterest(uuid) {
@@ -479,7 +528,7 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                     JOIN estimates_lead_links ell ON e.id = ell.estimate_id
                     JOIN leads l ON ell.lead_id = l.id
                 WHERE
-                    l.uuid = '${ uuid }'
+                    l.uuid = '${uuid}'
             ),
             filtered_versions AS (
                 -- Obtiene solo las versiones activas de cotización
@@ -542,36 +591,36 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         `);
 
         const dataArray = products[0];
-      
+
         return dataArray;
     },
 
     async prepareLeadData(uuid, data = {}) {
-        return await findOneByUuid( uuid, LEAD, {
-            fields : [ ...leadFields.fields ],
-            populate : {
-                estimates : true,
+        return await findOneByUuid(uuid, LEAD, {
+            fields: [...leadFields.fields],
+            populate: {
+                estimates: true,
                 ...leadFields.populate,
-                ...( data?.tasks && {
-                    tasks : true,
+                ...(data?.tasks && {
+                    tasks: true,
                 }),
-                ...( data?.documents && {
-                    documents : true,
+                ...(data?.documents && {
+                    documents: true,
                 }),
-                ...( data?.notes && {
-                    notes : true,
+                ...(data?.notes && {
+                    notes: true,
                 }),
-                ...( data?.interactions && {
-                    interactions : true,
+                ...(data?.interactions && {
+                    interactions: true,
                 }),
             },
         });
     },
 
     async convertLeadToCustomer(lead, company) {
-        const leadCreation = dayjs( lead.createdAt );
-        const today        = dayjs();
-        const difference   = today.diff( leadCreation, "day" );
+        const leadCreation = dayjs(lead.createdAt);
+        const today = dayjs();
+        const difference = today.diff(leadCreation, "day");
 
         let id = lead.id;
 
@@ -579,18 +628,18 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
         delete lead.uuid;
         delete lead.id;
 
-        const customer = await strapi.entityService.create( CUSTOMER, {
-            data : {
+        const customer = await strapi.entityService.create(CUSTOMER, {
+            data: {
                 ...lead,
-                leadMeta : {
-                    daysToConvert : difference,
-                    convertedAt   : new Date(),
-                    leadCreatedAt : leadCreation,
+                leadMeta: {
+                    daysToConvert: difference,
+                    convertedAt: new Date(),
+                    leadCreatedAt: leadCreation,
                 },
-                isArchived : false,
-                company    : company.id,
+                isArchived: false,
+                company: company.id,
             },
-            fields : ["uuid"],
+            fields: ["uuid"],
         });
 
         lead.id = id;
@@ -600,52 +649,52 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
 
     async deleteParallelData(id) {
         const estimates = await strapi.db.query(ESTIMATE).findMany({
-            where : {
-                lead : id,
+            where: {
+                lead: id,
             },
         });
 
-        for ( const estimate of estimates ) {
+        for (const estimate of estimates) {
             await strapi.entityService.delete(ESTIMATE, estimate.id);
         }
 
-        const tasks = await strapi.db.query( TASK ).findMany({
-            where : {
-                lead : id,
+        const tasks = await strapi.db.query(TASK).findMany({
+            where: {
+                lead: id,
             },
         });
 
-        for ( const task of tasks ) {
+        for (const task of tasks) {
             await strapi.entityService.delete(TASK, task.id);
         }
 
-        const notes = await strapi.db.query( NOTE ).findMany({
-            where : {
-                lead : id,
+        const notes = await strapi.db.query(NOTE).findMany({
+            where: {
+                lead: id,
             },
         });
 
-        for ( const note of notes ) {
+        for (const note of notes) {
             await strapi.entityService.delete(NOTE, note.id);
         }
 
-        const interactions = await strapi.db.query( CONTACT_INTERACTION ).findMany({
-            where : {
-                lead : id,
+        const interactions = await strapi.db.query(CONTACT_INTERACTION).findMany({
+            where: {
+                lead: id,
             },
         });
 
-        for ( const interaction of interactions ) {
+        for (const interaction of interactions) {
             await strapi.entityService.delete(CONTACT_INTERACTION, interaction.id);
         }
 
-        const insiders = await strapi.db.query( INSIDER ).findMany({
-            where : {
-                lead : id,
+        const insiders = await strapi.db.query(INSIDER).findMany({
+            where: {
+                lead: id,
             },
         });
 
-        for ( const insider of insiders ) {
+        for (const insider of insiders) {
             await strapi.entityService.delete(INSIDER, insider.id);
         }
     },
@@ -664,12 +713,12 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                 return `${street || ""} ${extNumber || ""} ${cp || ""} ${city || ""} ${state || ""} ${country || ""}`.trim();
             }
         };
-    
+
         const fetchCoordinates = async (addressData) => {
             const query = generateQuery(addressData);
-    
+
             const URL = `https://api.mapbox.com/search/geocode/v6/forward?access_token=${process.env.MAPBOX_TOKEN}&proximity=ip&q=${encodeURI(query)}`;
-    
+
             try {
                 const { data } = await axios.get(URL);
 
@@ -681,21 +730,21 @@ module.exports = createCoreService( LEAD, ({ strapi }) => ({
                 console.error("Error fetching coordinates:", error);
             }
         };
-    
+
         if (mainAddress) {
             const coordinates = await fetchCoordinates(mainAddress);
 
             mainAddress.longitude = coordinates.longitude;
-            mainAddress.latitude  = coordinates.latitude;
-            
+            mainAddress.latitude = coordinates.latitude;
+
             return;
         }
-    
+
         if (address) {
             const coordinates = await fetchCoordinates(address);
 
             address.longitude = coordinates.longitude;
-            address.latitude  = coordinates.latitude;
+            address.latitude = coordinates.latitude;
 
             return;
         }
