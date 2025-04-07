@@ -33,9 +33,6 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::stock-dispatch.stock-dispatch"
-    },
-    "isCancelled": {
-      "type": "boolean"
     }
   }
 }

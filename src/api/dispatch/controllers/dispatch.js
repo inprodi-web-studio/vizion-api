@@ -7,7 +7,7 @@ const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const dispatchFields = {
-    fields : ["uuid", "fol", "startDate", "endDate", "isCancelled"],
+    fields : ["uuid", "fol", "startDate", "endDate"],
     populate : {
         stockDispatches : {
             fields : ["uuid", "quantity", "isCompleted"],
@@ -182,6 +182,16 @@ module.exports = createCoreController( DISPATCH, ({ strapi }) => ({
         return newDispatch;
     },
     async conclude(ctx) {
+        const { uuid } = ctx.params;
 
+        const dispatch = await findOneByUuid( uuid, DISPATCH );
+
+        const updatedDispatch = await strapi.entityService.update( DISPATCH, dispatch.id, {
+            data : {
+                endDate : dayjs().toISOString(),
+            },
+        }, dispatchFields );
+
+        return updatedDispatch;
     },
 }));
