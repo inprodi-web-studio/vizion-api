@@ -511,7 +511,7 @@ module.exports = createCoreService(LEAD, ({ strapi }) => ({
 
         rows.forEach(({ date, total }) => {
             const dateStr = new Date(date).toISOString().split('T')[0];
-            dataMap[dateStr] = total;
+            dataMap[dateStr] = Number(total);
         });
 
         return Object.entries(dataMap);
