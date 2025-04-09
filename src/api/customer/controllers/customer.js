@@ -52,6 +52,14 @@ const customerFields = {
                 address : true,
             },
         },
+        createdByUser : {
+            fields : ["uuid", "name", "middleName", "lastName"],
+            populate : {
+                image : {
+                    fields : ["url"],
+                },
+            },
+        },
     },
 };
 
@@ -89,7 +97,7 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const { company } = ctx.state;
+        const { company, user } = ctx.state;
         const data = ctx.request.body;
 
         await validateCreate( data );
@@ -146,10 +154,11 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
         const newCustomer = await strapi.entityService.create( CUSTOMER, {
             data : {
                 ...data,
-                value      : 0,
-                isArchived : false,
-                company    : company.id,
-                finalName  : data.tradeName ? data.tradeName : `${ data.completeName.name }${ data.completeName.middleName ? ` ${ data.completeName.middleName }` : "" } ${ data.completeName.lastName ? data.completeName.lastName : "" }`,
+                createdByUser : user.id,
+                value         : 0,
+                isArchived    : false,
+                company       : company.id,
+                finalName     : data.tradeName ? data.tradeName : `${ data.completeName.name }${ data.completeName.middleName ? ` ${ data.completeName.middleName }` : "" } ${ data.completeName.lastName ? data.completeName.lastName : "" }`,
             },
             ...customerFields,
         });

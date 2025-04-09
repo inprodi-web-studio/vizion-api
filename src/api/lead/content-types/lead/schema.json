@@ -130,6 +130,11 @@
       "relation": "oneToMany",
       "target": "api::estimate.estimate",
       "mappedBy": "lead"
+    },
+    "createdByUser": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

@@ -176,6 +176,11 @@
       "type": "component",
       "repeatable": false,
       "component": "customer.preferences"
+    },
+    "createdByUser": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

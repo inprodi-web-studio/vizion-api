@@ -1319,6 +1319,11 @@ export interface ApiCustomerCustomer extends Schema.CollectionType {
     >;
     saleConditions: Attribute.Component<'customer.sale-conditions'>;
     preferences: Attribute.Component<'customer.preferences'>;
+    createdByUser: Attribute.Relation<
+      'api::customer.customer',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -1765,6 +1770,11 @@ export interface ApiLeadLead extends Schema.CollectionType {
       'api::lead.lead',
       'oneToMany',
       'api::estimate.estimate'
+    >;
+    createdByUser: Attribute.Relation<
+      'api::lead.lead',
+      'oneToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;

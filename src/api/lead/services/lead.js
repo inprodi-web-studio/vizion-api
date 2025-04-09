@@ -51,6 +51,14 @@ const leadFields = {
                 address: true,
             },
         },
+        createdByUser : {
+            fields : ["uuid", "name", "middleName", "lastName"],
+            populate : {
+                image : {
+                    fields : ["url"],
+                },
+            },
+        }
     },
 };
 
@@ -599,6 +607,7 @@ module.exports = createCoreService(LEAD, ({ strapi }) => ({
         return await findOneByUuid(uuid, LEAD, {
             fields: [...leadFields.fields],
             populate: {
+                createdByUser : true,
                 estimates: true,
                 ...leadFields.populate,
                 ...(data?.tasks && {
