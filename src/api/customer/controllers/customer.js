@@ -527,9 +527,12 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
             ...customerFields
         });
 
+        const type = customer.credit.amountLimit > data.amountLimit ? "decrease" : "increase";
+
         await strapi.entityService.create( CUSTOMER_CREDIT, {
             data : {
                 customer : updatedCustomer.id,
+                type,
                 details : {
                     ...data,
                     isActive : true,
@@ -554,6 +557,13 @@ module.exports = createCoreController( CUSTOMER, ({ strapi }) => ({
                 },
             },
             ...customerFields
+        });
+
+        await strapi.entityService.create( CUSTOMER_CREDIT, {
+            data : {
+                customer : updatedCustomer.id,
+                type : customer.credit.isActive ? "paused" : "activated",
+            },
         });
 
         return updatedCustomer.credit;

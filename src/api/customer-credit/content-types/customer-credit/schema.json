@@ -25,6 +25,9 @@
       "type": "component",
       "repeatable": false,
       "component": "customer.credit"
+    },
+    "type": {
+      "type": "string"
     }
   }
 }
