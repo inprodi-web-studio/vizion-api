@@ -603,6 +603,78 @@ module.exports = createCoreService(LEAD, ({ strapi }) => ({
         return dataArray;
     },
 
+    async getCategoriesOfInterest(uuid) {
+        const categories = await strapi.db.connection.raw(`
+            WITH lead_estimates AS (
+                -- Cotizaciones asociadas al lead (prospecto) especificado
+                SELECT
+                    e.id AS estimate_id
+                FROM
+                    estimates e
+                    JOIN estimates_lead_links ell ON e.id = ell.estimate_id
+                    JOIN leads l ON ell.lead_id = l.id
+                WHERE
+                    l.uuid = '${uuid}'
+            ),
+            filtered_versions AS (
+                -- Sólo las versiones activas de cotización
+                SELECT
+                    id AS version_id
+                FROM
+                    components_estimate_versions
+                WHERE
+                    is_active = 1
+            ),
+            filtered_items AS (
+                -- Filtrar items dentro de estimates_components relacionados a una versión activa
+                SELECT
+                    ec.entity_id AS estimate_id,
+                    fv.version_id,
+                    ceei.id AS estimate_item_id,
+                    ceei.quantity,
+                    ceei.price,
+                    ceei.iva
+                FROM
+                    estimates_components ec
+                    JOIN filtered_versions fv ON ec.component_id = fv.version_id
+                    JOIN components_estimate_versions_components cec ON fv.version_id = cec.entity_id
+                    JOIN components_estimate_estimate_items ceei ON cec.component_id = ceei.id
+                WHERE
+                    ec.field = 'versions'
+                    AND cec.field = 'items'
+            ),
+            products_linked AS (
+                -- Vincula los productos con los estimate_items
+                SELECT
+                    fi.estimate_id,
+                    fi.estimate_item_id,
+                    fi.quantity,
+                    fi.price,
+                    fi.iva,
+                    pl.product_id
+                FROM
+                    filtered_items fi
+                    JOIN components_estimate_estimate_items_product_links pl ON fi.estimate_item_id = pl.estimate_item_id
+            )
+            SELECT
+                SUM(pl.quantity) AS value,  -- Cantidad total cotizada por categoría
+                pc.name AS name             -- Nombre de la categoría
+            FROM
+                products_linked pl
+                JOIN products_category_links pcl ON pl.product_id = pcl.product_id
+                JOIN product_categories pc ON pcl.product_category_id = pc.id
+                JOIN lead_estimates le ON pl.estimate_id = le.estimate_id
+            GROUP BY
+                pc.id, pc.name
+            ORDER BY
+                value DESC;
+        `);
+
+        const dataArray = categories[0];
+
+        return dataArray;
+    },
+
     async prepareLeadData(uuid, data = {}) {
         return await findOneByUuid(uuid, LEAD, {
             fields: [...leadFields.fields],
