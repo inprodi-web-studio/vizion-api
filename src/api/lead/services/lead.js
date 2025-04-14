@@ -699,6 +699,8 @@ module.exports = createCoreService(LEAD, ({ strapi }) => ({
     },
 
     async convertLeadToCustomer(lead, company) {
+        const ctx = strapi.requestContext.get();
+        const user = ctx.state.user;
         const leadCreation = dayjs(lead.createdAt);
         const today = dayjs();
         const difference = today.diff(leadCreation, "day");
@@ -709,7 +711,7 @@ module.exports = createCoreService(LEAD, ({ strapi }) => ({
         delete lead.uuid;
         delete lead.id;
 
-        const customer = await strapi.entityService.create(CUSTOMER, {
+        const customer = await strapi.entityService.create( CUSTOMER, {
             data: {
                 ...lead,
                 leadMeta: {
@@ -719,6 +721,7 @@ module.exports = createCoreService(LEAD, ({ strapi }) => ({
                 },
                 isArchived: false,
                 company: company.id,
+                createdByUser: user.id,
             },
             fields: ["uuid"],
         });
