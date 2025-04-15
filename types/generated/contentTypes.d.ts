@@ -2162,6 +2162,11 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    documents: Attribute.Relation<
+      'api::product.product',
+      'oneToMany',
+      'api::document.document'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

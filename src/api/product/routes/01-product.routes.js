@@ -18,6 +18,14 @@ module.exports = {
       },
       {
         method  : "GET",
+        path    : "/files/products/:uuid",
+        handler : "product.getFiles",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "GET",
         path    : "/products/:uuid/relations",
         handler : "product.findEstimatesAndSales",
         config : {
@@ -33,9 +41,25 @@ module.exports = {
         },
       },
       {
+        method  : "POST",
+        path    : "/files/products/:uuid",
+        handler : "product.uploadFile",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "PUT",
         path    : "/products/:uuid",
         handler : "product.update",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "PUT",
+        path    : "/files/products/:uuid/:documentUuid",
+        handler : "product.updateFileName",
         config : {
           policies : ["global::userContext"],
         },
@@ -76,6 +100,14 @@ module.exports = {
         method  : "DELETE",
         path    : "/products/:uuid",
         handler : "product.delete",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
+        method  : "DELETE",
+        path    : "/files/products/:uuid/:documentUuid",
+        handler : "product.removeFile",
         config : {
           policies : ["global::userContext"],
         },

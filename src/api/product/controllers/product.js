@@ -1,5 +1,6 @@
-const { PRODUCT, ESTIMATE, SALE } = require("../../../constants/models");
+const { PRODUCT, ESTIMATE, SALE, DOCUMENT } = require("../../../constants/models");
 const checkForDuplicates = require("../../../helpers/checkForDuplicates");
+const { UnprocessableContentError } = require("../../../helpers/errors");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { validateKeyUpdate }    = require('../../../helpers/validateKeyUpdate');
@@ -245,6 +246,121 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
         });
 
         return updatedProduct;
+    },
+
+    async getFiles(ctx) {
+        const { uuid }   = ctx.params;
+        const { search } = ctx.query ?? {};
+
+        const product = await findOneByUuid( uuid, PRODUCT, {
+            populate : {
+                documents : {
+                    fields   : ["uuid", "name"],
+                    populate : {
+                        user : {
+                            fields   : ["name, middleName, lastName"],
+                            populate : {
+                                image : {
+                                    fields : ["url"],
+                                },
+                            },
+                        },
+                        file : true,
+                    },
+                },
+            },
+        });
+
+        return search ? product.documents.filter( doc => doc.file.name.toLowerCase().includes( search.toLowerCase() ) ) : product.documents ?? [];
+    },
+    
+    async uploadFile(ctx) {
+        const { user } = ctx.state;
+        const { uuid } = ctx.params;
+        const { file } = ctx.request.files ?? {};
+
+        if ( !file ) {
+            throw new UnprocessableContentError(["File is required"]);
+        }
+
+        const product = await findOneByUuid( uuid, PRODUCT, productFields );
+
+        const newDocument = await strapi.entityService.create( DOCUMENT, {
+            data : {
+                name : file.name,
+                user : user.id,
+            },
+        });
+
+        await strapi.plugins.upload.services.upload.uploadToEntity({
+            id    : newDocument.id,
+            model : DOCUMENT,
+            field : "file",
+        }, file );
+
+        const updatedProduct = await strapi.entityService.update( PRODUCT, product.id, {
+            data : {
+                documents : {
+                    connect : [ newDocument.id ],
+                },
+            },
+            fields : ["uuid"],
+            populate : {
+                documents : {
+                    fields : ["uuid"],
+                    populate : {
+                        user : {
+                            fields   : ["name, middleName, lastName"],
+                            populate : {
+                                image : {
+                                    fields : ["url"],
+                                },
+                            },
+                        },
+                        file : true,
+                    }
+                },
+            }
+        });
+
+        return updatedProduct;
+    },
+
+    async updateFileName(ctx) {
+        const data = ctx.request.body;
+        const { uuid, documentUuid } = ctx.params;
+
+        await findOneByUuid( uuid, PRODUCT );
+
+        const { id } = await findOneByUuid( documentUuid, DOCUMENT);
+
+        const updatedDocument = await strapi.entityService.update( DOCUMENT, id, {
+            data : {
+                name : data.name
+            },
+        });
+
+        return updatedDocument;
+    },
+
+    async removeFile(ctx) {
+        const { uuid, documentUuid } = ctx.params;
+
+        await findOneByUuid( uuid, PRODUCT );
+
+        const { id, file } = await findOneByUuid( documentUuid, DOCUMENT, {
+            populate : {
+                file : true,
+            },
+        });
+
+        await strapi.plugins.upload.services.upload.remove( file );
+
+        const deletedDocument = await strapi.entityService.delete( DOCUMENT, id, {
+            fields : ["uuid"],
+        });
+
+        return deletedDocument;
     },
 
     async findEstimatesAndSales(ctx) {
