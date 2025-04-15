@@ -8,7 +8,7 @@ const creditMovementsFields = {
     fields   : ["uuid", "policy", "daysToPay", "createdAt"],
     populate : {
         sale : {
-            fields : ["uuid", "fol", "subject"],
+            fields : ["uuid", "fol", "subject", "date"],
             populate : {
                 resume : true,
             },
