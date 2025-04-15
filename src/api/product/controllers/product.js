@@ -70,6 +70,14 @@ const productFields = {
         packages : {
             count : true,
         },
+        createdByUser : {
+            fields : ["uuid", "name", "middleName", "lastName"],
+            populate : {
+                image : {
+                    fields : ["url"],
+                },
+            },
+        },
     },
 };
 
@@ -97,7 +105,7 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const { company } = ctx.state;
+        const { company, user } = ctx.state;
         const data = ctx.request.body;
 
         await validateCreate( data );
@@ -119,6 +127,7 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
                         type : "fixed",
                     },
                 },
+                createdByUser : user.id,
                 company : company.id,
             },
         });

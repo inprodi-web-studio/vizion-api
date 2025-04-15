@@ -133,6 +133,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::adjustment-motive.adjustment-motive"
+    },
+    "createdByUser": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

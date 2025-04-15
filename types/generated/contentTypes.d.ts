@@ -2157,6 +2157,11 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'oneToOne',
       'api::adjustment-motive.adjustment-motive'
     >;
+    createdByUser: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
