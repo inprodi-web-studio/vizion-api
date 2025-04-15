@@ -14,7 +14,7 @@ const creditMovementsFields = {
             },
         },
         payment : {
-            fields : ["uuid", "amount", "date", "fol"],
+            fields : ["uuid", "amount", "date", "fol", "status"],
             populate : {
                 sale : {
                     fields : ["uuid", "fol", "subject"],
