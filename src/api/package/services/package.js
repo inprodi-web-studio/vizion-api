@@ -17,6 +17,12 @@ module.exports = createCoreService(PACKAGE, ({ strapi }) => ({
         } else {
             data.realConversion = data.conversionRate;
         }
+
+        if (data.package) {
+            const { id : packageId } = await findOneByUuid( data.package, PACKAGE );
+
+            data.package = packageId;
+        }
     },
 
     async updateReferencedPackages( data, package ) {

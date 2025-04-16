@@ -1867,6 +1867,11 @@ export interface ApiPackagePackage extends Schema.CollectionType {
       'api::product-variation.product-variation'
     >;
     type: Attribute.String;
+    package: Attribute.Relation<
+      'api::package.package',
+      'oneToOne',
+      'api::package.package'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
