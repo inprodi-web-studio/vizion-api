@@ -142,6 +142,7 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
                     uuid : {
                         $not : package.uuid,
                     },
+                    type : data.type,
                     product : product.id,
                     unity : {
                         uuid : data.unity,
@@ -169,6 +170,7 @@ module.exports = createCoreController(PACKAGE, ({ strapi }) => ({
                     uuid : {
                         $not : package.uuid,
                     },
+                    type : data.type,
                     variation : variation.id,
                     unity : {
                         uuid : data.unity,
