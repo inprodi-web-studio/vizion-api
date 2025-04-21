@@ -2359,6 +2359,11 @@ export interface ApiProductVariationProductVariation
       'oneToMany',
       'api::adjustment-motive.adjustment-motive'
     >;
+    createdByUser: Attribute.Relation<
+      'api::product-variation.product-variation',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

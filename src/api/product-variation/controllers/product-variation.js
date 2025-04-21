@@ -42,6 +42,14 @@ const variationsFields = {
         packages : {
             count : true,
         },
+        createdByUser : {
+            fields : ["uuid", "name", "middleName", "lastName"],
+            populate : {
+                image : {
+                    fields : ["url"],
+                },
+            },
+        },
     },
 };
 
@@ -65,7 +73,8 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const { productUuid } = ctx.params;
+        const { productUuid } = ctx.params
+        const { user } = ctx.state;
         const data = ctx.request.body;
 
         await validateCreate( data );
@@ -112,6 +121,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                     },
                 }),
                 product : product.id,
+                createdByUser : user.id,
             },
         });
 
