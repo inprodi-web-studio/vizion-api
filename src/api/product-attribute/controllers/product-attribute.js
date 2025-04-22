@@ -133,8 +133,6 @@ module.exports = createCoreController( PRODUCT_ATTRIBUTE, ({ strapi }) => ({
             });
         }
 
-        await strapi.service(PRODUCT_ATTRIBUTE).removeVariationsByAttribute(product.id, attribute.uuid);
-
         const updatedProduct = await strapi.entityService.update( PRODUCT, product.id, {
             data : {
                 attributes : product.attributes.filter( attr => attr.attribute.uuid !== attribute.uuid ),
