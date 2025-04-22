@@ -205,6 +205,11 @@ export interface EstimateVersion extends Schema.Component {
     comments: Attribute.Text;
     terms: Attribute.Text;
     isActive: Attribute.Boolean;
+    createdByUser: Attribute.Relation<
+      'estimate.version',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
   };
 }
 

@@ -119,6 +119,14 @@ const estimateFields = {
                         globalDiscount : true,
                     },
                 },
+                createdByUser : {
+                    fields : ["uuid", "name", "middleName", "lastName"],
+                    populate : {
+                        image : {
+                            fields : ["url"],
+                        },
+                    },
+                },
             },
         },
         sale : {
@@ -156,7 +164,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const { company } = ctx.state;
+        const { company, user } = ctx.state;
         const data = ctx.request.body;
 
         await validateCreate( data );
@@ -187,6 +195,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
                     comments : data.comments,
                     terms : data.terms,
                     isActive : true,
+                    createdByUser :user.id
                 }],
                 company : company.id,
             },
@@ -247,6 +256,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
     },
 
     async newVersion(ctx) {
+        const { user } = ctx.state;
         const { uuid } = ctx.params;
         const data = ctx.request.body;
 
@@ -279,6 +289,7 @@ module.exports = createCoreController( ESTIMATE, ({ strapi }) => ({
                         comments : data.comments,
                         terms : data.terms,
                         isActive : true,
+                        createdByUser :user.id
                     }
                 ],
             },
