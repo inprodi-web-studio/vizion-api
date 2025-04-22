@@ -1,6 +1,6 @@
 const { PRODUCT, ESTIMATE, SALE, DOCUMENT } = require("../../../constants/models");
 const checkForDuplicates = require("../../../helpers/checkForDuplicates");
-const { UnprocessableContentError } = require("../../../helpers/errors");
+const { UnprocessableContentError, BadRequestError } = require("../../../helpers/errors");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { validateKeyUpdate }    = require('../../../helpers/validateKeyUpdate');
@@ -236,7 +236,14 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
     async toggleStatus(ctx) {
         const { uuid } = ctx.params;
 
-        const { id, isDraft } = await findOneByUuid( uuid, PRODUCT, productFields );
+        const { id, isDraft, type, variations } = await findOneByUuid( uuid, PRODUCT, productFields );
+
+        if (isDraft && type === "variable" && variations.count === 0) {
+            throw new BadRequestError("The product must have at least one variation to be published", {
+                key : "product.needsVariations",
+                path : ctx.request.url,
+            });
+        }
 
         const updatedProduct = await strapi.entityService.update( PRODUCT, id, {
             data : {
