@@ -1,5 +1,6 @@
 const { PRODUCT_VARIATION, PRODUCT, ESTIMATE, SALE } = require('../../../constants/models');
 const checkForDuplicates = require('../../../helpers/checkForDuplicates');
+const { BadRequestError } = require('../../../helpers/errors');
 const findMany = require('../../../helpers/findMany');
 const findOneByUuid = require('../../../helpers/findOneByUuid');
 const { validateCreate, validateUpdate, validateSetPricing } = require('../content-types/product-variation/product-variation.validation');
@@ -223,9 +224,18 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
     },
 
     async toggleStatus(ctx) {
-        const { uuid } = ctx.params;
+        const { uuid, productUuid } = ctx.params;
+
+        const product = await findOneByUuid( productUuid, PRODUCT );
 
         const { id, isDraft } = await findOneByUuid( uuid, PRODUCT_VARIATION, variationsFields );
+
+        if ( isDraft && product.isDraft ) {
+            throw new BadRequestError("The product must be published to publish the variation", {
+                key : "product-variation.draftParent",
+                path : ctx.request.url,
+            });
+        }
 
         const updatedVariation = await strapi.entityService.update( PRODUCT_VARIATION, id, {
             data : {

@@ -1,4 +1,4 @@
-const { PRODUCT, PRODUCT_CATEGORY, USER, TAG, PRODUCT_ATTRIBUTE, ATTRIBUTE_VALUE, UNITY, BRAND } = require("../../../constants/models");
+const { PRODUCT, PRODUCT_CATEGORY, USER, TAG, PRODUCT_ATTRIBUTE, ATTRIBUTE_VALUE, UNITY, BRAND, PRODUCT_VARIATION } = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
@@ -102,5 +102,25 @@ module.exports = createCoreService( PRODUCT, ({ strapi }) => ({
         }
 
         return ids;
+    },
+
+    async unpublishVariations(productId) {
+        const variations = await strapi.query( PRODUCT_VARIATION ).find({
+            where : {
+                product : productId,
+            },
+        });
+
+        const promises = [];
+
+        for ( const variation of variations ) {
+            promises.push( strapi.entityService.update( PRODUCT_VARIATION, variation.id, {
+                data : {
+                    isDraft : true,
+                },
+            }) );
+        }
+
+        await Promise.all( promises );
     },
 }));

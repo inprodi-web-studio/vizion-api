@@ -245,6 +245,10 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
             });
         }
 
+        if (!isDraft && type === "variable" && variations.count > 0) {
+            await strapi.service( PRODUCT ).unpublishVariations( id );
+        }
+
         const updatedProduct = await strapi.entityService.update( PRODUCT, id, {
             data : {
                 isDraft : !isDraft,
