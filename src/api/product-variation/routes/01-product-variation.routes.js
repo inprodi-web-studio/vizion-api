@@ -41,6 +41,14 @@ module.exports = {
         },
       },
       {
+        method  : "PATCH",
+        path    : "/products/:productUuid/variations/:uuid/status",
+        handler : "product-variation.toggleStatus",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "DELETE",
         path    : "/products/:productUuid/variations/:uuid",
         handler : "product-variation.delete",

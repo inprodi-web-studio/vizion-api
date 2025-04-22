@@ -7,7 +7,7 @@ const { validateCreate, validateUpdate, validateSetPricing } = require('../conte
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const variationsFields = {
-    fields : ["uuid", "name", "sku", "description"],
+    fields : ["uuid", "name", "sku", "description", "isDraft"],
     populate : {
         dimensions : true,
         image : {
@@ -102,6 +102,7 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
 
         const newVariation = await strapi.entityService.create( PRODUCT_VARIATION, {
             data : {
+                isDraft : false,
                 ...data,
                 ...( data.saleInfo && {
                     saleInfo : {
@@ -214,6 +215,21 @@ module.exports = createCoreController(PRODUCT_VARIATION, ({ strapi }) => ({
                     iva : saleInfo?.iva ? saleInfo.iva : product.saleInfo.iva,
                     priceConfig : data,
                 },
+            },
+            ...variationsFields,
+        });
+
+        return updatedVariation;
+    },
+
+    async toggleStatus(ctx) {
+        const { uuid } = ctx.params;
+
+        const { id, isDraft } = await findOneByUuid( uuid, PRODUCT_VARIATION, variationsFields );
+
+        const updatedVariation = await strapi.entityService.update( PRODUCT_VARIATION, id, {
+            data : {
+                isDraft : !isDraft,
             },
             ...variationsFields,
         });

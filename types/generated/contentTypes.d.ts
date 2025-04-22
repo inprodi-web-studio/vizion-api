@@ -2364,6 +2364,7 @@ export interface ApiProductVariationProductVariation
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    isDraft: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
