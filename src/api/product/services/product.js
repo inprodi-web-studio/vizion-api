@@ -105,7 +105,7 @@ module.exports = createCoreService( PRODUCT, ({ strapi }) => ({
     },
 
     async unpublishVariations(productId) {
-        const variations = await strapi.query( PRODUCT_VARIATION ).find({
+        const variations = await strapi.query( PRODUCT_VARIATION ).findMany({
             where : {
                 product : productId,
             },
