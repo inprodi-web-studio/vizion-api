@@ -2382,6 +2382,53 @@ export interface ApiProductVariationProductVariation
   };
 }
 
+export interface ApiPromotionPromotion extends Schema.CollectionType {
+  collectionName: 'promotions';
+  info: {
+    singularName: 'promotion';
+    pluralName: 'promotions';
+    displayName: 'Promotion';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    name: Attribute.String;
+    description: Attribute.Text;
+    type: Attribute.String;
+    startDate: Attribute.Date;
+    endDate: Attribute.Date;
+    autoApply: Attribute.Boolean;
+    force: Attribute.Boolean;
+    conditions: Attribute.JSON;
+    productQuery: Attribute.JSON;
+    discount: Attribute.JSON;
+    company: Attribute.Relation<
+      'api::promotion.promotion',
+      'oneToOne',
+      'api::company.company'
+    >;
+    isActive: Attribute.Boolean;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::promotion.promotion',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::promotion.promotion',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiSaleSale extends Schema.CollectionType {
   collectionName: 'sales';
   info: {
@@ -3284,6 +3331,7 @@ declare module '@strapi/types' {
       'api::product-badge.product-badge': ApiProductBadgeProductBadge;
       'api::product-category.product-category': ApiProductCategoryProductCategory;
       'api::product-variation.product-variation': ApiProductVariationProductVariation;
+      'api::promotion.promotion': ApiPromotionPromotion;
       'api::sale.sale': ApiSaleSale;
       'api::shelf.shelf': ApiShelfShelf;
       'api::shelf-position.shelf-position': ApiShelfPositionShelfPosition;

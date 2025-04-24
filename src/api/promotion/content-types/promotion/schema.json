@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "promotions",
+  "info": {
+    "singularName": "promotion",
+    "pluralName": "promotions",
+    "displayName": "Promotion",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "type": {
+      "type": "string"
+    },
+    "startDate": {
+      "type": "date"
+    },
+    "endDate": {
+      "type": "date"
+    },
+    "autoApply": {
+      "type": "boolean"
+    },
+    "force": {
+      "type": "boolean"
+    },
+    "conditions": {
+      "type": "json"
+    },
+    "productQuery": {
+      "type": "json"
+    },
+    "discount": {
+      "type": "json"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    },
+    "isActive": {
+      "type": "boolean"
+    }
+  }
+}

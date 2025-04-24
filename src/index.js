@@ -44,6 +44,7 @@ const {
   DISPATCH,
   PLATFORM,
   BRAND,
+  PROMOTION,
 } = require("./constants/models");
 
 module.exports = {
@@ -74,6 +75,7 @@ module.exports = {
         INT_ROLE,
         ESTIMATE,
         WAREHOUSE,
+        PROMOTION,
         INVITATION,
         PRICE_LIST,
         PREFERENCE,
