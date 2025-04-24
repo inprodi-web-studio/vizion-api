@@ -39,7 +39,7 @@
     "conditions": {
       "type": "json"
     },
-    "productQuery": {
+    "productsQuery": {
       "type": "json"
     },
     "discount": {

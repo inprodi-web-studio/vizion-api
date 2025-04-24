@@ -3,12 +3,12 @@ const { yup, validateYupSchema } = require("../../../../helpers/validators");
 const createSchema = yup.object().shape({
     name : yup.string().required(),
     description : yup.string().nullable(),
-    startDate : yup.date().required(),
-    endDate : yup.date().nullable(),
+    startDate : yup.string().required(),
+    endDate : yup.string().nullable(),
     autoApply : yup.boolean().required(),
     force : yup.boolean().required(),
     type : yup.string().oneOf(["individualDiscount", "globalDiscount", "gift"]).required(),
-    productQuery : yup.array().of( yup.array().of( yup.object().shape({
+    productsQuery : yup.array().of( yup.array().of( yup.object().shape({
         type : yup.string().required(),
         entities : yup.array().nullable(),
     }).noUnknown().strict().required() ).required().min(1) ).required().min(1),

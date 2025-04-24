@@ -6,7 +6,7 @@ const { validateCreate } = require('../content-types/promotion/promotion.validat
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const promotionFields = {
-    fields : ["uuid", "name", "description", "startDate", "endDate", "autoApply", "force", "type", "conditions", "discount", "productQuery", "isActive"],
+    fields : ["uuid", "name", "description", "startDate", "endDate", "autoApply", "force", "type", "conditions", "discount", "productsQuery", "isActive"],
 };
 
 module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
@@ -40,6 +40,7 @@ module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
         const newPromotion = await strapi.entityService.create( PROMOTION, {
             data : {
                 ...data,
+                isActive : true,
                 company : company.id,
             },
             ...promotionFields,

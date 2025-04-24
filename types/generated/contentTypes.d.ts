@@ -2403,7 +2403,7 @@ export interface ApiPromotionPromotion extends Schema.CollectionType {
     autoApply: Attribute.Boolean;
     force: Attribute.Boolean;
     conditions: Attribute.JSON;
-    productQuery: Attribute.JSON;
+    productsQuery: Attribute.JSON;
     discount: Attribute.JSON;
     company: Attribute.Relation<
       'api::promotion.promotion',
