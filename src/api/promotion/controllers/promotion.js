@@ -37,10 +37,6 @@ module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
 
         await validateCreate( data );
 
-        return data;
-
-        console.log(data);
-
         const newPromotion = await strapi.entityService.create( PROMOTION, {
             data : {
                 ...data,
