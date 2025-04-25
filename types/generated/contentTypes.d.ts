@@ -2391,7 +2391,7 @@ export interface ApiPromotionPromotion extends Schema.CollectionType {
     description: '';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     uuid: Attribute.String;
@@ -2413,7 +2413,6 @@ export interface ApiPromotionPromotion extends Schema.CollectionType {
     isActive: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
       'api::promotion.promotion',
       'oneToOne',
