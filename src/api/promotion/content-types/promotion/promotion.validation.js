@@ -8,7 +8,7 @@ const createSchema = yup.object().shape({
     autoApply : yup.boolean().required(),
     force : yup.boolean().required(),
     type : yup.string().oneOf(["individualDiscount", "globalDiscount", "gift"]).required(),
-    productQuery : yup.array().of( yup.array().of( yup.object().shape({
+    productsQuery : yup.array().of( yup.array().of( yup.object().shape({
         type : yup.string().required(),
         entities : yup.array().nullable(),
     }).noUnknown().strict().required() ).required().min(1) ).required().min(1),
