@@ -2411,6 +2411,11 @@ export interface ApiPromotionPromotion extends Schema.CollectionType {
       'api::company.company'
     >;
     isActive: Attribute.Boolean;
+    createdByUser: Attribute.Relation<
+      'api::promotion.promotion',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

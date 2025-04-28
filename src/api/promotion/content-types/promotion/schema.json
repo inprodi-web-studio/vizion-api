@@ -52,6 +52,11 @@
     },
     "isActive": {
       "type": "boolean"
+    },
+    "createdByUser": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

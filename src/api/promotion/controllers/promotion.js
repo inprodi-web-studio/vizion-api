@@ -7,6 +7,16 @@ const { createCoreController } = require('@strapi/strapi').factories;
 
 const promotionFields = {
     fields : ["uuid", "name", "description", "startDate", "endDate", "autoApply", "force", "type", "conditions", "discount", "productsQuery", "isActive"],
+    populate : {
+        createdByUser : {
+            fields : ["uuid", "name", "middleName", "lastName"],
+            populate : {
+                image : {
+                    fields : ["url"],
+                },
+            },
+        },
+    },
 };
 
 module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
@@ -23,6 +33,10 @@ module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
         return promotions;
     },
 
+    async getStats() {
+        return await strapi.service( PROMOTION ).getStats();
+    },
+
     async findOne(ctx) {
         const { uuid } = ctx.params;
 
@@ -32,7 +46,7 @@ module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
     },
 
     async create(ctx) {
-        const { company } = ctx.state;
+        const { company, user } = ctx.state;
         const data = ctx.request.body;
 
         await validateCreate( data );
@@ -42,6 +56,7 @@ module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
                 ...data,
                 isActive : true,
                 company : company.id,
+                createdByUser : user.id,
             },
             ...promotionFields,
         });

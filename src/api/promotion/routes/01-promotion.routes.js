@@ -9,6 +9,14 @@ module.exports = {
         },
       },
       {
+        method  : "GET",
+        path    : "/promotions/stats",
+        handler : "promotion.getStats",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/promotions",
         handler : "promotion.create",
