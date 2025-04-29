@@ -17,6 +17,14 @@ module.exports = {
         },
       },
       {
+        method  : "GET",
+        path    : "/promotions/:uuid",
+        handler : "promotion.findOne",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "POST",
         path    : "/promotions",
         handler : "promotion.create",
