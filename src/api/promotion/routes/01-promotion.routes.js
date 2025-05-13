@@ -33,6 +33,14 @@ module.exports = {
         },
       },
       {
+        method  : "POST",
+        path    : "/promotions/check-applicable",
+        handler : "promotion.checkApplicable",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "PUT",
         path    : "/promotions/:uuid",
         handler : "promotion.update",

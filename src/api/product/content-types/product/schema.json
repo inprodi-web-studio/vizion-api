@@ -132,7 +132,7 @@
     "brand": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::adjustment-motive.adjustment-motive"
+      "target": "api::brand.brand"
     },
     "createdByUser": {
       "type": "relation",

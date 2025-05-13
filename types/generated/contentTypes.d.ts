@@ -2155,7 +2155,7 @@ export interface ApiProductProduct extends Schema.CollectionType {
     brand: Attribute.Relation<
       'api::product.product',
       'oneToOne',
-      'api::adjustment-motive.adjustment-motive'
+      'api::brand.brand'
     >;
     createdByUser: Attribute.Relation<
       'api::product.product',
