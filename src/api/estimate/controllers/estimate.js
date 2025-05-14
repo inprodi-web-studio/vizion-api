@@ -80,6 +80,9 @@ const estimateFields = {
                                 unity : {
                                     fields : ["uuid", "name", "satCode", "abbreviation"],
                                 },
+                                brand : {
+                                    fields : ["uuid", "name"],
+                                },
                                 variations : {
                                     count : true,
                                 },

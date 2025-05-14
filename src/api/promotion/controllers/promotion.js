@@ -126,17 +126,29 @@ module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
             ...promotionFields,
         });
 
-        const applicable = [];
+        const results = [];
+
 
         for (const promo of promotions) {
-          if (
-            await strapi.service(PROMOTION).evaluateProducts(promo, data) &&
-            await strapi.service(PROMOTION).evaluateConditions(promo, data)
-          ) {
-            applicable.push(promo);
+            const matchedItems = await strapi
+              .service(PROMOTION)
+              .getApplicableItems(promo, data);
+      
+            const conditionsOk = await strapi
+              .service(PROMOTION)
+              .evaluateConditions(promo, data);
+      
+            if (matchedItems.length > 0 && conditionsOk) {
+              results.push({
+                uuid : promo.uuid,
+                discount : promo.discount,
+                autoApply : promo.autoApply,
+                force : promo.force,
+                items: matchedItems
+              });
+            }
           }
-        }
 
-        return applicable;
+        return results;
     },
 }));
