@@ -22,8 +22,6 @@ const checkForDuplicates = async (MODEL, filters, schema, byCompany = true) => {
         ...schema,
     });
 
-    console.log( conflictingEntity );
-
     const checkFilters = ( filter, entity, path = "" ) => {
         const keys = Object.keys( filter );
 

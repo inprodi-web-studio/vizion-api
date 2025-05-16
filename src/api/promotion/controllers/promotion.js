@@ -141,6 +141,8 @@ module.exports = createCoreController(PROMOTION, ({ strapi }) => ({
             if (matchedItems.length > 0 && conditionsOk) {
               results.push({
                 uuid : promo.uuid,
+                name : promo.name,
+                description : promo.description,
                 discount : promo.discount,
                 autoApply : promo.autoApply,
                 force : promo.force,
