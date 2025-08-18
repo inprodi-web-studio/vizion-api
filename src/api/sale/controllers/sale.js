@@ -4,10 +4,14 @@ const {
   PREFERENCE,
   STOCK_RESERVATION,
   STOCK_RELEASE,
+  COMPANY,
 } = require("../../../constants/models");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const { validateCreate } = require("../content-types/sale/sale.validation");
+const { BadRequestError } = require("../../../helpers/errors");
+const { default: puppeteer } = require("puppeteer");
+const defaultSale = require("../../../templates/defaultSale.template");
 
 const { createCoreController } = require("@strapi/strapi").factories;
 
@@ -227,6 +231,86 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
     return updatedSale;
   },
 
+  async generatePdf(ctx) {
+    const { uuid } = ctx.params;
+    const { company } = ctx.state;
+
+    const sale = await findOneByUuid(uuid, SALE, saleFields);
+
+    try {
+      const browser = await puppeteer.launch({
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+        args: [
+          "--disable-gpu",
+          "--disable-setuid-sandbox",
+          "--no-sandbox",
+          "--no-zygote",
+        ],
+        ignoreDefaultArgs: ["--disable-extensions"],
+      });
+
+      const page = await browser.newPage();
+
+      const companyInfo = await strapi.entityService.findOne(
+        COMPANY,
+        company.id,
+        {
+          fields: ["name", "website"],
+          populate: {
+            logotype: {
+              fields: ["url", "name"],
+            },
+            fiscalInfo: {
+              fields: ["legalName", "rfc", "regime"],
+              populate: {
+                address: true,
+              },
+            },
+            address: true,
+          },
+        }
+      );
+
+      const { config } = await strapi.query(PREFERENCE).findOne({
+        where: {
+          company: company.id,
+          app: "crm",
+          module: "estimates",
+        },
+      });
+
+      const template = defaultSale(sale, config, companyInfo);
+
+      await page.setContent(template);
+
+      const pdfBuffer = await page.pdf({
+        format: "A4",
+        printBackground: true,
+        margin: {
+          top: 30,
+          right: 40,
+          bottom: 30,
+          left: 40,
+        },
+      });
+
+      await browser.close();
+
+      ctx.response.type = "application/pdf";
+      ctx.response.attachment("tester.pdf");
+      ctx.response.length = "pdfBuffer.length";
+
+      ctx.body = pdfBuffer;
+    } catch (error) {
+      console.error(error);
+
+      throw new BadRequestError("Error while generating pdf", {
+        key: "sale.pdfGeneration",
+        path: ctx.request.url,
+      });
+    }
+  },
+
   async authorize(ctx) {
     const { company } = ctx.state;
     const { uuid } = ctx.params;
@@ -250,16 +334,14 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
       ...saleFields,
     });
 
-    await strapi
-      .service(SALE)
-      .handleCreditSale(
-        {
-          customer: sale.customer.id,
-          customerCredit: sale.customer.credit,
-          paymentScheme: sale.paymentScheme,
-        },
-        sale
-      );
+    await strapi.service(SALE).handleCreditSale(
+      {
+        customer: sale.customer.id,
+        customerCredit: sale.customer.credit,
+        paymentScheme: sale.paymentScheme,
+      },
+      sale
+    );
     await strapi
       .service(SALE)
       .updateCustomerMeta({ customer: sale.customer.id, date: sale.date });
@@ -293,16 +375,14 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
       ...saleFields,
     });
 
-    await strapi
-      .service(SALE)
-      .handleCreditSale(
-        {
-          customer: sale.customer.id,
-          customerCredit: sale.customer.credit,
-          paymentScheme: sale.paymentScheme,
-        },
-        sale
-      );
+    await strapi.service(SALE).handleCreditSale(
+      {
+        customer: sale.customer.id,
+        customerCredit: sale.customer.credit,
+        paymentScheme: sale.paymentScheme,
+      },
+      sale
+    );
 
     return updatedSale;
   },
