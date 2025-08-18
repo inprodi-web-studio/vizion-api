@@ -403,7 +403,7 @@ const defaultSale = (data, preferences, companyInfo) => {
                     }
 
                     <div class="fol-container">
-                        <p class="fol">Cotización #${String(data.fol).padStart(
+                        <p class="fol">Venta #${String(data.fol).padStart(
                           4,
                           "0"
                         )}</p>
@@ -412,7 +412,7 @@ const defaultSale = (data, preferences, companyInfo) => {
 
                 <div class="meta-container">
                     <div class="quote-from">
-                        <p class="label">Cotización De:</p>
+                        <p class="label">Venta De:</p>
                         <p class="main-text">${companyInfo.name}</p>
                         ${
                           showLegalName && companyInfo.fiscalInfo?.legalName
@@ -439,7 +439,7 @@ const defaultSale = (data, preferences, companyInfo) => {
                     </div>
 
                     <div class="quote-to">
-                        <p class="label">Cotización Para:</p>
+                        <p class="label">Venta Para:</p>
                         <p class="main-text">${
                           data.customer?.uuid
                             ? data.customer.finalName
@@ -508,11 +508,11 @@ const defaultSale = (data, preferences, companyInfo) => {
 
             <div class="dates-container" style="margin-top: 30px">
                 <div class="date-container">
-                    <p class="label">Fecha de Cotización:</p>
+                    <p class="label">Fecha de Venta:</p>
                     <p class="info-text">${date}</p>
                 </div>
                 <div class="dueDate-container">
-                    <p class="label">Fecha de Vencimiento:</p>
+                    <p class="label">Fecha de Entrega:</p>
                     <p class="info-text">${dueDate}</p>
                 </div>
             </div>
