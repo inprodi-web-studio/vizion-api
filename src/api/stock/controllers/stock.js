@@ -1,75 +1,87 @@
-const { STOCK, WAREHOUSE, STOCK_LOCATION, PRODUCT, PRODUCT_VARIATION, PRODUCT_BADGE, PACKAGE } = require('../../../constants/models');
-const { BadRequestError } = require('../../../helpers/errors');
-const findOneByUuid = require('../../../helpers/findOneByUuid');
+const {
+  STOCK,
+  WAREHOUSE,
+  STOCK_LOCATION,
+  PRODUCT,
+  PRODUCT_VARIATION,
+  PRODUCT_BADGE,
+  PACKAGE,
+} = require("../../../constants/models");
+const { BadRequestError } = require("../../../helpers/errors");
+const findOneByUuid = require("../../../helpers/findOneByUuid");
 
-const { createCoreController } = require('@strapi/strapi').factories;
+const { createCoreController } = require("@strapi/strapi").factories;
 
 const stockFields = {
-    select : ["uuid", "quantity", "packageQuantity", "positionPartition"],
-    populate : {
-        product : {
-            select : ["uuid", "name", "sku", "type"],
-            populate : {
-                images : {
-                    select : ["url"],
-                },
-            },
+  select: ["uuid", "quantity", "packageQuantity", "positionPartition"],
+  populate: {
+    product: {
+      select: ["uuid", "name", "sku", "type"],
+      populate: {
+        images: {
+          select: ["url"],
         },
-        badge : {
-            select : ["uuid", "name", "expirationDate"],
-        },
-        variation : {
-            select : ["uuid", "name", "sku"],
-            populate : {
-                values : {
-                    select : ["uuid", "name"],
-                    populate : {
-                        attribute : {
-                            select : ["uuid", "name"],
-                        },
-                    },
-                }
-            },
-        },
-        unity : {
-            select : ["uuid", "name", "abbreviation"],
-        },
-        package : {
-            select : ["uuid", "conversionRate", "realConversion"],
-            populate : {
-                unity : {
-                    select : ["uuid", "name", "abbreviation"],
-                }
-            },
-        },
-        position : {
-            select : ["uuid", "xPosition", "yPosition", "rotation", "partitions"],
-            populate : {
-                shelf : {
-                    select : ["uuid", "name", "xPositions", "yPositions"],
-                    populate : {
-                        positions : {
-                            select : ["uuid", "xPosition", "yPosition"],
-                        },
-                    },
-                },
-            }
-        },
+      },
     },
+    badge: {
+      select: ["uuid", "name", "expirationDate"],
+    },
+    variation: {
+      select: ["uuid", "name", "sku"],
+      populate: {
+        values: {
+          select: ["uuid", "name"],
+          populate: {
+            attribute: {
+              select: ["uuid", "name"],
+            },
+          },
+        },
+      },
+    },
+    unity: {
+      select: ["uuid", "name", "abbreviation"],
+    },
+    package: {
+      select: ["uuid", "conversionRate", "realConversion"],
+      populate: {
+        unity: {
+          select: ["uuid", "name", "abbreviation"],
+        },
+      },
+    },
+    position: {
+      select: ["uuid", "xPosition", "yPosition", "rotation", "partitions"],
+      populate: {
+        shelf: {
+          select: ["uuid", "name", "xPositions", "yPositions"],
+          populate: {
+            positions: {
+              select: ["uuid", "xPosition", "yPosition"],
+            },
+          },
+        },
+      },
+    },
+    reservations: {
+      fields: ["quantity"],
+    },
+  },
 };
 
 module.exports = createCoreController(STOCK, ({ strapi }) => ({
-    async find(ctx) {
-        const { uuid, locationUuid } = ctx.params;
-        const { search, pagination } = ctx.query;
-    
-        const { page, pageSize } = pagination ?? {};
-    
-        await findOneByUuid(uuid, WAREHOUSE);
-        const location = await findOneByUuid(locationUuid, STOCK_LOCATION);
-    
-        try {
-            const [countResult] = await strapi.db.connection.raw(`
+  async find(ctx) {
+    const { uuid, locationUuid } = ctx.params;
+    const { search, pagination } = ctx.query;
+
+    const { page, pageSize } = pagination ?? {};
+
+    await findOneByUuid(uuid, WAREHOUSE);
+    const location = await findOneByUuid(locationUuid, STOCK_LOCATION);
+
+    try {
+      const [countResult] = await strapi.db.connection.raw(
+        `
                 SELECT COUNT(DISTINCT p.id) as total
                 FROM
                     stocks_product_links AS spl
@@ -79,14 +91,17 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                 WHERE
                     sl.id = ?
                     AND ( ? IS NULL OR ? = '' OR p.name LIKE ? )
-            `, [location.id, search ?? null, search ?? null, `%${search}%`]);
-    
-            const current = page ?? 1;
-            const limit = pageSize ?? 30;
-            const total = parseInt(countResult[0].total);
-            const offset = (current - 1) * limit;
-    
-            const [ result ] = await strapi.db.connection.raw(`
+            `,
+        [location.id, search ?? null, search ?? null, `%${search}%`]
+      );
+
+      const current = page ?? 1;
+      const limit = pageSize ?? 30;
+      const total = parseInt(countResult[0].total);
+      const offset = (current - 1) * limit;
+
+      const [result] = await strapi.db.connection.raw(
+        `
                 SELECT
                     JSON_OBJECT(
                         'uuid', p.uuid,
@@ -191,102 +206,116 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
                 ORDER BY
                     p.name ASC
                 LIMIT ? OFFSET ?;
-            `, [location.id, search ?? null, search ?? null, `%${search}%`, limit, offset]);
-    
-            const formatData = result.map(row => ({
-                product: JSON.parse(row.product),
-                stocks: JSON.parse(row.stocks)
-            }));
-    
-            const parsedData = await strapi.service(STOCK).formatStockData(formatData);
-    
-            return {
-                results: parsedData,
-                pagination: {
-                    page: parseInt(page),
-                    pageSize: limit,
-                    pageCount: Math.ceil(total / limit),
-                    total,
-                },
-            };
-        } catch (e) {
-            console.log(e);
-            throw new BadRequestError("Error while getting stock", {
-                key: "stock.sqlError",
-                path: ctx.request.url,
-            });
-        }
-    },
+            `,
+        [
+          location.id,
+          search ?? null,
+          search ?? null,
+          `%${search}%`,
+          limit,
+          offset,
+        ]
+      );
 
-    async getStockByEntity(ctx) {
-        const { locationUuid } = ctx.params;
-        const { product, variation, badge, package } = ctx.query;
+      const formatData = result.map((row) => ({
+        product: JSON.parse(row.product),
+        stocks: JSON.parse(row.stocks),
+      }));
 
-        const location = await findOneByUuid( locationUuid, STOCK_LOCATION );
+      const parsedData = await strapi
+        .service(STOCK)
+        .formatStockData(formatData);
 
-        if (package) {
-            const { id : packageId } = await findOneByUuid( package, PACKAGE );
+      return {
+        results: parsedData,
+        pagination: {
+          page: parseInt(page),
+          pageSize: limit,
+          pageCount: Math.ceil(total / limit),
+          total,
+        },
+      };
+    } catch (e) {
+      console.log(e);
+      throw new BadRequestError("Error while getting stock", {
+        key: "stock.sqlError",
+        path: ctx.request.url,
+      });
+    }
+  },
 
-            const stocks = await strapi.query( STOCK ).findMany({
-                where : {
-                    package : packageId,
-                    location : location.id,
-                },
-                ...stockFields,
-            });
+  async getStockByEntity(ctx) {
+    const { locationUuid } = ctx.params;
+    const { product, variation, badge, package } = ctx.query;
 
-            return stocks;
-        }
+    const location = await findOneByUuid(locationUuid, STOCK_LOCATION);
 
-        if (badge) {
-            const { id : badgeId } = await findOneByUuid( badge, PRODUCT_BADGE );
+    if (package) {
+      const { id: packageId } = await findOneByUuid(package, PACKAGE);
 
-            const stocks = await strapi.query( STOCK ).findMany({
-                where : {
-                    badge : badgeId,
-                    location : location.id,
-                },
-                ...stockFields,
-            });
+      const stocks = await strapi.query(STOCK).findMany({
+        where: {
+          package: packageId,
+          location: location.id,
+        },
+        ...stockFields,
+      });
 
-            return stocks;
-        }
+      return stocks;
+    }
 
-        if (variation) {
-            const { id : variationId } = await findOneByUuid( variation, PRODUCT_VARIATION );
+    if (badge) {
+      const { id: badgeId } = await findOneByUuid(badge, PRODUCT_BADGE);
 
-            const stocks = await strapi.query( STOCK ).findMany({
-                where : {
-                    variation : variationId,
-                    location : location.id,
-                },
-                ...stockFields,
-            });
+      const stocks = await strapi.query(STOCK).findMany({
+        where: {
+          badge: badgeId,
+          location: location.id,
+        },
+        ...stockFields,
+      });
 
-            return stocks;
-        }
+      return stocks;
+    }
 
-        if (product) {
-            const { id : productId } = await findOneByUuid( product, PRODUCT );
+    if (variation) {
+      const { id: variationId } = await findOneByUuid(
+        variation,
+        PRODUCT_VARIATION
+      );
 
-            const stocks = await strapi.query( STOCK ).findMany({
-                where : {
-                    product : productId,
-                    location : location.id,
-                },
-                ...stockFields,
-            });
+      const stocks = await strapi.query(STOCK).findMany({
+        where: {
+          variation: variationId,
+          location: location.id,
+        },
+        ...stockFields,
+      });
 
-            return stocks;
-        }
+      return stocks;
+    }
 
-        const stocks = await strapi.query( STOCK ).findMany({
-            where : {
-                location : location.id,
-            },
-            ...stockFields,
-        });
+    if (product) {
+      const { id: productId } = await findOneByUuid(product, PRODUCT);
 
-        return stocks;
-    },
+      const stocks = await strapi.query(STOCK).findMany({
+        where: {
+          product: productId,
+          location: location.id,
+        },
+        ...stockFields,
+      });
+
+      return stocks;
+    }
+
+    const stocks = await strapi.query(STOCK).findMany({
+      where: {
+        location: location.id,
+      },
+      ...stockFields,
+    });
+
+    return stocks;
+  },
 }));
