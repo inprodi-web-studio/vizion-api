@@ -6,9 +6,13 @@ const {
   PRODUCT_VARIATION,
   PRODUCT_BADGE,
   PACKAGE,
+  BRAND,
 } = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
+const fs = require("fs/promises");
+const XLSX = require("xlsx");
+const company = require("../../company/controllers/company");
 
 const { createCoreController } = require("@strapi/strapi").factories;
 
@@ -242,6 +246,79 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
         path: ctx.request.url,
       });
     }
+  },
+
+  async deache(ctx) {
+    const { document } = ctx.request.files;
+    ctx.request.socket.setTimeout(60 * 60 * 1000);
+
+    const buffer = await fs.readFile(document.path);
+
+    const wb = XLSX.read(buffer, { type: "buffer" });
+    const wsName = wb.SheetNames[0];
+    const ws = wb.Sheets[wsName];
+
+    const rows = XLSX.utils.sheet_to_json(ws, { defval: null });
+
+    const successes = [];
+    const errors = [];
+
+    const sanitize = (v) => (typeof v === "string" ? v.trim() : v);
+
+    for (let i = 0; i < rows.length; i++) {
+      const raw = rows[i];
+      const row = Object.fromEntries(
+        Object.entries(raw).map(([k, v]) => [
+          k.toString().trim().toLowerCase(),
+          v,
+        ])
+      );
+
+      const sku = sanitize(row.sku);
+      const price = sanitize(row.price);
+
+      const product = await strapi.query(PRODUCT).findOne({
+        where: {
+          sku,
+        },
+      });
+
+      try {
+        await strapi.entityService.update(PRODUCT, product.id, {
+          data: {
+            saleInfo: {
+              price: price,
+              iva: "16",
+              priceConfig: {
+                type: "fixed",
+              },
+            },
+          },
+        });
+      } catch (e) {
+        console.log(e);
+
+        errors.push({
+          sku,
+          price,
+          error: e,
+        });
+
+        continue;
+      }
+
+      successes.push({
+        sku,
+        price,
+      });
+    }
+
+    return {
+      totalSuccess: successes.length,
+      totalError: errors.length,
+      successes,
+      errors,
+    };
   },
 
   async getStockByEntity(ctx) {

@@ -30,7 +30,8 @@
     "strapi-provider-upload-do": "^3.6.9",
     "styled-components": "5.3.3",
     "twilio": "^5.0.4",
-    "uuidv4": "^6.2.13"
+    "uuidv4": "^6.2.13",
+    "xlsx": "^0.18.5"
   },
   "author": {
     "name": "A Strapi developer"

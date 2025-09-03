@@ -163,7 +163,7 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
                 ...data,
                 saleInfo : {
                     ...data.saleInfo,
-                    priceConfig : product.saleInfo.priceConfig,
+                    priceConfig : product.saleInfo?.priceConfig,
                 },
             },
             ...productFields
