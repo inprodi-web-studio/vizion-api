@@ -145,6 +145,9 @@ const saleFields = {
         "comments",
       ],
     },
+    warehouse : {
+      fields : ["uuid", "name"]
+    }
   },
 };
 
