@@ -2,7 +2,6 @@ const { auth } = require("strapi-provider-upload-do");
 const {
   SALE,
   PREFERENCE,
-  STOCK_RESERVATION,
   STOCK_RELEASE,
   COMPANY,
 } = require("../../../constants/models");
@@ -19,6 +18,7 @@ const saleFields = {
   fields: [
     "uuid",
     "fol",
+    "invoiceFol",
     "deliveryDate",
     "deliveryTime",
     "date",

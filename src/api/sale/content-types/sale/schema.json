@@ -115,6 +115,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::warehouse.warehouse"
+    },
+    "invoiceFol": {
+      "type": "string"
     }
   }
 }
