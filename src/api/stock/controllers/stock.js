@@ -7,6 +7,7 @@ const {
   PRODUCT_BADGE,
   PACKAGE,
   BRAND,
+  TAG,
 } = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
@@ -268,48 +269,34 @@ module.exports = createCoreController(STOCK, ({ strapi }) => ({
     for (let i = 0; i < rows.length; i++) {
       const raw = rows[i];
       const row = Object.fromEntries(
-        Object.entries(raw).map(([k, v]) => [
-          k.toString().trim().toLowerCase(),
-          v,
-        ])
+        Object.entries(raw).map(([k, v]) => [k.toString().trim(), v])
       );
 
-      const sku = sanitize(row.sku);
-      const price = sanitize(row.price);
-
-      const product = await strapi.query(PRODUCT).findOne({
-        where: {
-          sku,
-        },
-      });
+      const name = sanitize(row.name);
 
       try {
-        await strapi.entityService.update(PRODUCT, product.id, {
+        await strapi.entityService.create(TAG, {
           data: {
-            saleInfo: {
-              price: price,
-              iva: "16",
-              priceConfig: {
-                type: "fixed",
-              },
-            },
+            entity: "contact",
+            name,
+            company: 5,
           },
         });
       } catch (e) {
         console.log(e);
 
         errors.push({
-          sku,
-          price,
+          name,
           error: e,
         });
+
+        break;
 
         continue;
       }
 
       successes.push({
-        sku,
-        price,
+        name,
       });
     }
 

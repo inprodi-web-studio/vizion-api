@@ -145,9 +145,9 @@ const saleFields = {
         "comments",
       ],
     },
-    warehouse : {
-      fields : ["uuid", "name"]
-    }
+    warehouse: {
+      fields: ["uuid", "name"],
+    },
   },
 };
 
@@ -203,7 +203,34 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
       await strapi.service(SALE).handleCreditSale(data, newSale);
 
       if (company.applications.includes("inventories")) {
-        await strapi.service(STOCK_RELEASE).createStockReleases(newSale);
+        const releases = await strapi
+          .service(STOCK_RELEASE)
+          .createStockReleases(newSale);
+
+        const promises = [];
+
+        for (let i = 0; i < releases.length; i++) {
+          const release = releases[i];
+
+          const releaseController = strapi.controller(
+            "api::stock-release.stock-release"
+          );
+
+          const params = {
+            params: {
+              uuid: release.uuid,
+            },
+            request: {
+              body: {
+                quantity: release.quantity,
+              },
+            },
+          };
+
+          promises.push(releaseController.releaseStock(params));
+
+          await Promise.all(promises);
+        }
       }
     }
 
