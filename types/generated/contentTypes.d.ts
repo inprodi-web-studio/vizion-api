@@ -1703,6 +1703,43 @@ export interface ApiInvitationInvitation extends Schema.CollectionType {
   };
 }
 
+export interface ApiInvoiceInvoice extends Schema.CollectionType {
+  collectionName: 'invoices';
+  info: {
+    singularName: 'invoice';
+    pluralName: 'invoices';
+    displayName: 'Invoice';
+    description: '';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    uuid: Attribute.String;
+    sale: Attribute.Relation<
+      'api::invoice.invoice',
+      'manyToOne',
+      'api::sale.sale'
+    >;
+    items: Attribute.Component<'estimate.estimate-item', true>;
+    context: Attribute.JSON;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::invoice.invoice',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::invoice.invoice',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiLeadLead extends Schema.CollectionType {
   collectionName: 'leads';
   info: {
@@ -2507,6 +2544,11 @@ export interface ApiSaleSale extends Schema.CollectionType {
       'api::warehouse.warehouse'
     >;
     invoiceFol: Attribute.String;
+    invoices: Attribute.Relation<
+      'api::sale.sale',
+      'oneToMany',
+      'api::invoice.invoice'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::sale.sale', 'oneToOne', 'admin::user'> &
@@ -3323,6 +3365,7 @@ declare module '@strapi/types' {
       'api::insider.insider': ApiInsiderInsider;
       'api::int-role.int-role': ApiIntRoleIntRole;
       'api::invitation.invitation': ApiInvitationInvitation;
+      'api::invoice.invoice': ApiInvoiceInvoice;
       'api::lead.lead': ApiLeadLead;
       'api::note.note': ApiNoteNote;
       'api::package.package': ApiPackagePackage;
