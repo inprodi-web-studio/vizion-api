@@ -28,6 +28,9 @@
     },
     "context": {
       "type": "json"
+    },
+    "isCancelled": {
+      "type": "boolean"
     }
   }
 }
