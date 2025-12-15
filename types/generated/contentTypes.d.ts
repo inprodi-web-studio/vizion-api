@@ -1724,6 +1724,7 @@ export interface ApiInvoiceInvoice extends Schema.CollectionType {
     items: Attribute.Component<'estimate.estimate-item', true>;
     context: Attribute.JSON;
     isCancelled: Attribute.Boolean;
+    resume: Attribute.Component<'estimate.resume'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

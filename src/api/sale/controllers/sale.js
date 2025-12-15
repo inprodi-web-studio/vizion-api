@@ -147,8 +147,11 @@ const saleFields = {
     },
     invoices: {
       fields: ["uuid", "context", "isCancelled"],
-      items: {
-        fields: ["quantity", "price", "iva", "realQuantity", "comment"],
+      populate: {
+        items: {
+          fields: ["quantity", "price", "iva", "realQuantity", "comment"],
+        },
+        resume: true,
       },
     },
     warehouse: {
