@@ -150,6 +150,52 @@ const saleFields = {
       populate: {
         items: {
           fields: ["quantity", "price", "iva", "realQuantity", "comment"],
+          populate: {
+            product: {
+              fields: ["uuid", "name", "sku", "description"],
+              populate: {
+                images: {
+                  fields: ["url"],
+                },
+                unity: {
+                  fields: ["uuid", "name", "satCode", "abbreviation"],
+                },
+                brand: {
+                  fields: ["uuid", "name"],
+                },
+                variations: {
+                  count: true,
+                },
+                packages: {
+                  count: true,
+                },
+                stockInfo: true,
+                saleInfo: true,
+              },
+            },
+            package: {
+              fields: ["uuid", "conversionRate", "realConversion"],
+              populate: {
+                unity: true,
+              },
+            },
+            unity: {
+              fields: ["uuid", "name", "abbreviation"],
+            },
+            variation: {
+              fields: ["uuid", "sku"],
+              populate: {
+                values: {
+                  fields: ["uuid", "name"],
+                  populate: {
+                    attribute: {
+                      fields: ["uuid", "name"],
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         resume: true,
       },
