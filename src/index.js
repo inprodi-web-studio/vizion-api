@@ -45,6 +45,7 @@ const {
   PLATFORM,
   BRAND,
   PROMOTION,
+  INVOICE,
 } = require("./constants/models");
 
 module.exports = {
@@ -52,7 +53,7 @@ module.exports = {
 
   bootstrap({ strapi }) {
     strapi.db.lifecycles.subscribe({
-      models : [
+      models: [
         TAG,
         USER,
         LEAD,
@@ -68,6 +69,7 @@ module.exports = {
         INSIDER,
         COMPANY,
         PAYMENT,
+        INVOICE,
         PLATFORM,
         CUSTOMER,
         DISPATCH,
@@ -98,7 +100,7 @@ module.exports = {
         PRODUCT_VARIATION,
         CONTACT_INTERACTION,
       ],
-      async beforeCreate( event ) {
+      async beforeCreate(event) {
         const { data } = event.params;
 
         data.uuid = uuid();

@@ -1725,6 +1725,13 @@ export interface ApiInvoiceInvoice extends Schema.CollectionType {
     context: Attribute.JSON;
     isCancelled: Attribute.Boolean;
     resume: Attribute.Component<'estimate.resume'>;
+    fol: Attribute.String;
+    date: Attribute.Date;
+    author: Attribute.Relation<
+      'api::invoice.invoice',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

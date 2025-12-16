@@ -36,6 +36,17 @@
       "type": "component",
       "repeatable": false,
       "component": "estimate.resume"
+    },
+    "fol": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date"
+    },
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }
