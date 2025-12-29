@@ -4,7 +4,7 @@ const createSchema = yup.object().shape({
   paymentMethod: yup.string().required(),
   paymentForm: yup.string().required(),
   cfdiUse: yup.string().required(),
-  customer: yup.string().required(),
+  customer: yup.object().required(),
   items: yup
     .array()
     .of(
