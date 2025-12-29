@@ -94,7 +94,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
 
     await validateCreate(data);
 
-    const companyObj = await findOneByUuid(COMPANY, company.uuid, {
+    const companyObj = await findOneByUuid(company.uuid, COMPANY, {
       populate: {
         fiscalInfo: {
           populate: {
@@ -104,7 +104,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       },
     });
 
-    const customerObj = await findOneByUuid(CUSTOMER, data.customer, {
+    const customerObj = await findOneByUuid(data.customer, CUSTOMER, {
       populate: {
         fiscalInfo: {
           populate: {
