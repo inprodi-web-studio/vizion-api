@@ -73,7 +73,7 @@ const saleFields = {
       fields: ["quantity", "price", "iva", "realQuantity", "comment"],
       populate: {
         product: {
-          fields: ["uuid", "name", "sku", "description"],
+          fields: ["uuid", "satCode", "name", "sku", "description"],
           populate: {
             images: {
               fields: ["url"],
@@ -152,7 +152,7 @@ const saleFields = {
           fields: ["quantity", "price", "iva", "realQuantity", "comment"],
           populate: {
             product: {
-              fields: ["uuid", "name", "sku", "description"],
+              fields: ["uuid", "satCode", "name", "sku", "description"],
               populate: {
                 images: {
                   fields: ["url"],

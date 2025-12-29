@@ -16,5 +16,13 @@ module.exports = {
         policies: ["global::userContext"],
       },
     },
+    {
+      method: "POST",
+      path: "/invoices",
+      handler: "invoice.create",
+      config: {
+        policies: ["global::userContext"],
+      },
+    },
   ],
 };
