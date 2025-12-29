@@ -104,31 +104,21 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       },
     });
 
-    const customerObj = await findOneByUuid(data.customer, CUSTOMER, {
-      populate: {
-        fiscalInfo: {
-          populate: {
-            address: true,
-          },
-        },
-      },
-    });
-
-    if (!customerObj.fiscalInfo?.rfc) {
+    if (!data.customer.fiscalInfo?.rfc) {
       throw new BadRequestError("Customer doesn't have a rfc", {
         key: "customer.missingRfc",
         path: ctx.request.path,
       });
     }
 
-    if (!customerObj.fiscalInfo?.address?.cp) {
+    if (!data.customer.fiscalInfo?.address?.cp) {
       throw new BadRequestError("Customer doesn't have a cp", {
         key: "customer.missingCp",
         path: ctx.request.path,
       });
     }
 
-    if (!customerObj.fiscalInfo?.legalName) {
+    if (!data.customer.fiscalInfo?.legalName) {
       throw new BadRequestError("Customer doesn't have a legal name", {
         key: "customer.missingLegalName",
         path: ctx.request.path,
