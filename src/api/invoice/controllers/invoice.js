@@ -160,7 +160,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
               {
                 Name: "IVA",
                 Rate: item.iva / 100,
-                Total: (item.price * item.iva) / 100,
+                Total: ((item.price * item.iva) / 100) * item.quantity,
                 IsRetention: false,
               },
             ],
@@ -176,15 +176,17 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       PaymentMethod: data.paymentMethod,
       PaymentForm: data.paymentForm,
       Receiver: {
-        Rfc: data.customer.fiscalInfo?.rfc,
+        Rfc: data.customer.fiscalInfo?.rfc
+          ?.toUpperCase()
+          .replace(/\s+/g, "")
+          .replace(/[^A-Z0-9]/g, ""),
         CfdiUse: data.cfdiUse,
         Name: data.customer.fiscalInfo?.legalName,
         TaxZipCode: data.customer.fiscalInfo?.address?.cp,
+        FiscalRegime: data.customer.fiscalInfo?.regime,
       },
       Items: parsedItems,
     };
-
-    console.log("[SC]: " + company.sc?.fm?.u);
 
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
@@ -198,12 +200,10 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         },
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.response.data);
 
         throw error;
       });
-
-    console.log(response);
 
     return "success";
   },
