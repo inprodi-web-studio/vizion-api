@@ -6,6 +6,12 @@ const {
   validateCreate,
 } = require("../content-types/invoice/invoice.validations");
 const { BadRequestError } = require("../../../helpers/errors");
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const { createCoreController } = require("@strapi/strapi").factories;
 
@@ -185,7 +191,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
     }
 
     const payload = {
-      Date: new Date().toISOString(),
+      Date: dayjs().tz("America/Mexico_City").format(),
       CfdiType: "I",
       ExpeditionPlace: companyObj.fiscalInfo?.address?.cp,
       Currency: "MXN",
