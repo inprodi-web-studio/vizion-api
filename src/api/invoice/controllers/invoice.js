@@ -178,6 +178,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         Quantity: item.quantity,
         UnitPrice: item.price,
         Subtotal: subtotal,
+        Total: total,
         TaxObject: taxObject,
         ...(taxes.length && { Taxes: taxes }),
       });
