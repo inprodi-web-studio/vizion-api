@@ -148,23 +148,38 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         );
       }
 
+      const subtotal = item.price * item.quantity;
+
+      let taxObject = "01";
+      let taxes = [];
+      let total = subtotal;
+
+      if (item.iva && item.iva > -1) {
+        taxObject = "02";
+
+        const rate = item.iva / 100;
+        const taxAmount = subtotal * rate;
+
+        taxes.push({
+          Name: "IVA",
+          Rate: rate,
+          Base: subtotal,
+          Total: taxAmount,
+          IsRetention: false,
+        });
+
+        total = subtotal + taxAmount;
+      }
+
       parsedItems.push({
         ProductCode: item.product.satCode.split("-")[0].trim(),
         UnitCode: item.product.unity.satCode.split("-")[0].trim(),
         Description: item.product.name,
         Quantity: item.quantity,
         UnitPrice: item.price,
-        ...(item.iva &&
-          item.iva > -1 && {
-            Taxes: [
-              {
-                Name: "IVA",
-                Rate: item.iva / 100,
-                Total: ((item.price * item.iva) / 100) * item.quantity,
-                IsRetention: false,
-              },
-            ],
-          }),
+        Subtotal: subtotal,
+        TaxObject: taxObject,
+        ...(taxes.length && { Taxes: taxes }),
       });
     }
 
