@@ -176,10 +176,10 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       PaymentMethod: data.paymentMethod,
       PaymentForm: data.paymentForm,
       Receiver: {
-        Rfc: customerObj.fiscalInfo?.rfc,
+        Rfc: data.customer.fiscalInfo?.rfc,
         CfdiUse: data.cfdiUse,
-        Name: customerObj.fiscalInfo?.legalName,
-        TaxZipCode: customerObj.fiscalInfo?.address?.cp,
+        Name: data.customer.fiscalInfo?.legalName,
+        TaxZipCode: data.customer.fiscalInfo?.address?.cp,
       },
       Items: parsedItems,
     };
