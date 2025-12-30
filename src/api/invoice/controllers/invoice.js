@@ -184,11 +184,13 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       Items: parsedItems,
     };
 
+    console.log("[SC]: " + company.sc?.fm?.u);
+
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
         auth: {
-          username: process.env.FACTURAMA_USERNAME,
-          password: process.env.FACTURAMA_PASSWORD,
+          username: company.sc?.fm?.u,
+          password: company.sc?.fm?.p,
         },
         headers: {
           "Content-Type": "application/json",

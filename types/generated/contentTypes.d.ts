@@ -975,6 +975,7 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
     website: Attribute.String;
     primaryColor: Attribute.String;
     applications: Attribute.JSON;
+    sc: Attribute.JSON;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

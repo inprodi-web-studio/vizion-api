@@ -94,6 +94,9 @@
     },
     "applications": {
       "type": "json"
+    },
+    "sc": {
+      "type": "json"
     }
   }
 }
