@@ -227,6 +227,8 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         throw error;
       });
 
+    console.log(response.data);
+
     return "success";
   },
 }));
