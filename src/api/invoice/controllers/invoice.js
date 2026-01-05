@@ -271,6 +271,8 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       }
     );
 
+    console.log(response);
+
     const { ContentEncoding, ContentType, Content } = response.data;
 
     if (ContentEncoding !== "base64") {
