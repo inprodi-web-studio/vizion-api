@@ -146,7 +146,7 @@ const saleFields = {
       ],
     },
     invoices: {
-      fields: ["uuid", "context", "isCancelled"],
+      fields: ["uuid", "context", "isCancelled", "fol", "date"],
       populate: {
         items: {
           fields: ["quantity", "price", "iva", "realQuantity", "comment"],
