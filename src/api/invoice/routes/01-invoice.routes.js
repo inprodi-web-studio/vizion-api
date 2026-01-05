@@ -24,5 +24,13 @@ module.exports = {
         policies: ["global::userContext"],
       },
     },
+    {
+      method: "POST",
+      path: "/invoices/download/:format/:id",
+      handler: "invoice.download",
+      config: {
+        policies: ["global::userContext"],
+      },
+    },
   ],
 };

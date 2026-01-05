@@ -252,4 +252,42 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
 
     return intInvoice;
   },
+
+  async download(ctx) {
+    const { format, id } = ctx.params;
+    const { company } = ctx.state;
+
+    if (!["pdf", "xml"].includes(format)) {
+      ctx.throw(400, "Invalid format. Use pdf or xml.");
+    }
+
+    const response = await axios.get(
+      `https://apisandbox.facturama.mx/cfdi/${format}/issued/${id}`,
+      {
+        auth: {
+          username: company.sc?.fm?.u,
+          password: company.sc?.fm?.p,
+        },
+      }
+    );
+
+    const { ContentEncoding, ContentType, Content } = response.data;
+
+    if (ContentEncoding !== "base64") {
+      ctx.throw(500, "Unsupported content encoding");
+    }
+
+    const buffer = Buffer.from(Content, "base64");
+
+    const mimeType =
+      ContentType === "pdf" ? "application/pdf" : "application/xml";
+
+    const filename = `factura-${id}.${ContentType}`;
+
+    ctx.set("Content-Type", mimeType);
+    ctx.set("Content-Disposition", `attachment; filename="${filename}"`);
+    ctx.set("Content-Length", buffer.length.toString());
+
+    return buffer;
+  },
 }));
