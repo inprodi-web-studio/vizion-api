@@ -254,15 +254,15 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
   },
 
   async download(ctx) {
-    const { format, id } = ctx.params;
+    const { format, uuid } = ctx.params;
     const { company } = ctx.state;
 
     if (!["pdf", "xml"].includes(format)) {
-      ctx.throw(400, "Invalid format. Use pdf or xml.");
+      ctx.throw(400, "Invalid format");
     }
 
     const response = await axios.get(
-      `https://apisandbox.facturama.mx/cfdi/${format}/issued/${id}`,
+      `https://apisandbox.facturama.mx/cfdi/${format}/issued/${uuid}`,
       {
         auth: {
           username: company.sc?.fm?.u,
@@ -274,19 +274,15 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
     const { ContentEncoding, ContentType, Content } = response.data;
 
     if (ContentEncoding !== "base64") {
-      ctx.throw(500, "Unsupported content encoding");
+      ctx.throw(500, "Unsupported encoding");
     }
 
     const buffer = Buffer.from(Content, "base64");
 
-    const mimeType =
-      ContentType === "pdf" ? "application/pdf" : "application/xml";
-
-    const filename = `factura-${id}.${ContentType}`;
-
-    ctx.set("Content-Type", mimeType);
-    ctx.set("Content-Disposition", `attachment; filename="${filename}"`);
-    ctx.set("Content-Length", buffer.length.toString());
+    ctx.set(
+      "Content-Type",
+      ContentType === "pdf" ? "application/pdf" : "application/xml"
+    );
 
     return buffer;
   },
