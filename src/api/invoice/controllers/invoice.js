@@ -1,5 +1,10 @@
 const axios = require("axios");
-const { INVOICE, COMPANY, CUSTOMER } = require("../../../constants/models");
+const {
+  INVOICE,
+  COMPANY,
+  CUSTOMER,
+  SALE,
+} = require("../../../constants/models");
 const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const {
@@ -95,7 +100,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
   },
 
   async create(ctx) {
-    const { company } = ctx.state;
+    const { company, user } = ctx.state;
     const data = ctx.request.body;
 
     await validateCreate(data);
@@ -227,8 +232,24 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         throw error;
       });
 
-    console.log(response.data);
+    const sale = await findOneByUuid(data.sale, SALE);
 
-    return "success";
+    const intInvoice = await strapi.entityService.create(INVOICE, {
+      data: {
+        sale: sale.id,
+        items: data.items,
+        isCancelled: false,
+        resume: data.resume,
+        fol: response.data.Folio,
+        date: new Date(),
+        author: user.id,
+        context: {
+          ...response.data,
+        },
+      },
+      ...invoiceFields,
+    });
+
+    return intInvoice;
   },
 }));

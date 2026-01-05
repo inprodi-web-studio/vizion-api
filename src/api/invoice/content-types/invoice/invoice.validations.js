@@ -1,6 +1,7 @@
 const { yup, validateYupSchema } = require("../../../../helpers/validators");
 
 const createSchema = yup.object().shape({
+  sale: yup.string().uuid().required(),
   paymentMethod: yup.string().required(),
   paymentForm: yup.string().required(),
   cfdiUse: yup.string().required(),
