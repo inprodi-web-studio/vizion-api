@@ -254,17 +254,15 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
   },
 
   async download(ctx) {
-    const { format, uuid } = ctx.params;
+    const { format, id } = ctx.params;
     const { company } = ctx.state;
 
     if (!["pdf", "xml"].includes(format)) {
       ctx.throw(400, "Invalid format");
     }
 
-    console.log("valid format");
-
     const response = await axios
-      .get(`https://apisandbox.facturama.mx/cfdi/${format}/issued/${uuid}`, {
+      .get(`https://apisandbox.facturama.mx/cfdi/${format}/issued/${id}`, {
         auth: {
           username: company.sc?.fm?.u,
           password: company.sc?.fm?.p,
