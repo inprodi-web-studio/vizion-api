@@ -32,5 +32,13 @@ module.exports = {
         policies: ["global::userContext"],
       },
     },
+    {
+      method: "PATCH",
+      path: "/invoices/cancel/:id",
+      handler: "invoice.cancel",
+      config: {
+        policies: ["global::userContext"],
+      },
+    },
   ],
 };
