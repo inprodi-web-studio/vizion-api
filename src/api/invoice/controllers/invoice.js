@@ -254,7 +254,6 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
   },
 
   async download(ctx) {
-    console.log("entering controller");
     const { format, uuid } = ctx.params;
     const { company } = ctx.state;
 
@@ -262,17 +261,22 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       ctx.throw(400, "Invalid format");
     }
 
-    const response = await axios.get(
-      `https://apisandbox.facturama.mx/cfdi/${format}/issued/${uuid}`,
-      {
+    console.log("valid format");
+
+    const response = await axios
+      .get(`https://apisandbox.facturama.mx/cfdi/${format}/issued/${uuid}`, {
         auth: {
           username: company.sc?.fm?.u,
           password: company.sc?.fm?.p,
         },
-      }
-    );
+      })
+      .catch((error) => {
+        console.log(error);
 
-    console.log(response);
+        throw error;
+      });
+
+    console.log("post axios");
 
     const { ContentEncoding, ContentType, Content } = response.data;
 
