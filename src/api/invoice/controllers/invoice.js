@@ -218,7 +218,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       Items: parsedItems,
     };
 
-    console.log(parsedItems);
+    console.log(parsedItems[0].Taxes);
 
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
