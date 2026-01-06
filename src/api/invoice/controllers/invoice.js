@@ -254,6 +254,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
   },
 
   async download(ctx) {
+    console.log("entering controller");
     const { format, uuid } = ctx.params;
     const { company } = ctx.state;
 
