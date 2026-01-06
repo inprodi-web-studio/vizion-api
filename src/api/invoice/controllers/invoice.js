@@ -21,10 +21,13 @@ dayjs.extend(timezone);
 const { createCoreController } = require("@strapi/strapi").factories;
 
 const invoiceFields = {
-  fields: ["uuid", "context", "isCancelled", "fol", "date"],
+  fields: ["uuid", "context", "isCancelled", "fol", "date", "createdAt"],
   populate: {
     sale: {
       fields: ["uuid", "fol", "date", "subject"],
+      populate: {
+        fields: ["finalName"],
+      },
     },
     items: {
       fields: ["quantity", "price", "iva", "realQuantity", "comment"],
