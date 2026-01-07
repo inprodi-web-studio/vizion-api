@@ -27,6 +27,23 @@ const invoiceFields = {
       fields: ["uuid", "fol", "date", "subject"],
       populate: {
         fields: ["finalName"],
+        customer: {
+          fields: ["uuid", "finalName", "isArchived"],
+          populate: {
+            fiscalInfo: {
+              fields: ["legalName", "rfc", "regime"],
+              populate: {
+                address: true,
+              },
+            },
+            deliveryAddresses: {
+              fields: ["name", "isMain"],
+              populate: {
+                address: true,
+              },
+            },
+          },
+        },
       },
     },
     items: {
