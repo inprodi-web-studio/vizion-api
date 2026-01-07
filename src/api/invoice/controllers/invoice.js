@@ -177,8 +177,8 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         taxes.push({
           Name: "IVA",
           Rate: rate,
-          Base: subtotal,
-          Total: taxAmount,
+          Base: Number(subtotal.toFixed(6)),
+          Total: Number(taxAmount.toFixed(6)),
           IsRetention: false,
         });
 
@@ -191,8 +191,8 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         Description: item.product.name,
         Quantity: item.quantity,
         UnitPrice: item.price,
-        Subtotal: subtotal,
-        Total: total,
+        Subtotal: Number(subtotal.toFixed(6)),
+        Total: Number(total.toFixed(6)),
         TaxObject: taxObject,
         ...(taxes.length && { Taxes: taxes }),
       });
