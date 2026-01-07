@@ -45,11 +45,10 @@ const createSchema = yup.object().shape({
 
 const complementSchema = yup.object().shape({
   date: yup.string().required(),
-  customer: yup.object().required(),
   paymentMethod: yup.string().required(),
   amount: yup.number().required(),
-  outstandingBalance: yup.number().required(),
-  previousBalanceAmount: yup.number().required(),
+  outstandingBalance: yup.number().required(), // not in data
+  previousBalanceAmount: yup.number().required(), // not in data
 });
 
 module.exports = {

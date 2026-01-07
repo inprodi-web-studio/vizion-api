@@ -282,6 +282,38 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
 
     await validateComplement(data);
 
+    const invoice = await strapi.query(INVOICE).findOne({
+      where: {
+        context: {
+          $includes: id,
+        },
+      },
+      populate: {
+        sale: {
+          populate: {
+            customer: {
+              populate: {
+                fiscalInfo: {
+                  populate: {
+                    address: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    console.log(invoice);
+
+    if (!invoice) {
+      throw new BadRequestError(`Invoice with uuid not found`, {
+        key: "invoice.notFound",
+        path: ctx.request.path,
+      });
+    }
+
     const companyObj = await findOneByUuid(company.uuid, COMPANY, {
       populate: {
         fiscalInfo: {
@@ -297,14 +329,14 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       CfdiType: "P",
       ExpeditionPlace: companyObj.fiscalInfo?.address?.cp,
       Receiver: {
-        Rfc: data.customer.rfc
+        Rfc: invoice.customer.fiscalInfo?.legalName
           .toUpperCase()
           .replace(/\s+/g, "")
           .replace(/[^A-Z0-9]/g, ""),
-        Name: data.customer.name,
         CfdiUse: "P01",
-        TaxZipCode: data.customer.address.cp,
-        FiscalRegime: data.customer.fiscalInfo?.regime,
+        Name: invoice.customer.fiscalInfo?.legalName,
+        TaxZipCode: invoice.customer.fiscalInfo?.address?.cp,
+        FiscalRegime: invoice.customer.fiscalInfo?.regime,
       },
       Complement: {
         Payments: [

@@ -1733,6 +1733,7 @@ export interface ApiInvoiceInvoice extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    isComplement: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

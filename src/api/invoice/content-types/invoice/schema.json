@@ -47,6 +47,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "isComplement": {
+      "type": "boolean"
     }
   }
 }
