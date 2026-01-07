@@ -26,6 +26,14 @@ module.exports = {
     },
     {
       method: "POST",
+      path: "/invoices/:id/complement",
+      handler: "invoice.complement",
+      config: {
+        policies: ["global::userContext"],
+      },
+    },
+    {
+      method: "POST",
       path: "/invoices/download/:format/:id",
       handler: "invoice.download",
       config: {

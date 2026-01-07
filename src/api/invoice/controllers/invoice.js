@@ -9,6 +9,7 @@ const findMany = require("../../../helpers/findMany");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 const {
   validateCreate,
+  validateComplement,
 } = require("../content-types/invoice/invoice.validations");
 const { BadRequestError } = require("../../../helpers/errors");
 const dayjs = require("dayjs");
@@ -235,8 +236,6 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       Items: parsedItems,
     };
 
-    console.log(parsedItems[0].Taxes);
-
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
         auth: {
@@ -273,6 +272,78 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
     });
 
     return intInvoice;
+  },
+
+  async complement(ctx) {
+    const { id } = ctx.params;
+    const { company, user } = ctx.state;
+
+    const data = ctx.request.body;
+
+    await validateComplement(data);
+
+    const companyObj = await findOneByUuid(company.uuid, COMPANY, {
+      populate: {
+        fiscalInfo: {
+          populate: {
+            address: true,
+          },
+        },
+      },
+    });
+
+    const payload = {
+      Date: data.date,
+      CfdiType: "P",
+      ExpeditionPlace: companyObj.fiscalInfo?.address?.cp,
+      Receiver: {
+        Rfc: data.customer.rfc
+          .toUpperCase()
+          .replace(/\s+/g, "")
+          .replace(/[^A-Z0-9]/g, ""),
+        Name: data.customer.name,
+        CfdiUse: "P01",
+        TaxZipCode: data.customer.address.cp,
+        FiscalRegime: data.customer.fiscalInfo?.regime,
+      },
+      Complement: {
+        Payments: [
+          {
+            PaymentDate: data.date,
+            PaymentMethod: data.paymentMethod,
+            Currency: "MXN",
+            Amount: data.amount,
+            OutstandingBalanceAmount: data.outstandingBalance,
+            RelatedDocuments: [
+              {
+                Id: id,
+                PaidAmount: data.amount,
+                PreviousBalanceAmount: data.previousBalanceAmount,
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    const response = await axios
+      .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
+        auth: {
+          username: company.sc.fm.u,
+          password: company.sc.fm.p,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+
+        throw error;
+      });
+
+    return response;
   },
 
   async download(ctx) {

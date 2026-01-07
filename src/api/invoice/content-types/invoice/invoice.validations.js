@@ -43,6 +43,16 @@ const createSchema = yup.object().shape({
     .required(),
 });
 
+const complementSchema = yup.object().shape({
+  date: yup.string().required(),
+  customer: yup.object().required(),
+  paymentMethod: yup.string().required(),
+  amount: yup.number().required(),
+  outstandingBalance: yup.number().required(),
+  previousBalanceAmount: yup.number().required(),
+});
+
 module.exports = {
   validateCreate: validateYupSchema(createSchema),
+  validateComplement: validateYupSchema(complementSchema),
 };
