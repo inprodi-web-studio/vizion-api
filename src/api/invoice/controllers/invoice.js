@@ -285,7 +285,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
     const invoice = await strapi.query(INVOICE).findOne({
       where: {
         context: {
-          $includes: id,
+          $contains: id,
         },
       },
       populate: {
