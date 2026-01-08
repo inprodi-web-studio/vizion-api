@@ -329,16 +329,16 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       CfdiType: "P",
       ExpeditionPlace: companyObj.fiscalInfo?.address?.cp,
       Receiver: {
-        Rfc: invoice.sale.customer.fiscalInfo?.legalName
+        Rfc: invoice.sale.customer.fiscalInfo?.rfc
           .toUpperCase()
           .replace(/\s+/g, "")
           .replace(/[^A-Z0-9]/g, ""),
-        CfdiUse: "P01",
+        // CfdiUse: "P01",
         Name: invoice.sale.customer.fiscalInfo?.legalName,
         TaxZipCode: invoice.sale.customer.fiscalInfo?.address?.cp,
         FiscalRegime: invoice.sale.customer.fiscalInfo?.regime,
       },
-      Complement: {
+      Complemento: {
         Payments: [
           {
             PaymentDate: data.date,
@@ -359,6 +359,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
     };
 
     console.log(payload);
+    console.log(payload.Complement);
 
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
