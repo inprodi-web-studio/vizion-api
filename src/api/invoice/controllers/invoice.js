@@ -342,7 +342,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         Payments: [
           {
             PaymentDate: data.date,
-            PaymentMethod: data.paymentMethod,
+            PaymentForm: data.paymentForm,
             Currency: "MXN",
             Amount: data.amount,
             OutstandingBalanceAmount: data.outstandingBalance,
