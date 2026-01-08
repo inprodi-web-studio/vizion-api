@@ -329,14 +329,14 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       CfdiType: "P",
       ExpeditionPlace: companyObj.fiscalInfo?.address?.cp,
       Receiver: {
-        Rfc: invoice.customer.fiscalInfo?.legalName
+        Rfc: invoice.sale.customer.fiscalInfo?.legalName
           .toUpperCase()
           .replace(/\s+/g, "")
           .replace(/[^A-Z0-9]/g, ""),
         CfdiUse: "P01",
-        Name: invoice.customer.fiscalInfo?.legalName,
-        TaxZipCode: invoice.customer.fiscalInfo?.address?.cp,
-        FiscalRegime: invoice.customer.fiscalInfo?.regime,
+        Name: invoice.sale.customer.fiscalInfo?.legalName,
+        TaxZipCode: invoice.sale.customer.fiscalInfo?.address?.cp,
+        FiscalRegime: invoice.sale.customer.fiscalInfo?.regime,
       },
       Complement: {
         Payments: [
