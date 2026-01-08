@@ -358,6 +358,8 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       },
     };
 
+    console.log(payload);
+
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
         auth: {
