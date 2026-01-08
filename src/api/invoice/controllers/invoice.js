@@ -333,7 +333,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
           .toUpperCase()
           .replace(/\s+/g, "")
           .replace(/[^A-Z0-9]/g, ""),
-        // CfdiUse: "P01",
+        CfdiUse: "CP01",
         Name: invoice.sale.customer.fiscalInfo?.legalName,
         TaxZipCode: invoice.sale.customer.fiscalInfo?.address?.cp,
         FiscalRegime: invoice.sale.customer.fiscalInfo?.regime,
@@ -348,9 +348,10 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
             OutstandingBalanceAmount: data.outstandingBalance,
             RelatedDocuments: [
               {
-                Id: id,
+                Uuid: id,
                 PaidAmount: data.amount,
                 PreviousBalanceAmount: data.previousBalanceAmount,
+                TaxObject: "02",
               },
             ],
           },
@@ -359,7 +360,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
     };
 
     console.log(payload);
-    console.log(payload.Complement);
+    console.log(payload.Complemento.Payments);
 
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
