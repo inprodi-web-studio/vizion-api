@@ -325,7 +325,9 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
     });
 
     const payload = {
-      Date: dayjs(data.date).tz("America/Mexico_City").format(),
+      Date: dayjs(data.date)
+        .tz("America/Mexico_City")
+        .format("YYYY-MM-DDTHH:mm:ss"),
       CfdiType: "P",
       ExpeditionPlace: companyObj.fiscalInfo?.address?.cp,
       Receiver: {
@@ -341,7 +343,9 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       Complemento: {
         Payments: [
           {
-            PaymentDate: dayjs(data.date).tz("America/Mexico_City").format(),
+            PaymentDate: dayjs(data.date)
+              .tz("America/Mexico_City")
+              .format("YYYY-MM-DDTHH:mm:ss"),
             PaymentForm: data.paymentForm,
             Currency: "MXN",
             Amount: data.amount,
