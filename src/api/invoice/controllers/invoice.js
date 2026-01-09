@@ -348,6 +348,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
             OutstandingBalanceAmount: data.outstandingBalance,
             RelatedDocuments: [
               {
+                TaxObject: "02",
                 Uuid: invoice.context.Complement.Uuid,
                 PaidAmount: data.amount,
                 PreviousBalanceAmount: data.previousBalanceAmount,
@@ -359,7 +360,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
     };
 
     console.log(payload);
-    console.log(payload.Complemento.Payments);
+    console.log(payload.Complemento.Payments[0]);
 
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
