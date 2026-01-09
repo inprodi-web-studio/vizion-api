@@ -348,7 +348,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
             OutstandingBalanceAmount: data.outstandingBalance,
             RelatedDocuments: [
               {
-                TaxObject: "02",
+                TaxObject: "01",
                 Uuid: invoice.context.Complement.TaxStamp.Uuid,
                 PaidAmount: data.amount,
                 PreviousBalanceAmount: data.previousBalanceAmount,
