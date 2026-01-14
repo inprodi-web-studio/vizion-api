@@ -355,6 +355,7 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
                 TaxObject: "01",
                 Uuid: invoice.context.Complement.TaxStamp.Uuid,
                 PaidAmount: data.amount,
+                PartialityNumber: 1, // CALCULAR
               },
             ],
           },
