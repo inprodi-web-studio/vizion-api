@@ -365,9 +365,6 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
       },
     };
 
-    console.log(payload);
-    console.log(payload.Complemento.Payments[0]);
-
     const response = await axios
       .post("https://apisandbox.facturama.mx/3/cfdis", payload, {
         auth: {
@@ -385,7 +382,26 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         throw error;
       });
 
-    return response;
+    const intInvoice = await strapi.entityService.create(INVOICE, {
+      data: {
+        sale: invoice.sale.id,
+        items: [],
+        isCancelled: false,
+        resume: {
+          total: data.amount,
+        },
+        fol: response.data.Folio,
+        date: new Date(),
+        author: user.id,
+        context: {
+          ...response.data,
+        },
+        invoice: invoice.id,
+      },
+      ...invoiceFields,
+    });
+
+    return intInvoice;
   },
 
   async download(ctx) {

@@ -48,8 +48,10 @@
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
     },
-    "isComplement": {
-      "type": "boolean"
+    "invoice": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::invoice.invoice"
     }
   }
 }
