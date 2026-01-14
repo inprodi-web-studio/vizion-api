@@ -103,11 +103,16 @@ const invoiceFields = {
 
 module.exports = createCoreController(INVOICE, ({ strapi }) => ({
   async find(ctx) {
+    const { company } = ctx.state;
+
     const filters = {
       $search: ["sale.subject", "sale.fol", "sale.customer.finalName"],
+      sale: {
+        company: company.id,
+      },
     };
 
-    const invoices = await findMany(INVOICE, invoiceFields, filters);
+    const invoices = await findMany(INVOICE, invoiceFields, filters, false);
 
     return invoices;
   },
