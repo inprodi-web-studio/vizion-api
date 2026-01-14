@@ -377,7 +377,11 @@ module.exports = createCoreController(INVOICE, ({ strapi }) => ({
         },
       })
       .catch((error) => {
-        console.log(JSON.stringify(error.response, null, 2));
+        console.log("response");
+        console.log(error.response);
+
+        console.log("data");
+        console.log(error.response.data);
 
         throw error;
       });
