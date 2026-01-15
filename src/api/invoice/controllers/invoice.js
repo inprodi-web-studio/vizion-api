@@ -98,6 +98,9 @@ const invoiceFields = {
       },
     },
     resume: true,
+    invoice: {
+      fields: ["uuid"],
+    },
   },
 };
 

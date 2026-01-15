@@ -198,6 +198,9 @@ const saleFields = {
           },
         },
         resume: true,
+        invoice: {
+          fields: ["uuid"],
+        },
       },
     },
     warehouse: {
