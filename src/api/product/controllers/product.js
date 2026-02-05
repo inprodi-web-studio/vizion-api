@@ -415,4 +415,69 @@ module.exports = createCoreController( PRODUCT, ({ strapi }) => ({
 
         return deletedProduct;
     },
+
+    async export(ctx) {
+        const { company } = ctx.state;
+
+        const fields = {
+            fields : ["name", "sku"],
+            populate : {
+                saleInfo : {
+                    fields : ["price"],
+                },
+            },
+        };
+
+        const pageSize = 100;
+        let page = 1;
+        let pageCount = 1;
+        const products = [];
+
+        do {
+            const { results, pagination } = await strapi.service( PRODUCT ).find({
+                ...fields,
+                filters : {
+                    company : company.id,
+                },
+                pagination : {
+                    page,
+                    pageSize,
+                },
+            });
+
+            products.push( ...results );
+
+            pageCount = pagination?.pageCount ?? 1;
+            page += 1;
+        } while ( page <= pageCount );
+
+        const escapeCsv = ( value ) => {
+            if ( value === null || value === undefined ) return "";
+
+            const str = String( value );
+
+            if ( /[",\n\r]/.test( str ) ) {
+                return `"${ str.replace( /"/g, '""' ) }"`;
+            }
+
+            return str;
+        };
+
+        const rows = [
+            ["Nombre", "SKU", "Precio"],
+            ...products.map( ( product ) => ([
+                escapeCsv( product.name ),
+                escapeCsv( product.sku ),
+                escapeCsv( product.saleInfo?.price ),
+            ]) ),
+        ];
+
+        const csv = rows.map( row => row.join( "," ) ).join( "\n" );
+
+        const filename = `products.csv`;
+
+        ctx.set( "Content-Type", "text/csv; charset=utf-8" );
+        ctx.set( "Content-Disposition", `attachment; filename="${ filename }"` );
+        ctx.body = csv;
+    },
 }));

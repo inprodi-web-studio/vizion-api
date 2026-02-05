@@ -435,7 +435,32 @@ module.exports = createCoreController(SALE, ({ strapi }) => ({
       .updateCustomerMeta({ customer: sale.customer.id, date: sale.date });
 
     if (company.applications.includes("inventories")) {
-      await strapi.service(STOCK_RELEASE).createStockReleases(updatedSale);
+      const releases = await strapi.service(STOCK_RELEASE).createStockReleases(updatedSale);
+
+      const promises = [];
+
+      for (let i = 0; i < releases.length; i++) {
+        const release = releases[i];
+
+        const releaseController = strapi.controller(
+          "api::stock-release.stock-release"
+        );
+
+        const params = {
+          params: {
+            uuid: release.uuid,
+          },
+          request: {
+            body: {
+              quantity: release.quantity,
+            },
+          },
+        };
+
+        promises.push(releaseController.releaseStock(params));
+
+        await Promise.all(promises);
+      }
     }
 
     return updatedSale;

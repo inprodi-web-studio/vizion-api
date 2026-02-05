@@ -49,6 +49,14 @@ module.exports = {
         },
       },
       {
+        method  : "POST",
+        path    : "/products/export",
+        handler : "product.export",
+        config : {
+          policies : ["global::userContext"],
+        },
+      },
+      {
         method  : "PUT",
         path    : "/products/:uuid",
         handler : "product.update",
