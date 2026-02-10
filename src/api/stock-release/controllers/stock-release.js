@@ -50,7 +50,7 @@ const releaseFields = {
             },
         },
         reservations : {
-            fields : ["uuid", "quantity"],
+            fields : ["uuid", "quantity", "isPicked"],
             populate : {
                 stock : {
                     fields : ["uuid", "quantity", "packageQuantity", "positionPartition"],
@@ -91,7 +91,7 @@ const releaseFields = {
             fields : ["uuid", "quantity"],
             populate : {
                 reservations : {
-                    fields : ["uuid", "quantity"],
+                    fields : ["uuid", "quantity", "isPicked"],
                 },
             },
         },

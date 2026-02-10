@@ -121,19 +121,14 @@ module.exports = createCoreController(STOCK_RESERVATION, ({ strapi }) => ({
       );
     }
 
-    const available = Number(reservation.quantity);
-    const quantityToMove = data.quantity ?? available;
-
-    if (quantityToMove > available) {
-      throw new BadRequestError(
-        "Cannot move more quantity than the reservation quantity",
-        {
-          key: "stock-reservation.quantityExceeded",
-          path: ctx.request.path,
-        }
-      );
+    if (reservation.isPicked) {
+      throw new BadRequestError("Reservation has already been picked", {
+        key: "stock-reservation.alreadyPicked",
+        path: ctx.request.path,
+      });
     }
 
+    const quantityToMove = Number(reservation.quantity);
     const packageRealConversion = reservation.stock.package?.realConversion
       ? Number(reservation.stock.package.realConversion)
       : null;
@@ -144,24 +139,24 @@ module.exports = createCoreController(STOCK_RESERVATION, ({ strapi }) => ({
     try {
       await strapi.db.connection.raw("START TRANSACTION;");
 
-      const [updatedReservation] = await strapi.db.connection.raw(
-        `
-                UPDATE stock_reservations
-                SET quantity = quantity - ?, updated_at = NOW()
-                WHERE id = ? AND quantity >= ?;
-            `,
-        [quantityToMove, reservation.id, quantityToMove]
+      await strapi.service(STOCK_MOVEMENT).createOrUpdateStock(
+        {
+          product: reservation.stock.product.id,
+          location: reservation.stock.location.id,
+          unity: reservation.stock.unity.id,
+          badge: reservation.stock.badge?.id ?? null,
+          variation: reservation.stock.variation?.id ?? null,
+          package: reservation.stock.package?.id ?? null,
+          packageRealConversion: packageRealConversion ?? null,
+          shelf: reservation.stock.position?.shelf?.id ?? null,
+          xPosition: reservation.stock.position?.xPosition ?? null,
+          yPosition: reservation.stock.position?.yPosition ?? null,
+          partition: reservation.stock.positionPartition ?? null,
+          quantity: -movementQuantity,
+        },
+        false,
+        "dispatch"
       );
-
-      if (updatedReservation.affectedRows === 0) {
-        throw new BadRequestError(
-          "Cannot move more quantity than the reservation quantity",
-          {
-            key: "stock-reservation.quantityExceeded",
-            path: ctx.request.path,
-          }
-        );
-      }
 
       await strapi.service(STOCK_MOVEMENT).createOrUpdateStock(
         {
@@ -197,30 +192,51 @@ module.exports = createCoreController(STOCK_RESERVATION, ({ strapi }) => ({
         "dispatch"
       );
 
+      const destinationStocks = await strapi.service(STOCK_MOVEMENT).getStock({
+        product: reservation.stock.product.id,
+        location: destination.id,
+        unity: reservation.stock.unity.id,
+        badge: reservation.stock.badge?.id ?? null,
+        variation: reservation.stock.variation?.id ?? null,
+        package: reservation.stock.package?.id ?? null,
+      });
+
+      if (!destinationStocks?.length) {
+        throw new BadRequestError("Destination stock was not created", {
+          key: "stock-reservation.destinationStockNotFound",
+          path: ctx.request.path,
+        });
+      }
+
+      await strapi.db.connection.raw(
+        `
+          UPDATE stock_reservations
+          SET is_picked = ?, updated_at = NOW()
+          WHERE id = ?;
+        `,
+        [true, reservation.id]
+      );
+
+      await strapi.db.connection.raw(
+        `
+          UPDATE stock_reservations_stock_links
+          SET stock_id = ?
+          WHERE stock_reservation_id = ?;
+        `,
+        [destinationStocks[0].stock_id, reservation.id]
+      );
+
       await strapi.db.connection.raw("COMMIT;");
     } catch (e) {
       await strapi.db.connection.raw("ROLLBACK;");
       throw e;
     }
 
-    const [remainingRows] = await strapi.db.connection.raw(
-      `
-            SELECT quantity
-            FROM stock_reservations
-            WHERE id = ?;
-        `,
-      [reservation.id]
-    );
-
-    const remainingQuantity = remainingRows?.[0]
-      ? Number(remainingRows[0].quantity)
-      : 0;
-
     return {
       reservation: reservation.uuid,
       location: destination.uuid,
       movedQuantity: quantityToMove,
-      remainingQuantity,
+      isPicked: true,
     };
   },
 }));

@@ -24,6 +24,10 @@
     "quantity": {
       "type": "decimal"
     },
+    "isPicked": {
+      "type": "boolean",
+      "default": false
+    },
     "dispatches": {
       "type": "relation",
       "relation": "manyToMany",

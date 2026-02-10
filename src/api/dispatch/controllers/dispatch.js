@@ -57,7 +57,7 @@ const dispatchFields = {
           },
         },
         reservations: {
-          fields: ["uuid", "quantity"],
+          fields: ["uuid", "quantity", "isPicked"],
           populate: {
             stock: {
               fields: [
