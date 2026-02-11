@@ -134,6 +134,9 @@ module.exports = createCoreController(DISPATCH, ({ strapi }) => ({
       ...dispatchFields,
     });
 
+    console.log(lastDispatch[0]);
+    console.log(!lastDispatch[0]?.endDate);
+
     if (lastDispatch[0] && !lastDispatch[0]?.endDate) {
       throw new BadRequestError(
         "Cant create a new dispatch, there is an open one",
