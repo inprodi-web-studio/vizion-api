@@ -2994,6 +2994,7 @@ export interface ApiStockReservationStockReservation
       'api::stock.stock'
     >;
     quantity: Attribute.Decimal;
+    isPicked: Attribute.Boolean & Attribute.DefaultTo<false>;
     dispatches: Attribute.Relation<
       'api::stock-reservation.stock-reservation',
       'manyToMany',
