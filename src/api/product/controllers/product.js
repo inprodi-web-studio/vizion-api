@@ -613,6 +613,7 @@ module.exports = createCoreController(PRODUCT, ({ strapi }) => ({
           data: {
             saleInfo: {
               ...(existingProduct.saleInfo ?? {}),
+              iva: "16",
               price,
             },
           },
