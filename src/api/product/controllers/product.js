@@ -611,6 +611,7 @@ module.exports = createCoreController(PRODUCT, ({ strapi }) => ({
       if (existingProduct) {
         await strapi.entityService.update(PRODUCT, existingProduct.id, {
           data: {
+            unity: 1,
             saleInfo: {
               ...(existingProduct.saleInfo ?? {}),
               iva: "16",
