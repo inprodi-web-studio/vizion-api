@@ -95,41 +95,6 @@ const dispatchFields = {
   },
 };
 
-function filterUnpickedReservationsFromDispatch(dispatch) {
-  if (!dispatch || dispatch.endDate || !Array.isArray(dispatch.stockDispatches)) {
-    return dispatch;
-  }
-
-  return {
-    ...dispatch,
-    stockDispatches: dispatch.stockDispatches
-      .map((stockDispatch) => ({
-        ...stockDispatch,
-        reservations: (stockDispatch.reservations ?? []).filter(
-          (reservation) => !reservation.isPicked
-        ),
-      }))
-      .filter((stockDispatch) => stockDispatch.reservations.length > 0),
-  };
-}
-
-function filterUnpickedReservationsFromResponse(response) {
-  if (!response) return response;
-
-  if (Array.isArray(response)) {
-    return response.map(filterUnpickedReservationsFromDispatch);
-  }
-
-  if (Array.isArray(response.results)) {
-    return {
-      ...response,
-      results: response.results.map(filterUnpickedReservationsFromDispatch),
-    };
-  }
-
-  return filterUnpickedReservationsFromDispatch(response);
-}
-
 module.exports = createCoreController(DISPATCH, ({ strapi }) => ({
   async find(ctx) {
     const filters = {
@@ -138,7 +103,7 @@ module.exports = createCoreController(DISPATCH, ({ strapi }) => ({
 
     const dispatches = await findMany(DISPATCH, dispatchFields, filters);
 
-    return filterUnpickedReservationsFromResponse(dispatches);
+    return dispatches;
   },
 
   async findOne(ctx) {
@@ -146,7 +111,7 @@ module.exports = createCoreController(DISPATCH, ({ strapi }) => ({
 
     const dispatch = await findOneByUuid(uuid, DISPATCH, dispatchFields);
 
-    return filterUnpickedReservationsFromResponse(dispatch);
+    return dispatch;
   },
 
   async create(ctx) {
@@ -181,12 +146,21 @@ module.exports = createCoreController(DISPATCH, ({ strapi }) => ({
 
     const stockDispatches = await strapi.query(STOCK_DISPATCH).findMany({
       where: {
-        reservations: {
-          isPicked: false,
-        },
+        $or: [
+          {
+            createdAt: {
+              $lte: dayjs().toISOString(),
+              ...(lastDispatch.length > 0 && {
+                $gte: lastDispatch[0].createdAt,
+              }),
+            },
+          },
+          {
+            isCompleted: false,
+          },
+        ],
         release: {
           sale: {
-            company: company.id,
             warehouse: {
               uuid: data.warehouse,
             },
@@ -215,7 +189,7 @@ module.exports = createCoreController(DISPATCH, ({ strapi }) => ({
       dispatchFields
     );
 
-    return filterUnpickedReservationsFromResponse(newDispatch);
+    return newDispatch;
   },
 
   async conclude(ctx) {
