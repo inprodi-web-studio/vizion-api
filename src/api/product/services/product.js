@@ -1,25 +1,126 @@
-const { PRODUCT, PRODUCT_CATEGORY, USER, TAG, PRODUCT_ATTRIBUTE, ATTRIBUTE_VALUE, UNITY, BRAND, PRODUCT_VARIATION } = require("../../../constants/models");
+const {
+    PRODUCT,
+    PRODUCT_CATEGORY,
+    USER,
+    TAG,
+    PRODUCT_ATTRIBUTE,
+    ATTRIBUTE_VALUE,
+    UNITY,
+    BRAND,
+    PRODUCT_VARIATION,
+    PRODUCT_FAMILY,
+} = require("../../../constants/models");
 const { BadRequestError } = require("../../../helpers/errors");
 const findOneByUuid = require("../../../helpers/findOneByUuid");
 
 const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService( PRODUCT, ({ strapi }) => ({
-    async validateParallelData (data) {
-        const { id : unityId } = await findOneByUuid( data.unity, UNITY );
+    async validateParallelData (data, currentProduct = null) {
+        const ctx = strapi.requestContext.get();
 
-        data.unity = unityId;
+        const hasUnity = Object.prototype.hasOwnProperty.call(data, "unity");
+        const hasCategory = Object.prototype.hasOwnProperty.call(data, "category");
+        const hasBrand = Object.prototype.hasOwnProperty.call(data, "brand");
+        const hasFamily = Object.prototype.hasOwnProperty.call(data, "family");
+        const hasSubfamily = Object.prototype.hasOwnProperty.call(data, "subfamily");
 
-        if ( data.category ) {
-            const { id : categoryId } = await findOneByUuid( data.category, PRODUCT_CATEGORY );
+        if (hasUnity) {
+            const { id : unityId } = await findOneByUuid( data.unity, UNITY );
 
-            data.category = categoryId;
+            data.unity = unityId;
         }
 
-        if ( data.brand ) {
-            const { id : brandId } = await findOneByUuid( data.brand, BRAND );
+        if ( hasCategory ) {
+            if (data.category) {
+                const { id : categoryId } = await findOneByUuid( data.category, PRODUCT_CATEGORY );
 
-            data.brand = brandId;
+                data.category = categoryId;
+            } else {
+                data.category = null;
+            }
+        }
+
+        if ( hasBrand ) {
+            if (data.brand) {
+                const { id : brandId } = await findOneByUuid( data.brand, BRAND );
+
+                data.brand = brandId;
+            } else {
+                data.brand = null;
+            }
+        }
+
+        const familySchema = {
+            fields : ["uuid", "name"],
+            populate : {
+                parentId : {
+                    fields : ["uuid", "name"],
+                },
+            },
+        };
+
+        const previousFamilyUuid = currentProduct?.family?.uuid ?? null;
+        const previousSubfamilyUuid = currentProduct?.subfamily?.uuid ?? null;
+        const familyWasChanged = hasFamily && (data.family ?? null) !== previousFamilyUuid;
+
+        const familyUuid = hasFamily
+            ? data.family
+            : previousFamilyUuid;
+
+        const subfamilyUuid = hasSubfamily
+            ? data.subfamily
+            : ( familyWasChanged ? null : previousSubfamilyUuid );
+
+        let family = null;
+        let subfamily = null;
+
+        if (familyUuid) {
+            family = await findOneByUuid( familyUuid, PRODUCT_FAMILY, familySchema );
+
+            if (family.parentId) {
+                throw new BadRequestError("The family must be a top-level family", {
+                    key  : "product.invalidFamily",
+                    path : ctx.request.url,
+                });
+            }
+        }
+
+        if (subfamilyUuid) {
+            subfamily = await findOneByUuid( subfamilyUuid, PRODUCT_FAMILY, familySchema );
+
+            if (!subfamily.parentId) {
+                throw new BadRequestError("The subfamily must belong to a family", {
+                    key  : "product.invalidSubfamily",
+                    path : ctx.request.url,
+                });
+            }
+        }
+
+        if (hasFamily && data.family === null && subfamily) {
+            throw new BadRequestError("A family is required when subfamily is provided", {
+                key  : "product.invalidSubfamily",
+                path : ctx.request.url,
+            });
+        }
+
+        if (subfamily) {
+            if (!family) {
+                family = subfamily.parentId;
+            } else if (subfamily.parentId.id !== family.id) {
+                throw new BadRequestError("Subfamily does not belong to the provided family", {
+                    key  : "product.invalidSubfamilyFamilyRelation",
+                    path : ctx.request.url,
+                });
+            }
+        }
+
+        if (hasFamily || (hasSubfamily && family)) {
+            data.family = family ? family.id : null;
+        }
+
+        if (hasSubfamily || familyWasChanged || (hasFamily && data.family === null)) {
+            data.subfamily = subfamily ? subfamily.id : null;
         }
 
         if ( data.stockInfo?.alertTo ) {

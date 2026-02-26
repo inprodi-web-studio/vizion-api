@@ -40,6 +40,7 @@ module.exports = {
   CREDIT_MOVEMENT: "api::credit-movement.credit-movement",
   CUSTOMER_CREDIT: "api::customer-credit.customer-credit",
   PRODUCT_CATEGORY: "api::product-category.product-category",
+  PRODUCT_FAMILY: "api::product-family.product-family",
   STOCK_RESERVATION: "api::stock-reservation.stock-reservation",
   ADJUSTMENT_MOTIVE: "api::adjustment-motive.adjustment-motive",
   PRODUCT_ATTRIBUTE: "api::product-attribute.product-attribute",

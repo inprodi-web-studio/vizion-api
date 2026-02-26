@@ -43,6 +43,22 @@ const productFields = {
     category: {
       fields: ["uuid", "name", "icon", "color"],
     },
+    family: {
+      fields: ["uuid", "name"],
+      populate: {
+        parentId: {
+          fields: ["uuid", "name"],
+        },
+      },
+    },
+    subfamily: {
+      fields: ["uuid", "name"],
+      populate: {
+        parentId: {
+          fields: ["uuid", "name"],
+        },
+      },
+    },
     brand: {
       fields: ["uuid", "name"],
     },
@@ -142,7 +158,7 @@ module.exports = createCoreController(PRODUCT, ({ strapi }) => ({
       },
     ]);
 
-    await strapi.service(PRODUCT).validateParallelData(data);
+    await strapi.service(PRODUCT).validateParallelData(data, product);
 
     const newProduct = await strapi.entityService.create(PRODUCT, {
       data: {

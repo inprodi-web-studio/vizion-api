@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "product_families",
+  "info": {
+    "singularName": "product-family",
+    "pluralName": "product-families",
+    "displayName": "Product Family",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uuid": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "parentId": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product-family.product-family",
+      "inversedBy": "children"
+    },
+    "children": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-family.product-family",
+      "mappedBy": "parentId"
+    },
+    "products": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product.product",
+      "mappedBy": "family"
+    },
+    "subfamilyProducts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product.product",
+      "mappedBy": "subfamily"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company"
+    }
+  }
+}

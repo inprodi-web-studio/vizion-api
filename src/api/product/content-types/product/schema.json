@@ -77,6 +77,18 @@
       "target": "api::product-category.product-category",
       "inversedBy": "products"
     },
+    "family": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product-family.product-family",
+      "inversedBy": "products"
+    },
+    "subfamily": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product-family.product-family",
+      "inversedBy": "subfamilyProducts"
+    },
     "company": {
       "type": "relation",
       "relation": "oneToOne",
