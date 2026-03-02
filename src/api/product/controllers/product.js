@@ -158,7 +158,7 @@ module.exports = createCoreController(PRODUCT, ({ strapi }) => ({
       },
     ]);
 
-    await strapi.service(PRODUCT).validateParallelData(data, product);
+    await strapi.service(PRODUCT).validateParallelData(data);
 
     const newProduct = await strapi.entityService.create(PRODUCT, {
       data: {
